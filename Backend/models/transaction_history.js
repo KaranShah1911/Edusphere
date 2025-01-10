@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const TransactionSchema = new mongoose.Schema({
-    user_id: [{type: mongoose.schema.ObjectId, ref: "Users"}],
+    user_id: [{type: mongoose.Schema.ObjectId, ref: "Users"}],
 
-    courses_purchase: [{type: mongoose.schema.ObjectId, ref: "Courses"}], 
+    courses_purchase: [{type: mongoose.Schema.ObjectId, ref: "Courses"}], 
 
     purchases_date: {
         type: Date, 
