@@ -1,32 +1,70 @@
 const Admins = require('../models/admin_schema');
+const { get_token } = require('../service/auth');
 
-function DisplayAdminLoginPage(req , res){
-    res.render('admin_login');
-}
+async function CreateAdmin(req , res){
+    try{
+        const {name , wallet_id} = req.body;
 
-function DisplayAdminPage(req , res){
-    res.render('admin_page');
-}
+        if(!name || !wallet_id){
+            return res.status(400).json({message : "Please fill all fields" })
+        }
 
-async function VerifyAdmin(req ,res){
-    const wallet_id = req.body;
+        const admin = await Admins.create({
+            admin_name : name,
+            wallet_id : wallet_id
+        });
 
-    const admin = await Admins.findOne({metamask_wallet_id : wallet_id});
+        if(!admin){
+            return res.status(400).json({message : "Error Signing up the admin"});
+        }
 
-    if(!admin){
-        return res.redirect("/admin/login");
+        const token = get_token(admin)
+
+        return res.status(200).json({
+            message : "Admin created successfully",
+            id : admin._id,
+            name : admin.admin_name,
+            wallet_id : admin.wallet_id,
+            courses : admin.courses_created,
+            token : token
+        });
+
+    }catch(error){
+        return res.status(500).json({error : `${error}`})
     }
+}
+async function VerifyAdmin(req ,res){
+    try{
+        const {wallet_id} = req.body;
 
-    const token = setadmin(admin);
+        if(!wallet_id){
+            return res.status(400).json({error : 'Metamask Wallet Id is required'})
+        }
 
-    res.cookie('admin_id',token);
+        const admin = await Admins.findOne({metamask_wallet_id : wallet_id});
 
-    res.redirect('/');
+        if(!admin){
+            return res.status(404).json({error : "No Admin Found. Verify Wallet Id."});
+        }
+
+        const token = get_token(admin);
+
+        return res.status(200).json({
+            message : "Admin Logged in successfully",
+            id : admin._id,
+            name : admin.admin_name,
+            wallet_id : admin.wallet_id,
+            courses : admin.courses_created,
+            token : token
+        });
+    }
+    catch(error){
+        return res.status(500).json({error : "Error with the server"})
+    } 
 
 }
 
 module.exports = {
-    DisplayAdminLoginPage,
-    VerifyAdmin,
-    DisplayAdminPage
+    CreateAdmin,
+    VerifyAdmin
 };

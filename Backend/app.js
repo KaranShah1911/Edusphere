@@ -19,17 +19,18 @@ ConnectToDB(url)    // Establishing connection with the DataBase
 
 
 //Setting up engine
-app.set("view engine" , "ejs")
-app.set("views" , path.resolve('./views'))
+// app.set("view engine" , "ejs")
+// app.set("views" , path.resolve('./views'))
 
 // Setting up middleware for parsing the request body
-app.use(express.urlencoded({extended:true}))
-app.use(cookieparser())
+// app.use(express.urlencoded({extended:true}))
+// app.use(cookieparser())
+app.use(express.json())
 
 //routes
 app.use("/" , general_router)
 app.use("/user" , user_router)
 app.use("/admin" , admin_router)
-// app.use('/courses' , allow_login_user , course_router)
+app.use('/courses' , course_router)
 
 app.listen(PORT , ()=>{console.log(`Sever started at port ${PORT}`)})

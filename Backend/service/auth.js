@@ -12,17 +12,15 @@ function getuser(token){
     }
 }
 
-function setuser(user){
-
-    // console.log(user);
+function get_token(user){
+    
     const token = jwt.sign({
         id:user._id,
         wallet_id : user.metamask_wallet_id,
         email:user.email
     },key , {expiresIn: '1h'});
 
-    // console.log(token);
     return token;
 }
 
-module.exports = {getuser , setuser};
+module.exports = {getuser , get_token};
