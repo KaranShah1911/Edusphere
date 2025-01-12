@@ -18,7 +18,7 @@ function get_token(user){
         id:user._id,
         wallet_id : user.metamask_wallet_id,
         email:user.email
-    },key , {expiresIn: '1h'});
+    },key , {expiresIn: '30d'});
 
     return token;
 }

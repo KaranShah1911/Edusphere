@@ -1,30 +1,30 @@
+const Users = require('../models/user_schema');
 const {getuser} = require('../service/auth');
 
 // allowing only the loggin user to see the courses
 async function allow_login_user(req , res , next){
-    try{
-        const id = req.cookies?.uid;
-        console.log(id);
-        if(!id){
-            // if user is not logged in
-            // return res.redirect('/login');
-            // return res.redirect('/user/login');
-            return res.status(400).json({error : "User is not logged in."})
-        }
-        
-        const user = getuser(id);
-        
-        if(!user){
-            // if user is not logged in
-            // return res.render('error_page');
-            // return res.redirect('/login');
-            return res.status(400).json({error : "No user found."})
-        }
     
-        req.user = user;
-        next();
-    }catch(error){
-        return res.status(500).json({error : "Error with the server"});
+    let token;
+   
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+        try{
+            token = req.headers.authorization.split(' ')[1];
+            //decode token id
+            const decoded = getuser(token);
+            req.user = await Users.findById(decoded.id);
+            next();
+        }
+        catch(e){
+            res.status(401).json({
+            error: "Un Authorized",
+            status: false,
+            });
+        }
+    }else{
+        res.status(401).json({
+          error: "UnAuthorized",
+          status: false,
+        });
     }
     
 }

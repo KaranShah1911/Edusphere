@@ -14,7 +14,8 @@ const {allow_login_user} = require("./Middlewares/login_user")
 const app = express()
 const PORT = 8000;
 
-const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
+// const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
+const url = "mongodb+srv://skaran19112005:skaran19112005@cluster0.dazuu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"   // DataBase url
 ConnectToDB(url)    // Establishing connection with the DataBase
 
 
