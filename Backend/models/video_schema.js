@@ -6,11 +6,13 @@ const VideoSchema = new mongoose.Schema({
 
     image_url: [{type: String}],
 
-    course_id: {
+    course_id: 
+    {
         type: mongoose.Schema.ObjectId, ref: 'Courses'
     }, 
 
-    updated_at: {
+    updated_at: 
+    {
         type: Date,
         default: Date.now()
     }

@@ -5,7 +5,8 @@ const TransactionSchema = new mongoose.Schema({
 
     courses_purchase: [{type: mongoose.Schema.ObjectId, ref: "Courses"}], 
 
-    purchases_date: {
+    purchases_date: 
+    {
         type: Date, 
         default: Date.now()
     }

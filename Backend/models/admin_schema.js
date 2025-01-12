@@ -1,15 +1,19 @@
 const mongoose = require("mongoose");
 
 const AdminSchema = new mongoose.Schema({
-    admin_name:{
+    admin_name:
+    {
         type:String,
         required:true
     },
-    wallet_id:{
+    
+    wallet_id:
+    {
         type: String,
         required:true,
         unique:true
     },
+    
     courses_created:[{type:mongoose.Schema.ObjectId ,ref:'Courses'}],
 } , {
     timestamps: true

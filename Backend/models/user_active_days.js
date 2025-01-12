@@ -1,16 +1,22 @@
 const mongoose = require('mongoose');
 
 const UserActiveDaysSchema = new mongoose.Schema({
-    user_id:{
+    
+    user_id:
+    {
         type: mongoose.Schema.ObjectId,
         ref: 'Users',
         required:true
     },
-    counter:{
+    
+    counter:
+    {
         type: Number,
         default: 0
     },
-    active_date:{
+    
+    active_date:
+    {
         type: Date,
         default: Date.now
     }

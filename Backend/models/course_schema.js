@@ -1,27 +1,38 @@
 const mongoose = require("mongoose");
 
 const CourseSchema = new mongoose.Schema({
-    course_name:{
+    course_name:
+    {
         type: String,
         required:true,
     } , 
-    course_description:{
+    
+    course_description:
+    {
         type: String,
         required:true
     },
-    author_name:{
+    
+    author_name:
+    {
         type: String,
         required:true
     },
-    course_points:{
+    
+    course_points:
+    {
         type: Number,
         required:true
     },
-    course_price:{
+    
+    course_price:
+    {
         type: Number,
         required:true
     },
-    buy_count:{
+    
+    buy_count:
+    {
         type: Number,
         default:0
     }
