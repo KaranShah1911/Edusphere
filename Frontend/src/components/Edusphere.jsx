@@ -1,21 +1,14 @@
 import React from 'react';
-import { useNavigate, Link } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 
 const EduSphere = () => {
-
+                        
   const navigate = useNavigate(); // Hook for navigation
 
   // Click handler for the Get Started button
   const handleGetStarted = () => {
     navigate('/role-selection'); // Redirect to the login page
   };
-
-
-  
-
-  
-
-  
 
   return (
     <>
@@ -78,13 +71,13 @@ const EduSphere = () => {
             border-radius: 30px;
             
             .nav-options {
-             margin-left: -20px; /* Adjust to move to the left */
-             }
+            margin-left: -20px; /* Adjust to move to the left */
+            }
 
 
 
             }
-             nav button:hover {
+            nav button:hover {
             background-color: #ffae42;
           }
             
@@ -119,11 +112,12 @@ const EduSphere = () => {
             text-align: center;
             padding-top: 80px;
             height: 100vh;
-            background: url('images/home hero image.avif') no-repeat center center/cover;
+            background: url('images/home hero image.avif') no-repeat center center;
             position: relative;
             overflow: hidden;
             margin-top: 80px;
             animation: fadeInImage 2s ease-out forwards;
+            background-size:cover ;
           }
           .hero-overlay {
             position: absolute;
@@ -240,29 +234,7 @@ const EduSphere = () => {
             visibility: visible;
           }
 
-          /* Footer Styling */
-          footer {
-            background-color: #111;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-          }
-          footer a {
-            color: #f90;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 16px;
-          }
-          footer a:hover {
-            color: #ffae42;
-          }
-          footer .copyright {
-            font-size: 14px;
-            margin-top: 10px;
-          }
+        
 
           /* Animations */
           @keyframes fadeInImage {
@@ -290,83 +262,87 @@ const EduSphere = () => {
       </style>
 
       {/* Header */}
-      <header>
-        <div className="logo">
-          <img src="images/Edusphere logo.png" alt="EduSphere Logo" />
-          <span>EduSphere</span>
+      <header className="flex justify-between items-center py-5 px-10 bg-black border-b-2 border-gray-900 fixed w-screen top-0 z-50">
+        <div className="flex items-center">
+          <img src="images/Edusphere logo.png" alt="EduSphere Logo" className="w-16 mr-4" />
+          <span className="text-2xl font-bold text-custom-orange">EduSphere</span>
         </div>
-        <nav>
-         
-
-          <button onClick={handleGetStarted} >Get Started</button>
-          
+        <nav className="flex items-center gap-5">
+          <button className="px-6 py-2 bg-#f90 rounded-lg text-black hover:bg-#f90-800" onClick={handleGetStarted}>
+            Get Started
+          </button>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1 className="hero-title">Welcome to EduSphere</h1>
+      <section className="hero relative flex flex-col items-center justify-center text-center h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('images/home hero image.avif')" }}>
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-60"></div>
+        <div className="z-10">
+        <h1 className="text-6xl font-bold text-custom-orange">Welcome to EduSphere</h1>
+
         </div>
       </section>
 
       {/* Statistics Section */}
-      <section className="stats">
-        <div className="stat-box">
-          <h3>Courses</h3>
-          <p>762k+</p>
-        </div>
-        <div className="stat-box">
-          <h3>Students</h3>
-          <p>300k+</p>
-        </div>
-        <div className="stat-box">
-          <h3>17+ Years</h3>
-          <p>Educational Excellence</p>
-        </div>
-      </section>
+      <section className="flex justify-center gap-20 mt-10 z-10">
+  <div className="bg-gray-800 bg-opacity-80 p-6 rounded-lg text-white text-center w-80 hover:bg-[#f90] hover:text-black transition duration-300">
+    <h3 className="text-xl font-bold">Courses</h3>
+    <p className="text-3xl font-bold">762k+</p>
+  </div>
+  <div className="bg-gray-800 bg-opacity-80 p-6 rounded-lg text-white text-center w-80 hover:bg-[#f90] hover:text-black transition duration-300">
+    <h3 className="text-xl font-bold">Students</h3>
+    <p className="text-3xl font-bold">300k+</p>
+  </div>
+  <div className="bg-gray-800 bg-opacity-80 p-6 rounded-lg text-white text-center w-80 hover:bg-[#f90] hover:text-black transition duration-300">
+    <h3 className="text-xl font-bold">17+ Years</h3>
+    <p className="text-xl">Educational Excellence</p>
+  </div>
+</section>
 
-      {/* Container for the boxes */}
-      <div className="container">
-        {/* Info Boxes */}
-        <div className="card">
-          <div className="front">
-            <h3>Learn More About Courses</h3>
-          </div>
-          <div className="back">
-            <p>Explore our diverse range of courses designed to enhance your skills. We offer courses in various domains like Computer Science, Data Science, and more!</p>
-          </div>
-        </div>
 
-        <div className="card">
-          <div className="front">
-            <h3>Safe and Secure Platform</h3>
-          </div>
-          <div className="back">
-            <p>Your data is safe with us! We use the latest encryption technologies to ensure that your learning materials and information are protected at all times.</p>
-          </div>
-        </div>
+{/* Container for the boxes */}
+<div className="container flex justify-between items-center p-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 gap-24 z-20">
+  {/* Info Boxes */}
+  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+    <div className="front">
+      <h3 className="text-2xl font-bold">Learn More About Courses</h3>
+    </div>
+    <div className="back absolute top-0 right-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+      <p className="text-lg text-center">Explore our diverse range of courses designed to enhance your skills. We offer courses in various domains like Computer Science, Data Science, and more! Our platform aims to provide quality education with the best resources available for all students at every level of expertise.</p>
+    </div>
+  </div>
 
-        <div className="card">
-          <div className="front">
-            <h3>Transparent Transactions</h3>
-          </div>
-          <div className="back">
-            <p>We believe in full transparency. All transactions on our platform are recorded on the blockchain, ensuring security and accountability for all users.</p>
-          </div>
-        </div>
-      </div>
+  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+    <div className="front">
+      <h3 className="text-2xl font-bold">Safe and Secure Platform</h3>
+    </div>
+    <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+      <p className="text-lg text-center">Your data is safe with us! We use the latest encryption technologies to ensure that your learning materials and information are protected at all times. We maintain strict security protocols to safeguard your privacy and educational data across all aspects of the platform.</p>
+    </div>
+  </div>
+
+  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+    <div className="front">
+      <h3 className="text-2xl font-bold">Transparent Transactions</h3>
+    </div>
+    <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+      <p className="text-lg text-left">We believe in full transparency. All transactions on our platform are recorded on the blockchain, ensuring security and accountability for all users. This decentralized approach allows us to offer transparent of every transaction made on the platform.</p>
+    </div>
+  </div>
+</div>
+
+
 
       {/* Footer */}
-      <footer>
-        <div>
-          <a href="#">About</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
+        {/* Footer */}
+        <footer className="bg-black text-white text-center py-10 mt-auto w-full z-50">
+        <div className="flex justify-center space-x-10">
+          <a href="#" className="text-custom-orange hover:text-yellow-800">About</a>
+          <a href="#" className="text-custom-orange hover:text-yellow-800">Privacy Policy</a>
+          <a href="#" className="text-custom-orange hover:text-yellow-800">Terms of Service</a>
         </div>
-        <div className="copyright">
-          <p>&copy; 2025 EduSphere. All Rights Reserved.</p>
+        <div className="mt-5">
+          <p className="text-sm">&copy; 2025 EduSphere. All Rights Reserved.</p>
         </div>
       </footer>
     </>

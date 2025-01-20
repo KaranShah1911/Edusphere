@@ -6,6 +6,7 @@ const EduSphere = () => {
   const navigate = useNavigate(); // Hook for navigation
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [walletConnected, setWalletConnected] = useState(false);
 
    // Toggle Dropdown Menu
    const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
@@ -19,6 +20,7 @@ const EduSphere = () => {
     if (window.ethereum) {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" });
+        setWalletConnected(true);
         alert("Wallet connected successfully!");
       } catch (error) {
         alert("Failed to connect wallet. Please try again.");
@@ -28,16 +30,7 @@ const EduSphere = () => {
     }
   };
 
-  // Function to navigate to Educator Sign Up
-  const handleEducatorSignUp = () => {
-    navigate("/signup"); // Navigate to the Educator Sign Up page
-  };
-
-  // Function to navigate to Student Sign Up
-  const handleStudentSignUp = () => {
-    navigate("/signup"); // Navigate to the Student Sign Up page
-  };
-
+  
   
 
   return (
@@ -366,6 +359,10 @@ const EduSphere = () => {
               transform: translateY(0);
             }
           }
+            .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+          }
         `}
       </style>
 
@@ -376,12 +373,33 @@ const EduSphere = () => {
           <span>EduSphere</span>
         </div>
         <nav>
-          <a href="#home">Home</a>
-          
-          
-          <Link to="/courses">Courses</Link>
-          <Link to="/contest">Contest</Link>
-          <Link to="/contest">Transactions</Link>
+          <nav>
+                  <a href="#home" className={!walletConnected ? "disabled" : ""}>
+                      Home
+                    </a>
+                    <Link
+                      to="/createcourses"
+                      className={!walletConnected ? "disabled" : ""}
+                    >
+                      Create Courses
+                    </Link>
+                    <Link
+                      to="/studentsinsights"
+                      className={!walletConnected ? "disabled" : ""}
+                    >
+                      Students Insights
+                    </Link>
+                    <Link
+                      to="/reports"
+                      className={!walletConnected ? "disabled" : ""}
+                    >
+                      Reports
+                    </Link>
+                   
+                  </nav>
+                  <button className="button" onClick={handleConnectWallet}>
+          {walletConnected ? "Wallet Connected" : "Connect Wallet"}
+        </button>
 
          
         </nav>
@@ -407,7 +425,7 @@ const EduSphere = () => {
           <div className="dropdown-content">
             <Link to="/profile">Profile</Link>
             <Link to="/coins">Coins</Link>
-            <Link to="/my-courses">My Courses</Link>
+            <Link to="/managecourses">Manage Courses</Link>
             <Link to="/progress">Progress</Link>
             <Link to="/certification">Certification</Link>
             <div className="toggle-switch">
@@ -415,6 +433,7 @@ const EduSphere = () => {
               <button className="button" onClick={toggleDarkMode}>
                 {darkMode ? "Switch to Light" : "Switch to Dark"}
               </button>
+              
             </div>
           </div>
         </div>
@@ -445,35 +464,36 @@ const EduSphere = () => {
       </section>
 
       {/* Container for the boxes */}
-      <div className="container">
-        {/* Info Boxes */}
-        <div className="card">
-          <div className="front">
-            <h3>Learn More About Courses</h3>
-          </div>
-          <div className="back">
-            <p>Explore our diverse range of courses designed to enhance your skills. We offer courses in various domains like Computer Science, Data Science, and more!</p>
-          </div>
-        </div>
+<div className="container flex justify-between items-center p-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 gap-24 z-20">
+  {/* Info Boxes */}
+  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+    <div className="front">
+      <h3 className="text-2xl font-bold">Learn More About Courses</h3>
+    </div>
+    <div className="back absolute top-0 right-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+      <p className="text-lg text-center">Explore our diverse range of courses designed to enhance your skills. We offer courses in various domains like Computer Science, Data Science, and more! Our platform aims to provide quality education with the best resources available for all students at every level of expertise.</p>
+    </div>
+  </div>
 
-        <div className="card">
-          <div className="front">
-            <h3>Safe and Secure Platform</h3>
-          </div>
-          <div className="back">
-            <p>Your data is safe with us! We use the latest encryption technologies to ensure that your learning materials and information are protected at all times.</p>
-          </div>
-        </div>
+  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+    <div className="front">
+      <h3 className="text-2xl font-bold">Safe and Secure Platform</h3>
+    </div>
+    <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+      <p className="text-lg text-center">Your data is safe with us! We use the latest encryption technologies to ensure that your learning materials and information are protected at all times. We maintain strict security protocols to safeguard your privacy and educational data across all aspects of the platform.</p>
+    </div>
+  </div>
 
-        <div className="card">
-          <div className="front">
-            <h3>Transparent Transactions</h3>
-          </div>
-          <div className="back">
-            <p>We believe in full transparency. All transactions on our platform are recorded on the blockchain, ensuring security and accountability for all users.</p>
-          </div>
-        </div>
-      </div>
+  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+    <div className="front">
+      <h3 className="text-2xl font-bold">Transparent Transactions</h3>
+    </div>
+    <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+      <p className="text-lg text-left">We believe in full transparency. All transactions on our platform are recorded on the blockchain, ensuring security and accountability for all users. This decentralized approach allows us to offer transparent of every transaction made on the platform.</p>
+    </div>
+  </div>
+</div>
+
 
       {/* Footer */}
       <footer>
