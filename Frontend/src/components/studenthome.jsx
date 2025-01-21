@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { useNavigate,Link } from "react-router-dom"; // Import useNavigate hook
+import React, { useState } from 'react';
+import { useNavigate, Link } from "react-router-dom"; // Import useNavigate hook
 
 
 const EduSphere = () => {
@@ -9,12 +9,12 @@ const EduSphere = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [walletConnected, setWalletConnected] = useState(false);
 
-   // Toggle Dropdown Menu
-   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  // Toggle Dropdown Menu
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-   // Toggle Dark/Light Mode
-   const toggleDarkMode = () => setDarkMode(!darkMode);
-  
+  // Toggle Dark/Light Mode
+  const toggleDarkMode = () => setDarkMode(!darkMode);
+
 
   // Function to handle MetaMask wallet connection
   const handleConnectWallet = async () => {
@@ -32,9 +32,9 @@ const EduSphere = () => {
   };
 
   // Function to navigate to Educator Sign Up
-  
 
-  
+
+
 
   return (
     <>
@@ -46,7 +46,7 @@ const EduSphere = () => {
           body {
             margin: 0;
             padding: 0;
-            font-family: 'Orbitron', sans-serif;
+            font-family: "sans-serif";
             background-color: #111;
             color: #fff;
             overflow-x: hidden;
@@ -74,13 +74,16 @@ const EduSphere = () => {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 50px;
+            padding: 20px 15px;
             background-color: #111;
             border-bottom: 1px solid #222;
+            border-radius : 50px;
             position: fixed;
-            width: 96%;
-            top: 0;
-            z-index: 1000;
+            width: 90%;
+            top: 15px;
+            left:50%;
+            transform: translateX(-50%);
+            z-index: 10;
           }
           .logo {
             display: flex;
@@ -91,13 +94,14 @@ const EduSphere = () => {
             margin-right: 10px;
           }
           .logo span {
-            font-size: 24px;
+            // font-size: 24px;
             font-weight: bold;
             color:#f90;
           }
           nav {
             display: flex;
             align-items: center;
+            font-size : 20px;
             gap: 20px;
             
           }
@@ -136,7 +140,7 @@ const EduSphere = () => {
             transition: background-color 0.3s;
           }
           .button:hover {
-            background-color: #ffae42;
+            background-color: #ffae55;
           }
 
           /* Dropdown Menu */
@@ -153,9 +157,6 @@ const EduSphere = () => {
             background-color: #000000;
             border-radius: 10%;
             cursor: pointer;
-          }
-          .dropdown-button:hover {
-            background-color: #fff;
           }
           .dropdown-content {
             display: ${dropdownOpen ? "flex" : "none"};
@@ -188,40 +189,27 @@ const EduSphere = () => {
 
           /* Hero Section */
           .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
             text-align: center;
-            padding-top: 80px;
+            width:100vw;
             height: 100vh;
-            background: url('images/home hero image.avif') no-repeat center center/cover;
+            background-color: blue;
             position: relative;
-            overflow: hidden;
-            margin-top: 80px;
-            animation: fadeInImage 2s ease-out forwards;
-          }
-          .hero-overlay {
+            // overflow: hidden;
+            // animation: fadeInImage 2s ease-out forwards;
+            border:1px solid black;
+        }
+          .hero-title { 
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 1;
-          }
-          .hero-content {
-            position: relative;
+            top: 20%;
+            left:50%;
             z-index: 2;
             opacity: 0;
-            transform: translateY(50px);
-            animation: fadeInContent 1.5s ease-out 2s forwards;
-          }
-          .hero-title {
+            transform: translateX(-50%);
+            width : 70%;
+            animation: fadeInContent 1.5s ease-out 1s forwards;
             font-size: 64px;
             font-weight: bold;
             color: #f90;
-            margin-bottom: 20px;
           }
 
           /* Stats Section */
@@ -353,15 +341,15 @@ const EduSphere = () => {
           }
 
           @keyframes fadeInContent {
-            from {
-              opacity: 0;
-              transform: translateY(50px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
+  from {
+    opacity: 0;
+    transform: translateX(-50%); /* Keep the transform here */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%); /* And here */
+  }
+}
         .disabled {
             pointer-events: none;
             opacity: 0.5;
@@ -373,79 +361,93 @@ const EduSphere = () => {
       <header>
         <div className="logo">
           <img src="images/Edusphere logo.png" alt="EduSphere Logo" />
-          <span>EduSphere</span>
+          <span className="text-4xl">EduSphere</span>
         </div>
         <nav>
-        <a href="#home" className={!walletConnected ? "disabled" : ""}>
+          <div className='flex gap-8'>
+          <a href="/studenthome"
+          // className={!walletConnected ? "disabled" : ""}
+          className="text-2xl"
+          >
             Home
           </a>
           <Link
             to="/courses"
-            className={!walletConnected ? "disabled" : ""}
+          // className={!walletConnected ? "disabled" : ""}
+          className="text-2xl"
           >
             Courses
           </Link>
           <Link
             to="/contest"
-            className={!walletConnected ? "disabled" : ""}
+          // className={!walletConnected ? "disabled" : ""}
+          className="text-2xl"
           >
             Contest
           </Link>
-          <Link
+          {/* <Link
             to="/transactions"
             className={!walletConnected ? "disabled" : ""}
           >
             Transactions
-          </Link>
-         
+          </Link> */}
+          </div>
+        
+          <button className="button" onClick={handleConnectWallet}>
+            {walletConnected ? "Wallet Connected" : "Connect Wallet"}
+          </button>
+          {/* Dropdown Menu */}
+          <div className="dropdown">
+            <div
+              className={`dropdown-button ${!walletConnected ? 'disabled' : ''}`}
+              onClick={walletConnected ? toggleDropdown : null} // Ensure click doesn't trigger when disabled
+            >
+              {/* Replace 9-dot icon with a person image */}
+              <img
+                src="/images/student.jpg"
+                alt="Profile"
+                style={{
+                  width: "100px", // Set width of the image
+                  height: "50px", // Set height of the image
+                  borderRadius: "50%", // Make the image circular
+                  objectFit: "cover", // Ensure the image covers the area without distortion
+                  cursor: walletConnected ? "pointer" : "not-allowed", // Change cursor to indicate disabled state
+                }}
+              />
+            </div>
+            {/* </div> */}
+
+            <div className="dropdown-content">
+              <Link to="/add-details">Add Details</Link>
+              {/* <Link to="/coins">Coins</Link> */}
+              <Link to="/my-learning">My Learning</Link>
+              <Link to="/transaction-history">Transactions</Link>
+              <Link to="/redeem">Redeem</Link>
+              {/* <Link to="/progress">Progress</Link> */}
+              {/* <Link to="/certification">Certification</Link> */}
+            </div>
+          </div>
+          <div className="toggle-switch">
+            <button className="button" onClick={toggleDarkMode}>
+              {darkMode ? "Light" : "Dark"}
+            </button>
+          </div>
         </nav>
-        <button className="button" onClick={handleConnectWallet}>
-          {walletConnected ? "Wallet Connected" : "Connect Wallet"}
-        </button>
-        {/* Dropdown Menu */}
-        <div className="dropdown">
-          <div className="dropdown-button" onClick={toggleDropdown}>
-            {/* Google Drive-style 9-dot icon */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 10px)", gap: "3px" }}>
-              {Array.from({ length: 9 }).map((_, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: "10px",
-                    height: "10px",
-                    backgroundColor: "#f90",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-              ))}
-            </div>
-          </div>
-          <div className="dropdown-content">
-            <Link to="/profile">Profile</Link>
-            <Link to="/coins">Coins</Link>
-            <Link to="/my-courses">My Courses</Link>
-            <Link to="/progress">Progress</Link>
-            <Link to="/certification">Certification</Link>
-            <div className="toggle-switch">
-              
-              <button className="button" onClick={toggleDarkMode}>
-                {darkMode ? "Switch to Light" : "Switch to Dark"}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      </header >
 
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1 className="hero-title">Welcome to EduSphere</h1>
+      < section className="hero" >
+        <div className='border-2 border-red-500 w-full h-4/5 absolute bottom-0 p-0 flex'>
+                <p className='w-3/5 border-red-900 border-2 h-full text-5xl'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur sit porro ipsam ratione asperiores culpa inventore impedit laboriosam natus aliquam quae atque in, praesentium fuga vero id error dolorem saepe cum sunt nostrum? Sit rerum quam earum officia sequi temporibus.</p>
+                <div className='w-2/5 h-full flex justify-center items-center'>
+                  <img src="/images/student.jpg" alt="" className='w-3/6 h-3/6'/>
+                </div>
         </div>
-      </section>
+        
+      </section >
 
       {/* Statistics Section */}
-      <section className="stats">
+      {/* < section className="stats" >
         <div className="stat-box">
           <h3>Courses</h3>
           <p>762k+</p>
@@ -458,41 +460,41 @@ const EduSphere = () => {
           <h3>17+ Years</h3>
           <p>Educational Excellence</p>
         </div>
-      </section>
+      </section > */}
 
-     {/* Container for the boxes */}
-<div className="container flex justify-between items-center p-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 gap-24 z-20">
-  {/* Info Boxes */}
-  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
-    <div className="front">
-      <h3 className="text-2xl font-bold">Learn More About Courses</h3>
-    </div>
-    <div className="back absolute top-0 right-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
-      <p className="text-lg text-center">Explore our diverse range of courses designed to enhance your skills. We offer courses in various domains like Computer Science, Data Science, and more! Our platform aims to provide quality education with the best resources available for all students at every level of expertise.</p>
-    </div>
-  </div>
+      {/* Container for the boxes */}
+      {/* < div className="container flex justify-between items-center p-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 gap-24 z-20" >
+        
+        < div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out" >
+          <div className="front">
+            <h3 className="text-2xl font-bold">Learn More About Courses</h3>
+          </div>
+          <div className="back absolute top-0 right-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+            <p className="text-lg text-center">Explore our diverse range of courses designed to enhance your skills. We offer courses in various domains like Computer Science, Data Science, and more! Our platform aims to provide quality education with the best resources available for all students at every level of expertise.</p>
+          </div>
+        </div >
 
-  <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
-    <div className="front">
-      <h3 className="text-2xl font-bold">Safe and Secure Platform</h3>
-    </div>
-    <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
-      <p className="text-lg text-center">Your data is safe with us! We use the latest encryption technologies to ensure that your learning materials and information are protected at all times. We maintain strict security protocols to safeguard your privacy and educational data across all aspects of the platform.</p>
-    </div>
-  </div>
+        <div className="card w-[350px] h-[350px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+          <div className="front">
+            <h3 className="text-2xl font-bold">Safe and Secure Platform</h3>
+          </div>
+          <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+            <p className="text-lg text-center">Your data is safe with us! We use the latest encryption technologies to ensure that your learning materials and information are protected at all times. We maintain strict security protocols to safeguard your privacy and educational data across all aspects of the platform.</p>
+          </div>
+        </div>
 
-  <div className="card w-[4000px] h-[400px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
-    <div className="front">
-      <h3 className="text-2xl font-bold">Transparent Transactions</h3>
-    </div>
-    <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
-      <p className="text-lg text-left">We believe in full transparency. All transactions on our platform are recorded on the blockchain, ensuring security and accountability for all users. This decentralized approach allows us to offer transparent of every transaction made on the platform.</p>
-    </div>
-  </div>
-</div>
+        <div className="card w-[4000px] h-[400px] p-6 bg-gray-800 rounded-lg text-yellow-900 text-center cursor-pointer perspective relative group transition-all duration-300 ease-out">
+          <div className="front">
+            <h3 className="text-2xl font-bold">Transparent Transactions</h3>
+          </div>
+          <div className="back absolute top-0 left-0 w-full h-full bg-gray-800 rounded-lg text-yellow-900 text-left p-6 flex items-center justify-center overflow-auto group-hover:w-[350px] group-hover:h-[350px] group-hover:text-sm">
+            <p className="text-lg text-left">We believe in full transparency. All transactions on our platform are recorded on the blockchain, ensuring security and accountability for all users. This decentralized approach allows us to offer transparent of every transaction made on the platform.</p>
+          </div>
+        </div>
+      </div > */}
 
       {/* Footer */}
-      <footer>
+      < footer >
         <div>
           <a href="#">About</a>
           <a href="#">Privacy Policy</a>
@@ -501,7 +503,7 @@ const EduSphere = () => {
         <div className="copyright">
           <p>&copy; 2025 EduSphere. All Rights Reserved.</p>
         </div>
-      </footer>
+      </footer >
     </>
   );
 };
