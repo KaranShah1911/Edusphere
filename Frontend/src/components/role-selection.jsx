@@ -19,18 +19,13 @@ const RoleSelection = () => {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { type: "spring", stiffness: 100, damping: 10, duration: 1 },
-    },
-    hover: { scale: 1.05, boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.2)" },
+    hidden: { opacity: 0, y: -50 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", duration: 2 } },
   };
 
   return (
     <div
-      className={`flex flex-col justify-center items-center min-h-screen px-4 space-y-8 ${
+      className={`flex flex-col justify-center items-center min-h-screen px-4 ${
         theme === "light"
           ? "bg-gradient-to-r from-orange-400 to-gray-700 text-black"
           : "bg-gradient-to-r from-gray-900 to-gray-700 text-white"
@@ -47,7 +42,7 @@ const RoleSelection = () => {
       </button>
 
       {/* Logo and Text */}
-      <div className="flex items-center text-6xl font-bold mb-8">
+      <div className="flex items-center text-orange-300 text-6xl font-bold mb-8">
         <img
           src="/images/Edusphere logo.png"
           alt="Edusphere Logo"
@@ -56,27 +51,30 @@ const RoleSelection = () => {
         <span>Edusphere</span>
       </div>
 
-      {/* Role Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+      {/* Cards Section */}
+      <div className="flex flex-wrap justify-center w-full gap-8 mb-8">
         {/* Educator Card */}
         <motion.div
-          className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg shadow-lg p-6 flex flex-col items-center"
-          variants={cardVariants}
+          className="bg-white text-black dark:bg-gray-800 dark:text-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-300 hover:scale-105 hover:shadow-custom hover:z-10"
           initial="hidden"
           animate="visible"
-          whileHover="hover"
+          variants={cardVariants}
         >
           <img
             src="/images/educator.jpg"
             alt="Educator"
-            className="w-48 h-32 rounded-lg mb-4"
+            className="w-full h-48 rounded-md mb-4 object-cover"
+            onClick={() => handleRoleSelection("educator")}
           />
           <h2 className="text-2xl font-bold mb-2">Educator</h2>
-          <p className="text-center text-sm leading-relaxed mb-4">
-            <strong>Share your knowledge:</strong> Guide students, create content, and foster learning in a blockchain-based system.
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            <strong>Share your knowledge</strong>
+            <br />
+            As an Educator, you can guide students, create content, and foster
+            learning in a blockchain-based system.
           </p>
           <button
-            className="bg-white text-blue-500 px-4 py-2 rounded-full font-bold shadow-md hover:bg-gray-100"
+            className="mt-4 bg-gradient-to-r from-orange-400 to-orange-300 text-black px-6 py-3 text-lg font-bold rounded-full shadow-lg w-full transform transition-transform duration-300 hover:scale-110 hover:border-4 hover:border-orange-500"
             onClick={() => handleRoleSelection("educator")}
           >
             I am Educator
@@ -85,23 +83,26 @@ const RoleSelection = () => {
 
         {/* Student Card */}
         <motion.div
-          className="bg-gradient-to-r from-green-500 to-green-400 text-white rounded-lg shadow-lg p-6 flex flex-col items-center"
-          variants={cardVariants}
+          className="bg-white text-black dark:bg-gray-800 dark:text-white rounded-lg shadow-lg p-6 w-96 transform transition-transform duration-300 hover:scale-105 hover:shadow-custom hover:z-10 "
           initial="hidden"
           animate="visible"
-          whileHover="hover"
+          variants={cardVariants}
         >
           <img
             src="/images/student.jpg"
             alt="Student"
-            className="w-48 h-32 rounded-lg mb-4"
+            className="w-full h-48 rounded-md mb-4 object-cover"
+            onClick={() => handleRoleSelection("student")}
           />
           <h2 className="text-2xl font-bold mb-2">Student</h2>
-          <p className="text-center text-sm leading-relaxed mb-4">
-            <strong>Learn and grow:</strong> Access courses, gain new skills, and interact with an innovative educational community.
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            <strong>Learn and grow</strong>
+            <br />
+            As a Student, you can access courses, gain new skills, and interact
+            with an innovative educational community.
           </p>
           <button
-            className="bg-white text-green-500 px-4 py-2 rounded-full font-bold shadow-md hover:bg-gray-100"
+            className="mt-4 bg-gradient-to-r from-orange-400 to-orange-300 text-black px-6 py-3 text-lg font-bold rounded-full shadow-lg w-full transform transition-transform duration-300 hover:scale-110 hover:border-4 hover:border-orange-500"
             onClick={() => handleRoleSelection("student")}
           >
             I am Student
