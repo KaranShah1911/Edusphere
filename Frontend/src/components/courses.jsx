@@ -126,8 +126,8 @@ const CoursesPage = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 py-10  ${darkMode ? 'bg-gradient-to-r from-gray-900 to-pink-700' : 'bg-white'}`}>
-      <nav className="flex justify-between items-center p-5 bg-black shadow-md fixed w-full top-0 left-0 z-50">
+    <div className={`min-h-screen transition-colors duration-300 py-10  ${darkMode ? 'bg-gradient-to-r from-black to-gray-700' : 'bg-gradient-to-r from-yellow-100 to-white'}`}>
+      <nav className={`flex justify-between items-center p-5 shadow-md fixed w-full top-0 left-0 z-50 ${darkMode ? 'bg-gradient-to-r from-black to-gray-700' : 'bg-gradient-to-r from-yellow-100 to-white'}`}>
         <div className="flex items-center gap-4">
           <img src="/images/Edusphere logo.png" alt="Logo" className="w-10 h-10 rounded-full" />
           <span className="text-orange-400 text-4xl font-bold">Edusphere</span>
@@ -150,10 +150,32 @@ const CoursesPage = () => {
           >
             {darkMode ? '🌙' : '☀'}
           </button>
+          
+    <div className="relative" >
+            <button
+              
+              className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
+            >
+              ☰
+            </button>
+
+           
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
+                <ul>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Add Details</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Coins</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Transaction</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Manage Courses</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Redeem</li>
+                </ul>
+              </div>
+              
+          </div>
+          
         </div>
       </nav>
 
-      <div className={` px-20 py-14 flex justify-center  ${darkMode ? 'bg-gradient-to-r from-purple-900 to-pink-700' : 'bg-gray-100'}`}>
+      <div className={` px-20 py-14 flex justify-center  ${darkMode ? 'bg-gradient-to-r from-black to-gray-700 ' : 'bg-gray-100'}`}>
      
         <input
           type="text"

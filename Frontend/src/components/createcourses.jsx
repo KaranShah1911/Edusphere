@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const CreateCourse = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -13,7 +17,8 @@ const CreateCourse = () => {
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setWalletAddress(accounts[0]);
         setWalletConnected(true);
         setMenuOpen(false); // Close dropdown after connecting wallet
         console.log("Connected to MetaMask");
@@ -23,6 +28,19 @@ const CreateCourse = () => {
     } else {
       alert("Please install MetaMask to connect your wallet.");
     }
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleWalletClick = () => {
+    console.log("Wallet Address:", walletAddress);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(walletAddress);
+    alert("Wallet address copied to clipboard!");
   };
 
   useEffect(() => {
@@ -36,42 +54,76 @@ const CreateCourse = () => {
   }, [isDarkMode]);
 
   return (
-    <div className={`create-course ${isDarkMode ? 'dark' : 'bg-gradient-to-r from-purple-600 via-violet-300  to-purple-400'} bg-gradient-to-r from-orange-500 via-orange-400  to-orange-300 text-white transition-all duration-300`}>
-      <nav className="navbar bg-opacity-80 p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
-        <div className="logo flex items-center gap-3">
-          <img src="/images/Edusphere logo.png" alt="Edusphere Logo" className="w-12" />
-          <span className="text-2xl font-semibold text-pink-400">Edusphere</span>
+    <div className={`create-course ${isDarkMode ? "bg-gradient-to-r from-black to-gray-700 text-amber-500" : "bg-gradient-to-r from-yellow-200 to-white text-black"
+    } transition-colors duration-300`}
+  >
+      
+
+      <nav className="flex justify-between items-center p-6">
+        <div className="flex items-center space-x-2">
+          <img
+            src="/images/Edusphere logo.png"
+            alt="Edusphere Logo"
+            className="w-20 h-12"
+          />
+          <h1 className="text-4xl font-bold">Edusphere</h1>
         </div>
-
-        {/* Navbar items (Right side) */}
-        <div className="nav-links flex gap-8 ml-auto">
-          <a href="#" className="text-lg hover:text-pink-400">Home</a>
-          <a href="#" className="text-lg hover:text-pink-400">Create Courses</a>
-          <a href="#" className="text-lg hover:text-pink-400">Student Insights</a>
-          <button onClick={connectWallet} className={`text-lg bg-pink-400 px-6 py-2 rounded-md hover:bg-pink-500 ${walletConnected ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={walletConnected}>Connect Wallet</button>
-        </div>
-
-        {/* Grid icon button */}
-        <button className="grid-icon text-3xl" onClick={() => setMenuOpen(!menuOpen)}>
-          &#x2630;
-        </button>
-
-        {/* Dropdown menu */}
-        {menuOpen && (
-          <div className={`menu-options absolute p-4 shadow-lg top-16 right-0 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-800 text-white'}`}>
-            <ul>
-              <li><a href="#" className="block p-2 hover:bg-orange-300">Add Details</a></li>
-              <li><a href="#" className="block p-2 hover:bg-orange-300">Coins</a></li>
-              <li><a href="#" className="block p-2 hover:bg-orange-300">Reports</a></li>
-              <li><a href="#" className="block p-2 hover:bg-orange-300">Manage Courses</a></li>
-            </ul>
+        <div className="flex items-center space-x-8">
+          <div className="flex space-x-8">
+            <button className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full">
+              Home
+            </button>
+            <button className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full">
+              Courses
+            </button>
+            <button className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full">
+              Contest
+            </button>
           </div>
-        )}
 
-        {/* Dark Mode Toggle */}
-        <button className="dark-mode-toggle text-3xl" onClick={toggleDarkMode}>
-          {isDarkMode ? '🌙' : '☀️'}
-        </button>
+          <button
+            className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full"
+            onClick={walletConnected ? handleWalletClick : connectWallet}
+          >
+            {walletAddress ? (
+              <div>
+                {walletAddress.length > 0 ? (
+                  <div>
+                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                   
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              "Connect Wallet"
+            )}
+          </button>
+
+          <button className="dark-mode-toggle text-3xl" onClick={toggleDarkMode}>
+            {isDarkMode ? "🌙" : "☀️"}
+          </button>
+
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={toggleDropdown}
+              className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full"
+            >
+              ☰
+            </button>
+
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
+                <ul>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Add Details</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Coins</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Transaction</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Manage Courses</li>
+                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Redeem</li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
       </nav>
 
       <div className="container flex justify-center items-center gap-8 p-6 mx-auto max-w-screen-xl">

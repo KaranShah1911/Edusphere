@@ -99,7 +99,7 @@ const ManageCourses = () => {
             {menuOpen && (
               <div className="absolute top-8 right-0 bg-orange-400 text-black shadow-lg rounded-lg p-2">
                 <ul>
-                  <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Add Details</li>
+                  <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-black">Add Details</li>
                   <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Transaction</li>
                   <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Coins</li>
                   <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Reports</li>
@@ -132,7 +132,7 @@ const ManageCourses = () => {
 
         <div className="courses-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => (
-            <div className="course-card bg-white p-4 rounded-lg shadow-md" key={course.id}>
+            <div className="course-card bg-blue-900 p-4 rounded-lg shadow-md" key={course.id}>
               <h3 className="text-xl font-semibold">{course.title}</h3>
               <p>Status: {course.status}</p>
               <p>Enrollments: {course.enrollments}</p>

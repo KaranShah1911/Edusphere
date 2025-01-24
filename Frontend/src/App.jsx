@@ -11,6 +11,8 @@ import CreateCourse from './components/createcourses.jsx';
 import Managecourse from './components/managecourses.jsx';
 import Redeem from './components/redeem.jsx';
 import Transaction from './components/transaction.jsx';
+import Contest from './components/contest.jsx';
+import SignUp from './components/signup.jsx';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
@@ -18,8 +20,11 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 
 
+
+
 const App = () => {
   return (
+    
     <ThemeProvider> {/* Wrap ThemeProvider around the entire router */}
       <Router>
         <Routes>
@@ -33,6 +38,8 @@ const App = () => {
           <Route path="/managecourse" element={<Managecourse />} />
           <Route path="/redeem" element={<Redeem />} />
           <Route path="/transaction" element={<Transaction />} />
+          <Route path="/contest" element={<Contest />} />
+          <Route path="/signup" element={<SignUp />} />
          
          {/* Route for the animation */}
          <Route
@@ -50,7 +57,9 @@ const App = () => {
         </Routes>
       </Router>
     </ThemeProvider>
+    
   );
 };
 
 export default App;
+

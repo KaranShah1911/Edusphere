@@ -29,18 +29,18 @@ const CourseDetails = () => {
   }
 
   return (
-    <div className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} min-h-screen`}>
+    <div className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-r from-yellow-100 to-white text-black'} min-h-screen`}>
       {/* Navbar */}
-      <nav className="flex justify-between items-center py-4 px-8 shadow-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+      <nav className={`flex justify-between items-center py-4 px-8 shadow-md ${darkMode ? 'bg-gradient-to-r from-black to-gray-700' : 'bg-gradient-to-r from-yellow-300 to-white text-black'}`}>
         <div className="flex items-center space-x-4">
           <img src="/images/Edusphere logo.png" alt="Logo" className="h-10 w-10 rounded-full" />
-          <h1 className="text-2xl font-bold text-white">Edusphere</h1>
+          <h1 className="text-2xl font-bold ">Edusphere</h1>
         </div>
         <div className="flex items-center space-x-6">
-          <a href="/" className="text-white font-medium hover:text-gray-300 transition-colors duration-300">Home</a>
-          <a href="/courses" className="text-white font-medium hover:text-gray-300 transition-colors duration-300">Courses</a>
-          <a href="/contest" className="text-white font-medium hover:text-gray-300 transition-colors duration-300">Contest</a>
-          <button className="px-4 py-2 bg-yellow-500 text-white font-medium rounded-md hover:bg-yellow-600 transition-colors duration-300">
+          <a href="/" className=" font-medium hover:text-gray-300 transition-colors duration-300">Home</a>
+          <a href="/courses" className=" font-medium hover:text-gray-300 transition-colors duration-300">Courses</a>
+          <a href="/contest" className="font-medium hover:text-gray-300 transition-colors duration-300">Contest</a>
+          <button className="px-4 py-2 bg-yellow-500  font-medium rounded-md hover:bg-yellow-600 transition-colors duration-300">
             Connect Wallet
           </button>
           <button
