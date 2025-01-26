@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useTheme } from "next-themes";
+import { Link } from "react-router-dom";
 
 
-const Edusphere = () => {
 
-  
-  
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [isVisible, setIsVisible] = useState({});
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    setTheme(isDarkMode ? "light" : "dark");
-  };
 
   const sections = [
     {
@@ -39,6 +29,19 @@ const Edusphere = () => {
       direction: "left",
     },
   ];
+  const Edusphere = () => {
+
+  
+  
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    const { theme, setTheme } = useTheme();
+    const [isVisible, setIsVisible] = useState({});
+  
+    const toggleTheme = () => {
+      setIsDarkMode(!isDarkMode);
+      setTheme(isDarkMode ? "light" : "dark");
+    };
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,7 +60,7 @@ const Edusphere = () => {
     window.addEventListener("scroll", handleScroll);
     handleScroll(); // Check visibility on page load
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [sections]);
+  }, []);
   
 
   const contacts = [
@@ -91,11 +94,8 @@ const Edusphere = () => {
     }
   ];
 
-  
-
-  
-
   return (
+    <div className="overflow-x-hidden">
     <div
       className={`${
         isDarkMode ? "bg-gradient-to-r from-black to-gray-700 text-amber-500" : "bg-gradient-to-r from-yellow-100 to-white text-black"
@@ -109,26 +109,33 @@ const Edusphere = () => {
       alt="Edusphere Logo"
       className="w-20 h-12"
     />
-    <h1 className="text-4xl font-bold bg-clip-text text-">Edusphere</h1>
+    <h1 className="text-4xl font-bold bg-clip-text text">Edusphere</h1>
   </div>
   <div className="flex items-center space-x-8">
     <div className="flex space-x-8">
     
-    
+      
         <button className="text-lg bg bg-gradient-to-r from-custom-orange to-yellow-200 text-black py-2 px-4 rounded-full">
           Home
         </button>
       
       
-      <button className="text-lg bg-gradient-to-r from-custom-orange to-yellow-200 text-black py-2 px-4 rounded-full">
+      <button className="text-lg bg-gradient-to-r from-custom-orange to-yellow-200 text-black py-2 px-4 rounded-full"
+       onClick={() => {
+        const element = document.getElementById("features");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }}>
         About
       </button>
 
     
-    
+      <Link to="/role-selection">
       <button className="text-lg bg-gradient-to-r from-custom-orange to-yellow-200 text-black py-2 px-4 rounded-full ">
         Get Started
       </button>
+      </Link>
      
     </div>
     <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
@@ -169,11 +176,12 @@ const Edusphere = () => {
           </div>
         </div>
       </div>
+      
 
       {/* About Section */}
-      <div className="about-section mt-20">
+      <div id="features" className="about-section mt-20">
         <h2 className="text-4xl font-bold text-center mb-12">Our Features</h2>
-        <div className="border-b-4 border-gold -mt-9"></div>
+        <div className="border-b-4 border-gold mb-9"></div>
         <div className="space-y-12">
           {sections.map((item, index) => (
             <div
@@ -192,8 +200,8 @@ const Edusphere = () => {
                     : "translate-x-full opacity-0"
                 }`}
               >
-                <h3 className="text-3xl font-bold mb-4">{item.title}</h3>
-                <p className="text-lg">{item.description}</p>
+                <h3 className="text-3xl font-bold mb-4 p-10">{item.title}</h3>
+                <p className="text-lg p-10">{item.description}</p>
               </div>
               <div
                 className={`md:w-1/2 transform transition-all duration-1000 ${
@@ -215,8 +223,10 @@ const Edusphere = () => {
       </div>
 
       {/* Contact Section */}
-      <div className="contact-section mt-20">
+      <div className="contact-section mt-20 px-6">
+        
   <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
+  <div className="border-b-4 border-gold mb-9"></div>
   <div className="flex flex-wrap justify-center items-start space-y-8">
     {contacts.map((contact, idx) => (
       <div
@@ -256,6 +266,7 @@ const Edusphere = () => {
           <p className="text-yellow-600">&copy; 2025 Edusphere. All Rights Reserved.</p>
         </div>
       </footer>
+    </div>
     </div>
   );
 };

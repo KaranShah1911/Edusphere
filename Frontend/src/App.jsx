@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Edusphere from './components/Edusphere.jsx'; // Import EduSphere component
 import RoleSelection from './components/role-selection.jsx'; // Import RoleSelection component
-import { ThemeProvider } from './components/Themecontext.jsx';
+import { ThemeProvider,useTheme } from './components/Themecontext.jsx';
 import EduSphere1 from './components/studenthome.jsx';
 import EduSphere2 from './components/educatorhome.jsx';
 import Courses from './components/courses.jsx';
@@ -13,6 +13,7 @@ import Redeem from './components/redeem.jsx';
 import Transaction from './components/transaction.jsx';
 import Contest from './components/contest.jsx';
 import SignUp from './components/signup.jsx';
+import ThemeToggle from './components/themetoggle.jsx';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
@@ -27,19 +28,22 @@ const App = () => {
     
     <ThemeProvider> {/* Wrap ThemeProvider around the entire router */}
       <Router>
+        <div>
         <Routes>
           <Route path="/" element={<Edusphere />} />
+          <Route path="/Edusphere" element={<Edusphere />} />
           <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/studenthome" element={<EduSphere1 />} />
           <Route path="/educatorhome" element={<EduSphere2 />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/course/:id" element={<CourseDetailsPage />} />
-          <Route path="/createcourse" element={<CreateCourse />} />
-          <Route path="/managecourse" element={<Managecourse />} />
+          <Route path="/createcourses" element={<CreateCourse />} />
+          <Route path="/managecourses" element={<Managecourse />} />
           <Route path="/redeem" element={<Redeem />} />
           <Route path="/transaction" element={<Transaction />} />
           <Route path="/contest" element={<Contest />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/themetoggle" element={<ThemeToggle />} />
          
          {/* Route for the animation */}
          <Route
@@ -55,9 +59,21 @@ const App = () => {
             }
           />
         </Routes>
+        </div>
       </Router>
     </ThemeProvider>
+
+            
     
+  );
+};
+const GlobalDarkModeToggle = () => {
+  const { darkMode, toggleDarkMode } = useTheme();
+
+  return (
+    <button onClick={toggleDarkMode} className="fixed top-4 right-4 z-10 bg-gray-800 text-white p-2 rounded">
+      {darkMode ? '🌙 Light Mode' : '☀️ Dark Mode'}
+    </button>
   );
 };
 
