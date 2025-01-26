@@ -21,3 +21,31 @@
   /* src/index.css */
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
+
+/* Light Theme Styles */
+body.light {
+  background-color: white;
+  color: black;
+}
+
+.bg-light-theme {
+  background-color: #f0f0f0; /* Light background for this page */
+}
+
+.text-black {
+  color: black;
+}
+
+/* Dark Theme Styles */
+body.dark {
+  background-color: #121212;
+  color: white;
+}
+
+.bg-dark-theme {
+  background-color: #333; /* Dark background for this page */
+}
+
+.text-white {
+  color: white;
+}

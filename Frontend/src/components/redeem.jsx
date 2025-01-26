@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 
 const RedeemPage = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -10,6 +10,15 @@ const RedeemPage = () => {
     if (!darkMode) document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
   };
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+  
 
   // Handle MetaMask wallet connection
   const connectWallet = async () => {

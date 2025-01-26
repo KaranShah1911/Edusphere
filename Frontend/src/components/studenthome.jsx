@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Link } from "react-router-dom";
 
 const Edusphere = () => {
   const [walletAddress, setWalletAddress] = useState("");
-  const [isWalletClicked, setIsWalletClicked] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const dropdownRef = useRef(null);
-
 
   // Connect wallet to MetaMask
   const connectWallet = async () => {
@@ -34,27 +33,20 @@ const Edusphere = () => {
 
   // Disconnect wallet
   const disconnectWallet = () => {
-    // Clear the wallet address from local storage and state
     localStorage.removeItem("walletAddress");
     setWalletAddress("");
-  };
-
-  const handleDisconnect = () => {
-    disconnectWallet();
   };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  
-
   const handleClickOutside = (event) => {
-    // Ensure that clicks outside the dropdown close it
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setDropdownOpen(false);
     }
   };
+
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => {
@@ -62,7 +54,6 @@ const Edusphere = () => {
     };
   }, []);
 
-  // Load saved wallet address from local storage on page load
   useEffect(() => {
     const savedWalletAddress = localStorage.getItem("walletAddress");
     if (savedWalletAddress) {
@@ -70,7 +61,6 @@ const Edusphere = () => {
     }
   }, []);
 
-  // Listen for account changes
   useEffect(() => {
     if (window.ethereum) {
       const handleAccountsChanged = (accounts) => {
@@ -78,38 +68,19 @@ const Edusphere = () => {
           setWalletAddress(accounts[0]);
           localStorage.setItem("walletAddress", accounts[0]);
         } else {
-          // No accounts available, treat it as a disconnect
           setWalletAddress("");
           localStorage.removeItem("walletAddress");
         }
-     
-    };
-    window.ethereum.on("accountsChanged", handleAccountsChanged);
-    window.ethereum.on("disconnect", handleDisconnect);
+      };
 
-    return () => {
-      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-      window.ethereum.removeListener("disconnect", handleDisconnect);
-    };
-  }
-}, []);
-  
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
 
-  // Copy wallet address to clipboard
-  const copyToClipboard = () => {
-    if (walletAddress) {
-      navigator.clipboard.writeText(walletAddress).then(() => {
-        alert("Wallet address copied to clipboard!");
-      });
+      return () => {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      };
     }
-  };
+  }, []);
 
-  // Toggle the view for the wallet address
-  const handleWalletClick = () => {
-    setIsWalletClicked(!isWalletClicked); // Toggle the state on click
-  };
-
-  // Toggle between light and dark themes
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     setTheme(isDarkMode ? "light" : "dark");
@@ -118,7 +89,7 @@ const Edusphere = () => {
   return (
     <div
       className={`${
-        isDarkMode 
+        isDarkMode
           ? "bg-gradient-to-r from-black to-gray-700 text-gold"
           : "bg-gradient-to-r from-yellow-100 to-white text-black"
       } transition-colors duration-300`}
@@ -135,66 +106,105 @@ const Edusphere = () => {
         </div>
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
-            <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-              Home
-            </button>
-            <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-              Courses
-            </button>
-            <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-              Contest
-            </button>
+            <Link to="/Edusphere">
+              <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
+                Home
+              </button>
+            </Link>
+            <Link to="/courses">
+              <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
+                Courses
+              </button>
+            </Link>
+            <Link to="/contest">
+              <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
+                Contest
+              </button>
+            </Link>
           </div>
 
-          {/* Wallet Button or Address */}
+          {/* Wallet Button */}
           <button
-            className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
-            onClick={walletAddress ? handleWalletClick : connectWallet}
-          >
-            {walletAddress ? (
-              <div>
-                {/* If wallet is clicked, toggle between full and shortened address */}
-                {isWalletClicked ? (
-                  <>
-                    <span className="text-sm">{walletAddress}</span>
-                    <button
-                      className="ml-2 text-blue-500"
-                      onClick={copyToClipboard}
-                    >
-                      Copy to Clipboard
-                    </button>
-                  </>
-                ) : (
-                  // If not clicked, show shortened address
-                  `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-                )}
-              </div>
-            ) : (
-              "Connect Wallet"
-            )}
-          </button>
+  className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
+  onClick={connectWallet} // Always trigger connectWallet on click
+>
+  {walletAddress ? (
+    `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` // Show address if connected
+  ) : (
+    "Connect Wallet" // Show "Connect Wallet" if not connected
+  )}
+</button>
 
           {/* Theme toggle */}
           <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
-      {isDarkMode ? "🌙" : "☀️"}
-    </button>
-    <div className="relative" ref={dropdownRef}>
+            {isDarkMode ? "🌙" : "☀️"}
+          </button>
+
+          {/* Dropdown Menu */}
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
+              className={`text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full ${
+                walletAddress ? "" : "cursor-not-allowed opacity-50"
+              }`}
+              disabled={!walletAddress}
             >
               ☰
             </button>
+            {dropdownOpen && walletAddress && (
+              <div
+                className={`absolute right-0 mt-2 w-48 border border-gray-300 rounded-md shadow-lg ${
+                  isDarkMode
+                    ? "bg-gray-800 text-white border-gray-600"
+                    : "bg-white text-black border-gray-300"
+                }`}
+              >
+               <ul>
+  <Link to="/signup">
+    <li
+      className={`p-2 ${
+        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
+      }`}
+    >
+      Add Details
+    </li>
+  </Link>
+  <li
+    className={`p-2 ${
+      walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
+    }`}
+  >
+    Coins
+  </li>
+  <Link to="/transaction">
+    <li
+      className={`p-2 ${
+        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
+      }`}
+    >
+      Transaction
+    </li>
+  </Link>
+  <Link to="/managecourses">
+    <li
+      className={`p-2 ${
+        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
+      }`}
+    >
+      Manage Courses
+    </li>
+  </Link>
+  <Link to="/redeem">
+    <li
+      className={`p-2 ${
+        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
+      }`}
+    >
+      Redeem
+    </li>
+  </Link>
+</ul>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
-                <ul>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Add Details</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Coins</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Transaction</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Manage Courses</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Redeem</li>
-                </ul>
               </div>
             )}
           </div>
@@ -202,18 +212,17 @@ const Edusphere = () => {
       </nav>
       <div className="border-b-4 border-gold"></div>
 
-
-             {/* Main Content Section */}
-<div className="container mx-auto py-14">
-<div className="flex justify-between items-center">
-  <div className="w-1/2">
-    <DotLottieReact
-      src="https://lottie.host/2fa8ee19-3348-4358-92c0-c3331ca12c20/BbbdUxJoOR.lottie"
-      loop
-      autoplay
-      className="w-full h-[500px] flex justify-center"
-    />
-  </div>
+      {/* Main Content Section */}
+      <div className="container mx-auto py-14">
+        <div className="flex justify-between items-center">
+          <div className="w-1/2">
+            <DotLottieReact
+              src="https://lottie.host/b3d4cb2f-dce5-406a-938f-0ed9f0b58974/k1qWoZHhWD.lottie"
+              loop
+              autoplay
+              className="w-full h-[500px] flex justify-center"
+            />
+          </div>
           <div className="w-1/2">
             <h2 className="relative text-6xl font-bold">Welcome to Edusphere</h2>
             <p className="mt-9 text-xl">
@@ -243,8 +252,3 @@ const Edusphere = () => {
 };
 
 export default Edusphere;
-
-
-
-
-

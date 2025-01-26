@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const CreateCourse = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -20,7 +20,7 @@ const CreateCourse = () => {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         setWalletAddress(accounts[0]);
         setWalletConnected(true);
-        setMenuOpen(false); // Close dropdown after connecting wallet
+        setDropdownOpen(false); // Close dropdown after connecting wallet
         console.log("Connected to MetaMask");
       } catch (error) {
         console.error("Error connecting to MetaMask:", error);
@@ -32,6 +32,12 @@ const CreateCourse = () => {
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
   };
 
   const handleWalletClick = () => {
@@ -54,11 +60,7 @@ const CreateCourse = () => {
   }, [isDarkMode]);
 
   return (
-    <div className={`create-course ${isDarkMode ? "bg-gradient-to-r from-black to-gray-700 text-amber-500" : "bg-gradient-to-r from-yellow-200 to-white text-black"
-    } transition-colors duration-300`}
-  >
-      
-
+    <div className={`create-course ${isDarkMode ? "bg-gradient-to-r from-black to-gray-700 text-amber-500" : "bg-gradient-to-r from-yellow-200 to-white text-black"} transition-colors duration-300`}>
       <nav className="flex justify-between items-center p-6">
         <div className="flex items-center space-x-2">
           <img
@@ -70,19 +72,25 @@ const CreateCourse = () => {
         </div>
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
-            <button className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full">
-              Home
-            </button>
-            <button className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full">
-              Courses
-            </button>
-            <button className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full">
-              Contest
-            </button>
+            <Link to="/Edusphere">
+              <button className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full">
+                Home
+              </button>
+            </Link>
+            <Link to="/courses">
+              <button className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full">
+                Courses
+              </button>
+            </Link>
+            <Link to="/contest">
+              <button className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full">
+                Contest
+              </button>
+            </Link>
           </div>
 
           <button
-            className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full"
+            className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full"
             onClick={walletConnected ? handleWalletClick : connectWallet}
           >
             {walletAddress ? (
@@ -90,7 +98,6 @@ const CreateCourse = () => {
                 {walletAddress.length > 0 ? (
                   <div>
                     {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                   
                   </div>
                 ) : null}
               </div>
@@ -106,7 +113,7 @@ const CreateCourse = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className="text-lg  bg-amber-500 text-black py-2 px-4 rounded-full"
+              className="text-lg bg-amber-500 text-black py-2 px-4 rounded-full"
             >
               ☰
             </button>
@@ -114,11 +121,31 @@ const CreateCourse = () => {
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
                 <ul>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Add Details</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Coins</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Transaction</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Manage Courses</li>
-                  <li className="p-2 hover:bg-gray-100 cursor-pointer">Redeem</li>
+                  <Link to="/signup" onClick={() => setDropdownOpen(false)}>
+                    <li className={`p-2 hover:bg-gray-100 cursor-pointer ${!walletConnected ? 'text-gray-400 cursor-not-allowed' : ''}`} style={{ pointerEvents: walletConnected ? 'auto' : 'none' }}>
+                      Add Details
+                    </li>
+                  </Link>
+                  <Link to="/coins" onClick={() => setDropdownOpen(false)}>
+                    <li className={`p-2 hover:bg-gray-100 cursor-pointer ${!walletConnected ? 'text-gray-400 cursor-not-allowed' : ''}`} style={{ pointerEvents: walletConnected ? 'auto' : 'none' }}>
+                      Coins
+                    </li>
+                  </Link>
+                  <Link to="/transaction" onClick={() => setDropdownOpen(false)}>
+                    <li className={`p-2 hover:bg-gray-100 cursor-pointer ${!walletConnected ? 'text-gray-400 cursor-not-allowed' : ''}`} style={{ pointerEvents: walletConnected ? 'auto' : 'none' }}>
+                      Transaction
+                    </li>
+                  </Link>
+                  <Link to="/managecourses" onClick={() => setDropdownOpen(false)}>
+                    <li className={`p-2 hover:bg-gray-100 cursor-pointer ${!walletConnected ? 'text-gray-400 cursor-not-allowed' : ''}`} style={{ pointerEvents: walletConnected ? 'auto' : 'none' }}>
+                      Manage Courses
+                    </li>
+                  </Link>
+                  <Link to="/redeem" onClick={() => setDropdownOpen(false)}>
+                    <li className={`p-2 hover:bg-gray-100 cursor-pointer ${!walletConnected ? 'text-gray-400 cursor-not-allowed' : ''}`} style={{ pointerEvents: walletConnected ? 'auto' : 'none' }}>
+                      Redeem
+                    </li>
+                  </Link>
                 </ul>
               </div>
             )}

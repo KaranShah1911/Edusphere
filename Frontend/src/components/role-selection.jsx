@@ -67,7 +67,7 @@ const RoleSelection = () => {
             onClick={() => handleRoleSelection("educator")}
           />
           <h2 className="text-2xl font-bold mb-2 text-slate-950">Educator</h2>
-          <p className="text-lg text-black dark:text-gray-300">
+          <p className="text-lg text-black dark:text-black">
             <strong>Share your knowledge</strong>
             <br />
             As an Educator, you can guide students, create content, and foster
@@ -95,7 +95,7 @@ const RoleSelection = () => {
             onClick={() => handleRoleSelection("student")}
           />
           <h2 className="text-2xl font-bold mb-2 text-slate-950">Student</h2>
-          <p className="text-lg text-black dark:text-gray-300">
+          <p className="text-lg text-black dark:text-black">
             <strong>Learn and grow</strong>
             <br />
             As a Student, you can access courses, gain new skills, and interact

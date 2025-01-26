@@ -81,9 +81,9 @@ const ManageCourses = () => {
           <span className="text-4xl text-orange-400">Edusphere</span>
         </div>
         <div className="nav-links flex space-x-3 items-center">
-          <a href="#" className="hover:text-gray-200 text-orange-400">Home</a>
-          <a href="#" className="hover:text-gray-200 text-orange-400">Create Courses</a>
-          <a href="#" className="hover:text-gray-200 text-orange-400">Manage Courses</a>
+          <a href="/Edusphere" className="hover:text-gray-200 text-orange-400">Home</a>
+          <a href="/createcourses" className="hover:text-gray-200 text-orange-400">Create Courses</a>
+          <a href="/managecourses" className="hover:text-gray-200 text-orange-400">Manage Courses</a>
           <button
             className="connect-wallet bg-blue-600 hover:bg-blue-700 text-orange-400 px-4 py-2 rounded-full"
             onClick={handleConnectWallet}
@@ -99,10 +99,10 @@ const ManageCourses = () => {
             {menuOpen && (
               <div className="absolute top-8 right-0 bg-orange-400 text-black shadow-lg rounded-lg p-2">
                 <ul>
-                  <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-black">Add Details</li>
-                  <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Transaction</li>
-                  <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Coins</li>
-                  <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Reports</li>
+                 <a href="signup"> <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Add Details</li>   </a>
+                 <a href="transaction"> <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Transaction</li></a>
+                 <a href="coins"> <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Coins</li></a>
+                 <a href="Reports"> <li className="menu-item p-2 cursor-pointer bg-orange-400 hover:bg-gray-100">Reports</li></a>
                  
                 </ul>
               </div>
