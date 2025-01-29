@@ -1359,217 +1359,568 @@
 
 
 //contest
-import React, { Component } from 'react';
-import Slider from "react-slick";
-import { FaSun, FaMoon } from 'react-icons/fa'; // Icons for light and dark mode
-import { Link } from "react-router-dom";
+// import React, { Component } from 'react';
+// import Slider from "react-slick";
+// import { FaSun, FaMoon } from 'react-icons/fa'; // Icons for light and dark mode
+// import { Link } from "react-router-dom";
 
-class Contest extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contests: [],
-      loading: true,
-      theme: 'light', // State for theme
-      walletAddress: null, // Placeholder for wallet address
-      isWalletClicked: false, // State for wallet click
-      dropdownOpen: false, // State for dropdown menu
-    };
-    document.title = "Coding Contests - Codeforces";
-  }
+// class Contest extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       contests: [],
+//       loading: true,
+//       theme: 'light', // State for theme
+//       walletAddress: null, // Placeholder for wallet address
+//       isWalletClicked: false, // State for wallet click
+//       dropdownOpen: false, // State for dropdown menu
+//     };
+//     document.title = "Coding Contests - Codeforces";
+//   }
 
-  async componentDidMount() {
-    let url = `https://codeforces.com/api/contest.list?gym=true/contest`;
+//   async componentDidMount() {
+//     let url = `https://codeforces.com/api/contest.list?gym=true/contest`;
 
-    try {
-      let data = await fetch(url);
-      let parsedData = await data.json();
-      const filteredContests = parsedData.result.filter(
-        contest => contest.phase === "BEFORE" || contest.phase === "CODING"
-      );
-      this.setState({ contests: filteredContests, loading: false });
-    } catch (error) {
-      console.error("Failed to fetch contests:", error);
-      this.setState({ loading: false });
-    }
-  }
+//     try {
+//       let data = await fetch(url);
+//       let parsedData = await data.json();
+//       const filteredContests = parsedData.result.filter(
+//         contest => contest.phase === "BEFORE" || contest.phase === "CODING"
+//       );
+//       this.setState({ contests: filteredContests, loading: false });
+//     } catch (error) {
+//       console.error("Failed to fetch contests:", error);
+//       this.setState({ loading: false });
+//     }
+//   }
 
-  toggleTheme = () => {
-    this.setState((prevState) => ({
-      theme: prevState.theme === 'light' ? 'dark' : 'light',
-    }));
-  };
+//   toggleTheme = () => {
+//     this.setState((prevState) => ({
+//       theme: prevState.theme === 'light' ? 'dark' : 'light',
+//     }));
+//   };
 
-  connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        this.setState({ walletAddress: accounts[0] });
-      } catch (error) {
-        console.error("Failed to connect wallet:", error);
-      }
-    } else {
-      alert("MetaMask is not installed. Please install MetaMask to connect your wallet.");
-    }
-  };
+//   connectWallet = async () => {
+//     if (window.ethereum) {
+//       try {
+//         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+//         this.setState({ walletAddress: accounts[0] });
+//       } catch (error) {
+//         console.error("Failed to connect wallet:", error);
+//       }
+//     } else {
+//       alert("MetaMask is not installed. Please install MetaMask to connect your wallet.");
+//     }
+//   };
 
-  toggleDropdown = () => {
-    this.setState((prevState) => ({
-      dropdownOpen: !prevState.dropdownOpen,
-    }));
-  };
+//   toggleDropdown = () => {
+//     this.setState((prevState) => ({
+//       dropdownOpen: !prevState.dropdownOpen,
+//     }));
+//   };
 
-  render() {
-    const { contests, loading, theme, walletAddress, dropdownOpen } = this.state;
+//   render() {
+//     const { contests, loading, theme, walletAddress, dropdownOpen } = this.state;
 
-    const isDark = theme === 'dark';
-    const themeClasses = isDark ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-800';
+//     const isDark = theme === 'dark';
+//     const themeClasses = isDark ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-800';
 
-    const settings = {
-      dots: true,
-      infinite: true,
-      speed: 1000,
-      autoplay: true,
-      autoplaySpeed: 3000,
-      slidesToShow: 3, // Show 3 contests at a time
-      slidesToScroll: 1,
-    };
+//     const settings = {
+//       dots: true,
+//       infinite: true,
+//       speed: 1000,
+//       autoplay: true,
+//       autoplaySpeed: 3000,
+//       slidesToShow: 3, // Show 3 contests at a time
+//       slidesToScroll: 1,
+//     };
 
-    const isWalletConnected = !!walletAddress;
+//     const isWalletConnected = !!walletAddress;
 
-    return (
-      <div className={`${isDark ? "bg-gradient-to-r from-black to-gray-700 text-gold" : "bg-gradient-to-r from-yellow-100 to-yellow-100 text-black"} transition-colors duration-300`}>
-        {/* Navbar Section */}
-        <nav className="flex justify-between items-center p-6">
-          <div className="flex items-center space-x-2">
-            <img
-              src="/images/Edusphere logo.png"
-              alt="Edusphere Logo"
-              className="w-20 h-12"
-            />
-            <h1 className="text-4xl font-bold">Edusphere</h1>
-          </div>
-          <div className="flex items-center space-x-8">
-            <div className="flex space-x-8">
-              <Link to="/Edusphere">
-                <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-                  Home
-                </button>
-              </Link>
-              <Link to="/courses">
-                <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-                  Courses
-                </button>
-              </Link>
-              <Link to="/contest">
-                <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-                  Contest
-                </button>
-              </Link>
-            </div>
+//     return (
+//       <div className={`${isDark ? "bg-gradient-to-r from-black to-gray-700 text-gold" : "bg-gradient-to-r from-yellow-100 to-yellow-100 text-black"} transition-colors duration-300`}>
+//         {/* Navbar Section */}
+//         <nav className="flex justify-between items-center p-6">
+//           <div className="flex items-center space-x-2">
+//             <img
+//               src="/images/Edusphere logo.png"
+//               alt="Edusphere Logo"
+//               className="w-20 h-12"
+//             />
+//             <h1 className="text-4xl font-bold">Edusphere</h1>
+//           </div>
+//           <div className="flex items-center space-x-8">
+//             <div className="flex space-x-8">
+//               <Link to="/Edusphere">
+//                 <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
+//                   Home
+//                 </button>
+//               </Link>
+//               <Link to="/courses">
+//                 <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
+//                   Courses
+//                 </button>
+//               </Link>
+//               <Link to="/contest">
+//                 <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
+//                   Contest
+//                 </button>
+//               </Link>
+//             </div>
 
-            {/* Wallet Button or Address */}
-            <button
-              className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
-              onClick={this.connectWallet}
-            >
-              {isWalletConnected
-                ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-                : "Connect Wallet"}
-            </button>
+//             {/* Wallet Button or Address */}
+//             <button
+//               className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
+//               onClick={this.connectWallet}
+//             >
+//               {isWalletConnected
+//                 ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+//                 : "Connect Wallet"}
+//             </button>
 
-            {/* Theme toggle */}
-            <button className="text-3xl" onClick={this.toggleTheme}>
-              {isDark ? <FaMoon className="text-yellow-300" /> : <FaSun className="text-gray-800" />}
-            </button>
+//             {/* Theme toggle */}
+//             <button className="text-3xl" onClick={this.toggleTheme}>
+//               {isDark ? <FaMoon className="text-yellow-300" /> : <FaSun className="text-gray-800" />}
+//             </button>
 
-            {/* Dropdown Menu */}
-            <div className="relative">
-              <button
-                onClick={this.toggleDropdown}
-                className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
-              >
-                ☰
-              </button>
+//             {/* Dropdown Menu */}
+//             <div className="relative">
+//               <button
+//                 onClick={this.toggleDropdown}
+//                 className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
+//               >
+//                 ☰
+//               </button>
 
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
-                  <ul>
-                    <li
-                      className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
-                      onClick={() => isWalletConnected && console.log("Add Details")}
-                    >
-                      Add Details
-                    </li>
-                    <li
-                      className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
-                      onClick={() => isWalletConnected && console.log("Coins")}
-                    >
-                      Coins
-                    </li>
-                    <li
-                      className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
-                      onClick={() => isWalletConnected && console.log("Manage Courses")}
-                    >
-                      Manage Courses
-                    </li>
-                    <li
-                      className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
-                      onClick={() => isWalletConnected && console.log("Redeem")}
-                    >
-                      Redeem
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </nav>
-        <div className="border-b-4 border-gold"></div>
+//               {dropdownOpen && (
+//                 <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg">
+//                   <ul>
+//                     <li
+//                       className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+//                       onClick={() => isWalletConnected && console.log("Add Details")}
+//                     >
+//                       Add Details
+//                     </li>
+//                     <li
+//                       className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+//                       onClick={() => isWalletConnected && console.log("Coins")}
+//                     >
+//                       Coins
+//                     </li>
+//                     <li
+//                       className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+//                       onClick={() => isWalletConnected && console.log("Manage Courses")}
+//                     >
+//                       Manage Courses
+//                     </li>
+//                     <li
+//                       className={`p-2 cursor-pointer ${!isWalletConnected ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+//                       onClick={() => isWalletConnected && console.log("Redeem")}
+//                     >
+//                       Redeem
+//                     </li>
+//                   </ul>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         </nav>
+//         <div className="border-b-4 border-gold"></div>
 
-        <div className={`container mx-auto my-1 p-8 rounded-lg shadow-lg ${isDark ? 'bg-gray-700 text-white' : 'bg-gradient-to-r from-yellow-100 to-white text-black'}`}>
-          <header className="text-center mb-8">
-            <h1 className="text-3xl font-bold">Coding Contests</h1>
-          </header>
+//         <div className={`container mx-auto my-1 p-8 rounded-lg shadow-lg ${isDark ? 'bg-gray-700 text-white' : 'bg-gradient-to-r from-yellow-100 to-white text-black'}`}>
+//           <header className="text-center mb-8">
+//             <h1 className="text-3xl font-bold">Coding Contests</h1>
+//           </header>
 
-          {loading && <div className="text-center">Loading contests...</div>}
+//           {loading && <div className="text-center">Loading contests...</div>}
 
-          {!loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {contests.map((contest) => (
-                <div key={contest.id} className={`rounded-lg p-6 shadow-md ${isDark ? 'bg-gradient-to-r from-gold via-yellow-200 to-black text-black' : 'bg-gradient-to-r from-yellow-200 to-gray-100 text-black'}`}>
-                  <div className="text-center">
-                    <h5 className="text-xl font-semibold">{contest.name}</h5>
-                    <p className="mt-2">
-                      <strong>Start Time:</strong> {new Date(contest.startTimeSeconds * 1000).toLocaleString()} <br />
-                      <strong>Duration:</strong> {Math.floor(contest.durationSeconds / 3600)}h {Math.floor((contest.durationSeconds % 3600) / 60)}m
-                    </p>
-                    <p className="mt-2">
-                      <strong>Type:</strong> {contest.type} <br />
-                      <strong>Phase:</strong> {contest.phase}
-                    </p>
-                    <a
-                      href={`https://codeforces.com/contests/${contest.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`mt-4 inline-block px-4 py-2 rounded ${isDark ? 'bg-blue-500 text-gray-800' : 'bg-blue-500 text-gray-900'}`}
-                    >
-                      View Contest
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+//           {!loading && (
+//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//               {contests.map((contest) => (
+//                 <div key={contest.id} className={`rounded-lg p-6 shadow-md ${isDark ? 'bg-gradient-to-r from-gold via-yellow-200 to-black text-black' : 'bg-gradient-to-r from-yellow-200 to-gray-100 text-black'}`}>
+//                   <div className="text-center">
+//                     <h5 className="text-xl font-semibold">{contest.name}</h5>
+//                     <p className="mt-2">
+//                       <strong>Start Time:</strong> {new Date(contest.startTimeSeconds * 1000).toLocaleString()} <br />
+//                       <strong>Duration:</strong> {Math.floor(contest.durationSeconds / 3600)}h {Math.floor((contest.durationSeconds % 3600) / 60)}m
+//                     </p>
+//                     <p className="mt-2">
+//                       <strong>Type:</strong> {contest.type} <br />
+//                       <strong>Phase:</strong> {contest.phase}
+//                     </p>
+//                     <a
+//                       href={`https://codeforces.com/contests/${contest.id}`}
+//                       target="_blank"
+//                       rel="noopener noreferrer"
+//                       className={`mt-4 inline-block px-4 py-2 rounded ${isDark ? 'bg-blue-500 text-gray-800' : 'bg-blue-500 text-gray-900'}`}
+//                     >
+//                       View Contest
+//                     </a>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
 
-          <footer className={`text-center mt-28 p-4 my-10 rounded-lg w-100% ${isDark ? 'bg-gray-600' : 'bg-gray-200'}`}>
-            <p>&copy; 2025 Codeforces | All rights reserved</p>
-          </footer>
-        </div>
-      </div>
-    );
-  }
-}
+//           <footer className={`text-center mt-28 p-4 my-10 rounded-lg w-100% ${isDark ? 'bg-gray-600' : 'bg-gray-200'}`}>
+//             <p>&copy; 2025 Codeforces | All rights reserved</p>
+//           </footer>
+//         </div>
+//       </div>
+//     );
+//   }
+// }
 
-export default Contest;
+// export default Contest;
 
+
+
+
+
+
+// import React, { useState, useEffect, useRef } from "react";
+// import { useTheme } from "next-themes";
+// import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+// import { Link } from "react-router-dom";
+// import { 
+//   FiSun, FiMoon, FiX, FiUser, FiDollarSign, 
+//   FiBook, FiGift, FiSettings, FiCopy 
+// } from "react-icons/fi";
+// import { TbCoin } from "react-icons/tb";
+// import { Tooltip } from 'react-tooltip';
+// import { motion, AnimatePresence } from 'framer-motion';
+
+// const Edusphere = () => {
+//   // 1. First declare all hooks
+//   const { theme, setTheme } = useTheme();
+//   const [walletAddress, setWalletAddress] = useState("");
+//   const [dropdownOpen, setDropdownOpen] = useState(false);
+//   const [walletConnected, setWalletConnected] = useState(false);
+//   const dropdownRef = useRef(null);
+//   const [mounted, setMounted] = useState(false);
+
+//   // 2. Then use effects
+//   useEffect(() => {
+//     setMounted(true);
+    
+//     const checkConnectedWallet = async () => {
+//       if (typeof window.ethereum !== 'undefined') {
+//         try {
+//           const accounts = await window.ethereum.request({ 
+//             method: 'eth_accounts' 
+//           });
+//           if (accounts.length > 0) {
+//             setWalletAddress(accounts[0]);
+//             setWalletConnected(true);
+//           }
+//         } catch (error) {
+//           console.error("Error checking accounts:", error);
+//         }
+//       }
+//     };
+    
+//     checkConnectedWallet();
+//   }, []);
+
+//   // 3. Then conditional return
+//   if (!mounted) return null;
+
+//   // 4. Then derived state
+//   const isDarkMode = theme === "dark";
+
+//   // Handle account changes
+//   useEffect(() => {
+//     if (window.ethereum) {
+//       const handleAccountsChanged = (accounts) => {
+//         if (accounts.length === 0) {
+//           // Disconnected
+//           setWalletConnected(false);
+//           setWalletAddress("");
+//         } else {
+//           // Account changed
+//           setWalletAddress(accounts[0]);
+//           setWalletConnected(true);
+//         }
+//       };
+
+//       window.ethereum.on('accountsChanged', handleAccountsChanged);
+//       return () => {
+//         window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+//       };
+//     }
+//   }, []);
+
+//   const connectWallet = async () => {
+//     if (window.ethereum) {
+//       try {
+//         const accounts = await window.ethereum.request({ 
+//           method: 'eth_requestAccounts' 
+//         });
+//         setWalletAddress(accounts[0]);
+//         setWalletConnected(true);
+//         setDropdownOpen(false);
+//       } catch (error) {
+//         console.error("Error connecting to MetaMask:", error);
+//       }
+//     } else {
+//       const installMetaMask = confirm("MetaMask is required. Would you like to install it?");
+//       if (installMetaMask) window.open("https://metamask.io/download/", "_blank");
+//     }
+//   };
+
+//   const copyToClipboard = () => {
+//     navigator.clipboard.writeText(walletAddress);
+//     alert("Wallet address copied to clipboard!");
+//   };
+
+//   useEffect(() => {
+//     const handleClickOutside = (e) => {
+//       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+//         setDropdownOpen(false);
+//       }
+//     };
+//     document.addEventListener("mousedown", handleClickOutside);
+//     return () => document.removeEventListener("mousedown", handleClickOutside);
+//   }, [dropdownRef]); // This is fine
+  
+
+//   const toggleTheme = () => setTheme(isDarkMode ? "light" : "dark");
+
+//   return (
+//     <div className={`min-h-screen flex flex-col ${isDarkMode ? 
+//       "bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100" : 
+//       "bg-gradient-to-br from-amber-50 to-amber-100 text-gray-900"
+//     }`}>
+//       {/* Navbar */}
+//       <nav className="sticky top-0 z-50 backdrop-blur-md border-b border-amber-200/30 shadow-lg">
+//         <div className="container mx-auto px-6 py-4">
+//           <div className="flex items-center justify-between">
+//             <Link 
+//               to="/Edusphere" 
+//               className="flex items-center space-x-4 hover:scale-105 transition-transform"
+//             >
+//               <img
+//                 src="/images/Edusphere logo.png"
+//                 alt="Edusphere Logo"
+//                 className="w-24 h-14 object-contain"
+//               />
+//               <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
+//                 Edusphere
+//               </h1>
+//             </Link>
+
+//             <div className="hidden lg:flex items-center space-x-6">
+//               <nav className="flex space-x-6">
+//                 <Link 
+//                   to="/Edusphere" 
+//                   className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
+//                 >
+//                   Home
+//                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+//                 </Link>
+//                 <Link 
+//                   to="/courses" 
+//                   className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
+//                 >
+//                   Courses
+//                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+//                 </Link>
+//                 <Link 
+//                   to="/contest" 
+//                   className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
+//                 >
+//                   Contest
+//                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+//                 </Link>
+//               </nav>
+//             </div>
+
+//             <div className="flex items-center space-x-4">
+//               <motion.button
+//                 whileHover={{ scale: 1.05 }}
+//                 whileTap={{ scale: 0.95 }}
+//                 className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+//                   walletConnected 
+//                     ? 'bg-emerald-500/20 text-emerald-400' 
+//                     : 'bg-amber-500 hover:bg-amber-600 text-white'
+//                 } transition-colors`}
+//                 onClick={walletConnected ? undefined : connectWallet}
+//               >
+//                 {walletConnected ? (
+//                   <>
+//                     <span className="hidden sm:inline">
+//                       {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+//                     </span>
+//                     <FiCopy 
+//                       className="hover:text-amber-400 transition-colors ml-2"
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         copyToClipboard();
+//                       }}
+//                       data-tooltip-id="copy-tooltip"
+//                     />
+//                   </>
+//                 ) : (
+//                   <>
+//                     <span>Connect Wallet</span>
+//                     <TbCoin className="ml-2" />
+//                   </>
+//                 )}
+//               </motion.button>
+
+//               <button
+//                 onClick={toggleTheme}
+//                 className="p-2 rounded-full bg-amber-100/10 hover:bg-amber-500/20 transition-colors"
+//               >
+                
+//                 {isDarkMode ? (
+//                   <FiMoon className="w-6 h-6 text-amber-400" />
+//                 ) : (
+//                   <FiSun className="w-6 h-6 text-amber-600" />
+//                 )}
+//               </button>
+
+//                   <div className="relative" ref={dropdownRef}>
+//                 <button
+//                   onClick={() => walletConnected && setDropdownOpen(!dropdownOpen)}
+//                   className={`p-2 rounded-full transition-colors ${
+//                     walletConnected 
+//                       ? "bg-amber-100/10 hover:bg-amber-500/20 cursor-pointer"
+//                       : "opacity-50 cursor-not-allowed"
+//                   }`}
+//                   disabled={!walletConnected}
+//                 >
+//                     ☰
+                 
+//                 </button>
+
+//                 <AnimatePresence>
+//                 {dropdownOpen && walletConnected && (
+//                     <motion.div
+//                       initial={{ opacity: 0, y: -10 }}
+//                       animate={{ opacity: 1, y: 0 }}
+//                       exit={{ opacity: 0, y: -10 }}
+//                       className={`absolute right-0 mt-2 w-64 origin-top-right rounded-xl shadow-xl backdrop-blur-lg ${
+//                         isDarkMode 
+//                           ? "bg-gray-800/95 border border-gray-700" 
+//                           : "bg-white/95 border border-amber-100"
+//                       }`}
+//                     >
+//                       <div className="p-2 space-y-1">
+//                         <Link 
+//                           to="/profile" 
+//                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+//                         >
+//                           <FiUser className="text-amber-500" />
+//                           <span>Profile</span>
+//                         </Link>
+//                         <button className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors w-full">
+//                           <TbCoin className="text-amber-500" />
+//                           <span>Coins</span>
+//                           <span className="ml-auto px-2 py-1 bg-amber-500/10 text-amber-600 rounded-full text-sm">
+//                             120
+//                           </span>
+//                         </button>
+//                         <Link 
+//                           to="/transactions" 
+//                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+//                         >
+//                           <FiDollarSign className="text-amber-500" />
+//                           <span>Transactions</span>
+//                         </Link>
+//                         <Link 
+//                           to="/courses" 
+//                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+//                         >
+//                           <FiBook className="text-amber-500" />
+//                           <span>My Courses</span>
+//                         </Link>
+//                         <Link 
+//                           to="/redeem" 
+//                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+//                         >
+//                           <FiGift className="text-amber-500" />
+//                           <span>Redeem</span>
+//                         </Link>
+//                       </div>
+//                     </motion.div>
+//                   )}
+//                 </AnimatePresence>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </nav>
+
+//       {/* Main Content */}
+//       <main className="flex-1 container mx-auto px-6 py-16">
+//         <div className="flex flex-col lg:flex-row items-center justify-between">
+//           <div className="lg:w-1/2 mb-12 lg:mb-0">
+//             <DotLottieReact
+//               src="https://lottie.host/b3d4cb2f-dce5-406a-938f-0ed9f0b58974/k1qWoZHhWD.lottie"
+//               loop
+//               autoplay
+//               className="w-full max-w-2xl"
+//             />
+//           </div>
+
+//           <div className="lg:w-1/2 space-y-8">
+//             <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent leading-tight">
+//               Revolutionizing Education with Blockchain
+//             </h2>
+//             <p className={`text-xl ${isDarkMode ? "text-amber-100/80" : "text-gray-600"} leading-relaxed`}>
+//               Empower your learning journey with decentralized education. 
+//               Take control of your academic credentials and earn rewards 
+//               through Web3 technology.
+//             </p>
+//             <div className="flex space-x-4">
+//               <Link 
+//                 to="/courses" 
+//                 className="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-600 hover:to-amber-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-amber-500/30 transition-all duration-300"
+//               >
+//                 Explore Courses
+//               </Link>
+//               <button className="px-8 py-4 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500/10 transition-colors duration-300 font-semibold">
+//                 How It Works
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </main>
+
+//       {/* Footer */}
+//       <footer className="border-t border-amber-500/20 mt-24">
+//         <div className="container mx-auto px-6 py-8">
+//           <div className="flex flex-col md:flex-row justify-between items-center">
+//             <div className="flex items-center space-x-4 mb-4 md:mb-0">
+//               <img
+//                 src="/images/Edusphere logo.png"
+//                 alt="Edusphere Logo"
+//                 className="w-16 h-10 opacity-80"
+//               />
+//               <p className={`${isDarkMode ? "text-amber-100/80" : "text-gray-500"}`}>
+//                 © 2025 Edusphere. All rights reserved.
+//               </p>
+//             </div>
+//             <div className="flex space-x-8">
+//               <button className={`${isDarkMode ? "text-amber-100/80" : "text-gray-500"} hover:text-amber-500 transition-colors`}>
+//                 Privacy Policy
+//               </button>
+//               <button className={`${isDarkMode ? "text-amber-100/80" : "text-gray-500"} hover:text-amber-500 transition-colors`}>
+//                 Terms of Service
+//               </button>
+//               <button className={`${isDarkMode ? "text-amber-100/80" : "text-gray-500"} hover:text-amber-500 transition-colors`}>
+//                 Contact Us
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </footer>
+
+//       <Tooltip id="copy-tooltip" place="bottom" content="Copy address" />
+
+//     </div>
+//   );
+// };
+
+// export default Edusphere;

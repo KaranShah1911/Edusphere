@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { FaSun, FaMoon } from "react-icons/fa"; // Importing sun and moon icons
+import { useThemeStore } from "../store/themeStore";
 
 const ManageCourses = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+    const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const [courses, setCourses] = useState([
     {
       id: 1,

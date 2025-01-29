@@ -21,6 +21,7 @@
   /* src/index.css */
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* Light Theme Styles */
 body.light {
@@ -49,3 +50,21 @@ body.dark {
 .text-white {
   color: white;
 }
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-amber-50 dark:bg-gray-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-amber-400 rounded-full;
+}
+

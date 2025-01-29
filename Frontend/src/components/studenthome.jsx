@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Link } from "react-router-dom";
+import { FiUser, FiDollarSign, FiBook, FiGift } from "react-icons/fi";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Edusphere = () => {
   const [walletAddress, setWalletAddress] = useState("");
@@ -20,8 +22,6 @@ const Edusphere = () => {
         });
         const address = accounts[0];
         setWalletAddress(address);
-
-        // Save the wallet address to local storage
         localStorage.setItem("walletAddress", address);
       } catch (error) {
         console.error("Error connecting wallet:", error);
@@ -31,7 +31,6 @@ const Edusphere = () => {
     }
   };
 
-  // Disconnect wallet
   const disconnectWallet = () => {
     localStorage.removeItem("walletAddress");
     setWalletAddress("");
@@ -97,43 +96,40 @@ const Edusphere = () => {
       {/* Navbar Section */}
       <nav className="flex justify-between items-center p-6">
         <div className="flex items-center space-x-2">
-          <img
-            src="/images/Edusphere logo.png"
-            alt="Edusphere Logo"
-            className="w-20 h-12"
-          />
-          <h1 className="text-4xl font-bold">Edusphere</h1>
+          
+           <img src="/images/Edusphere logo.png" alt="Logo" className="w-12 h-12 rounded-full shadow-lg" />
+            
+           
+          
+          <h1 className="text-4xl font-bold ">Edusphere</h1>
         </div>
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
-            <Link to="/Edusphere">
-              <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-                Home
-              </button>
-            </Link>
-            <Link to="/courses">
-              <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-                Courses
-              </button>
-            </Link>
-            <Link to="/contest">
-              <button className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full">
-                Contest
-              </button>
-            </Link>
+            <Link to="/studenthome" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
+                             Home
+                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                           </Link>
+                           <Link to="/courses" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
+                             Courses
+                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                           </Link>
+                           <Link to="/contest" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
+                             Contest
+                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                           </Link>
           </div>
 
           {/* Wallet Button */}
           <button
-  className="text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full"
-  onClick={connectWallet} // Always trigger connectWallet on click
->
-  {walletAddress ? (
-    `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` // Show address if connected
-  ) : (
-    "Connect Wallet" // Show "Connect Wallet" if not connected
-  )}
-</button>
+            className="text-lg bg-gradient-to-r from-amber-500 to-amber-300 text-black py-2 px-4 rounded-full"
+            onClick={connectWallet}
+          >
+            {walletAddress ? (
+              `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+            ) : (
+              "Connect Wallet"
+            )}
+          </button>
 
           {/* Theme toggle */}
           <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
@@ -144,76 +140,70 @@ const Edusphere = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className={`text-lg bg-gradient-to-r from-gold to-yellow-200 text-black py-2 px-4 rounded-full ${
+              className={`text-lg bg-gradient-to-r from-amber-500 to-amber-300 text-black py-2 px-4 rounded-full ${
                 walletAddress ? "" : "cursor-not-allowed opacity-50"
               }`}
               disabled={!walletAddress}
             >
               ☰
             </button>
-            {dropdownOpen && walletAddress && (
-              <div
-                className={`absolute right-0 mt-2 w-48 border border-gray-300 rounded-md shadow-lg ${
-                  isDarkMode
-                    ? "bg-gray-800 text-white border-gray-600"
-                    : "bg-white text-black border-gray-300"
-                }`}
-              >
-               <ul>
-  <Link to="/signup">
-    <li
-      className={`p-2 ${
-        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
-      }`}
-    >
-      Add Details
-    </li>
-  </Link>
-  <li
-    className={`p-2 ${
-      walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
-    }`}
-  >
-    Coins
-  </li>
-  <Link to="/transaction">
-    <li
-      className={`p-2 ${
-        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
-      }`}
-    >
-      Transaction
-    </li>
-  </Link>
-  <Link to="/managecourses">
-    <li
-      className={`p-2 ${
-        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
-      }`}
-    >
-      Manage Courses
-    </li>
-  </Link>
-  <Link to="/redeem">
-    <li
-      className={`p-2 ${
-        walletAddress ? "hover:bg-yellow-400 cursor-pointer" : "cursor-not-allowed opacity-50"
-      }`}
-    >
-      Redeem
-    </li>
-  </Link>
-</ul>
-
-              </div>
-            )}
+            <AnimatePresence>
+              {dropdownOpen && walletAddress && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className={`absolute right-0 mt-2 w-64 origin-top-right rounded-xl shadow-xl backdrop-blur-lg ${
+                    isDarkMode ? "bg-gray-800/95 border border-gray-700" : "bg-white/95 border border-amber-100"
+                  } z-50`}  
+                >
+                  <div className="p-2 space-y-1">
+                    <Link
+                      to="/signup"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiUser className="text-amber-500" />
+                      <span>Add Details</span>
+                    </Link>
+                    <Link
+                      to="/coins"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiDollarSign className="text-amber-500" />
+                      <span>Coins</span>
+                    </Link>
+                    <Link
+                      to="/transactions"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiDollarSign className="text-amber-500" />
+                      <span>Transactions</span>
+                    </Link>
+                    <Link
+                      to="/mylearning"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiBook className="text-amber-500" />
+                      <span>My Learning</span>
+                    </Link>
+                    <Link
+                      to="/redeem"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiGift className="text-amber-500" />
+                      <span>Redeem</span>
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </nav>
       <div className="border-b-4 border-gold"></div>
 
       {/* Main Content Section */}
-      <div className="container mx-auto py-14">
+      <div className="container mx-auto py-14 relative">
         <div className="flex justify-between items-center">
           <div className="w-1/2">
             <DotLottieReact
@@ -223,16 +213,22 @@ const Edusphere = () => {
               className="w-full h-[500px] flex justify-center"
             />
           </div>
-          <div className="w-1/2">
-            <h2 className="relative text-6xl font-bold">Welcome to Edusphere</h2>
-            <p className="mt-9 text-xl">
-              Edusphere is a platform for educators and students powered by
-              blockchain technology.
+          <div className="lg:w-1/2 space-y-8 animate-fade-in-up delay-100">
+            <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent leading-tight">
+              Revolutionizing Education with Blockchain
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-amber-100/80 leading-relaxed">
+              Empower your learning journey with decentralized education. Take control of your academic credentials, 
+              earn rewards for your achievements, and access a world of knowledge powered by Web3 technology.
             </p>
-            <p className="mt-4">
-              Revolutionizing the way we learn and teach by giving users full
-              control over their education data.
-            </p>
+           <div className="flex space-x-4">
+                         <Link to="/courses" className="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-600 hover:to-amber-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-amber-500/30 transition-all duration-300">
+                           Explore Courses
+                         </Link>
+                         <button className="px-8 py-4 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500/10 transition-colors duration-300 font-semibold">
+                           How It Works
+                         </button>
+                       </div>
           </div>
         </div>
       </div>

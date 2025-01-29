@@ -14,6 +14,8 @@ import Transaction from './components/transaction.jsx';
 import Contest from './components/contest.jsx';
 import SignUp from './components/signup.jsx';
 import ThemeToggle from './components/themetoggle.jsx';
+import MyLearning from './components/mylearning.jsx';
+import CourseDetails from './components/coursedetails1.jsx';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
@@ -44,6 +46,8 @@ const App = () => {
           <Route path="/contest" element={<Contest />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/themetoggle" element={<ThemeToggle />} />
+            <Route path="/mylearning" element={<MyLearning />} />
+            <Route path="/mylearning/:id" element={<CourseDetails />} />
          
          {/* Route for the animation */}
          <Route
