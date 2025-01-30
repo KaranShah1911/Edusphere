@@ -56,7 +56,7 @@ const LoginPage = () => {
               });
               if(response.status===200){
               console.log(response.message);
-              setCookie(response.token);
+              setCookie("user",response.token,1);
               localStorage.setItem("user" , response.data);
             }else{
               alert(response.error)
@@ -82,7 +82,7 @@ const LoginPage = () => {
             }
           );
           if(response.status===200){
-            setCookie(response.token);
+            setCookie("user" , response.token , 1);
             console.log(response.message);
             localStorage.setItem("user" , response.data);
           }else{

@@ -32,8 +32,7 @@ async function VerifyUser(req ,res){
             data : {
                 id : user._id,
                 name : user.user_name,
-                wallet_id : user.wallet_id,
-                courses : user.courses_created,
+                wallet_id : user.metamask_wallet_id
             },
             token : token
         });
