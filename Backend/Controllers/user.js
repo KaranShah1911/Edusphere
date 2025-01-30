@@ -25,7 +25,7 @@ async function VerifyUser(req ,res){
             return res.status(404).json({error : "No User Found. Verify Wallet Id."});
         }
 
-        const token = get_token(admin);
+        const token = get_token(user);
 
         return res.status(200).json({
             message : "Student Logged in successfully",
