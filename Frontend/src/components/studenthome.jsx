@@ -13,6 +13,12 @@ const Edusphere = () => {
 
   const dropdownRef = useRef(null);
 
+  const setCookie = (name, value, days) => {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;`;
+  };
+
   // Connect wallet to MetaMask
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -22,7 +28,30 @@ const Edusphere = () => {
         });
         const address = accounts[0];
         setWalletAddress(address);
-        localStorage.setItem("walletAddress", address);
+        localStorage.setItem("walletAddress", walletAddress);
+        try{
+          const response = await fetch(
+            "http://localhost:3000/user/VerifyUser",{
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body:{
+                wallet_id : walletAddress
+              }
+            }
+          );
+  
+          if(response.status === 200){
+            console.log(response.message);
+            localStorage.setItem("user", response.data);
+            setCookie("user", response.token, 1);
+          }else{
+            console.log(response.error);
+          }
+        }catch(error){
+          console.log(error);
+        } 
       } catch (error) {
         console.error("Error connecting wallet:", error);
       }

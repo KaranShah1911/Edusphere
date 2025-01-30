@@ -98,6 +98,7 @@ const CoursesPage = () => {
   const [account, setAccount] = useState(null);
   const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
   const { state } = useLocation();
   const menuRef = useRef(null);
@@ -108,13 +109,33 @@ const CoursesPage = () => {
     setTheme(isDarkMode ? "light" : "dark");
   };
 
-  
+
 
   useEffect(() => {
     if (window.ethereum) {
       setIsMetaMaskInstalled(true);
       loadAccount();
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/courses'); 
+
+        if(response.status==500){
+          alert(response.error);
+        }else{
+          console.log(response.message);
+          const data = response.courses;
+          setCourses(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch courses:', error);
+      }
+    };
+
+    fetchCourses();
   }, []);
 
   useEffect(() => {
@@ -168,7 +189,7 @@ const CoursesPage = () => {
   );
 
   const handleVisitCourse = (course) => {
-    navigate(`/course/${course.name}`, { state: { course } });
+    navigate(`/course/${course.title}`, { state: { course } });
   };
 
   const DashboardDropdown = () => (
@@ -313,8 +334,8 @@ const CoursesPage = () => {
           >
             <div className="relative h-60 overflow-hidden">
               <img 
-                src={course.image} 
-                alt={course.name} 
+                src={course.course_iamge} 
+                alt={course.title} 
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
               />
               <div className="absolute inset-0 " />
@@ -324,7 +345,7 @@ const CoursesPage = () => {
               <h3 className={`text-xl font-bold mb-3 ${
                 darkMode ? 'text-white' : 'text-gray-800'
               }`}>
-                {course.name}
+                {course.title}
               </h3>
               
               <div className="flex items-center justify-between mb-4">

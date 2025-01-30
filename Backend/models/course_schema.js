@@ -1,28 +1,29 @@
 const mongoose = require("mongoose");
 
 const CourseSchema = new mongoose.Schema({
-    course_name:
+    title:
     {
         type: String,
         required:true,
     } , 
-    
-    course_description:
+    description:
     {
         type: String,
         required:true
     },
-    
     author_name:
     {
         type: String,
         required:true
     },
-    
+    author_wallet_id:{
+        type:String,
+        required:true
+    },
     course_points:
     {
         type: Number,
-        required:true
+        default:100
     },
     
     course_price:
@@ -35,7 +36,15 @@ const CourseSchema = new mongoose.Schema({
     {
         type: Number,
         default:0
-    }
+    },
+    course_image:{
+        type: String,
+        required:true
+    },
+    course_video:[{
+        type: String,
+        required:true
+    }]
 } , {
     timestamps: true
 });

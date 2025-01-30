@@ -3,7 +3,12 @@ const mongoose = require("mongoose");
 const TransactionSchema = new mongoose.Schema({
     user_id: {type: mongoose.Schema.ObjectId, ref: "Users"},
 
-    courses_purchase: [{type: mongoose.Schema.ObjectId, ref: "Courses"}], 
+    courses_purchased: {type: mongoose.Schema.ObjectId, ref: "Courses"}, 
+
+    transaction_address : {
+        type : String ,
+        required : true
+    },
 
     purchases_date: 
     {

@@ -14,6 +14,33 @@ async function DisplayCourses(req ,res){
 
 }
 
+async function UploadCourse(req , res){
+    try{
+        const{title , description , authorname , author_id , pricing , image_hash , video_hash} = req.body;
+        if(!title || !description || !authorname || !author_id || !pricing || !image_hash || !video_hash){
+            return res.status(400).json({error : "Please fill all fields."});
+        }
+        const course = await Courses.create({
+            title : title,
+            description : description,
+            author_name : authorname,
+            author_wallet_id : author_id,
+            course_price : pricing,
+            course_image : image_hash,
+            course_video : video_hash
+        });
+
+        if(!course){
+            return res.status(400).json({error : "Error uploading course."});
+        }
+        return res.status(200).json({message : "Course uploaded successfully." , course : course});
+    }catch(error){
+        return res.status(500).json({error : `${error}`});
+    }
+}
+
+
 module.exports = {
-    DisplayCourses
+    DisplayCourses,
+    UploadCourse
 }

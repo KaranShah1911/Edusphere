@@ -7,9 +7,9 @@ const {get_token} = require('../service/auth');
 //     res.render('user_login');
 // }
 
-function DisplayUserHomePage(req , res){
-    return res.status(200).json({message : "User home page rendered successfully."})
-}
+// function DisplayUserHomePage(req , res){
+//     return res.status(200).json({message : "User home page rendered successfully."})
+// }
 
 async function VerifyUser(req ,res){
     try{
@@ -29,10 +29,12 @@ async function VerifyUser(req ,res){
 
         return res.status(200).json({
             message : "Student Logged in successfully",
-            id : admin._id,
-            name : admin.admin_name,
-            wallet_id : admin.wallet_id,
-            courses : admin.courses_created,
+            data : {
+                id : user._id,
+                name : user.user_name,
+                wallet_id : user.wallet_id,
+                courses : user.courses_created,
+            },
             token : token
         });
     }
@@ -55,25 +57,27 @@ async function VerifyUser(req ,res){
 
 async function CreateUser(req , res){
     try{
-        const {username  , email , wallet_id} = req.body;
+        const {username , wallet_id} = req.body;
 
-        if(!username || !email || !wallet_id){
+        if(!username || !wallet_id){
             return res.status(400).json({error : 'All fields are required.'})
         }
         
-        const user = await Users.create({user_name : username , email_id : email , metamask_wallet_id : wallet_id});
+        const user = await Users.create({user_name : username , metamask_wallet_id : wallet_id});
 
         if(!user){
-            return res.status(400).json({error : "Error signing up the student"});
+            return res.status(400).json({error : "Error in adding details of Student."});
         }
 
         const token = get_token(user);
 
         return res.status(200).json({
             message : "Student Signed up successfully",
-            id : user._id,
-            name : user.user_name,
-            wallet_id : user.metamask_wallet_id,
+            data:{
+                id : user._id,
+                name : user.user_name,
+                wallet_id : user.metamask_wallet_id,
+            },
             token : token
         });
     
@@ -91,15 +95,15 @@ async function DisplayMyLearning(req , res){
         
         const id = req.user._id;
     
-        const user = await Users.findById(id);
+        const user = await Users.findById(id).populate("courses_enrolled").populate("courses_completed");
     
-        const courses_enrolled = user.course_enrolled.map(course => Courses.findById(course));
-        const courses_completed = user.course_completed.map(course => Courses.findById(course));
+        // const courses_enrolled = user.course_enrolled.map(course => Courses.findById(course));
+        // const courses_completed = user.course_completed.map(course => Courses.findById(course));
     
         
         return res.status(200).json({
-            courses_enrolled : courses_enrolled ,
-            courses_completed : courses_completed
+            courses_enrolled : user.courses_enrolled ,
+            courses_completed : user.courses_completed
         });
         
         // res.render('courses' , {
@@ -120,11 +124,11 @@ async function DisplayTransactionHistory(req , res){
         const id = req.user._id;
 
         try{
-            const transaction_history = await Transactions.findById(id);
-            if(transaction_history.length<=0){
-                return res.status(200).json({error : "No Transaction done yet"});
+            const user_transactions = await Transactions.findById(id).populate("course_purchased");
+            if(!user_transactions){
+                return res.status(201).json({error : "No Transaction done yet"});
             }else{
-                return res.status(200).json({message : "Transactions history fetched successfully", transaction_history : transaction_history});
+                return res.status(200).json({message : "Transactions history fetched successfully", transaction_history : user_transactions});
             }
         }catch(error){
             return res.status(500).json({error : "Error fetching Transaction history"})
@@ -135,30 +139,40 @@ async function DisplayTransactionHistory(req , res){
     }
 }
 
-// async function DisplayCourses(req ,res){
-//     try{
-//         const courses = await Courses.find();
-//         if(courses.length>0){
-//             res.render("courses" , {allcourses : courses})
-//         }else{
-//             throw "No courses available"
-//         }
-//     }catch(err){
-//         res.json({error : `${err}`})
-//     }
-
-// }
-
-// async function DisplayStore(req ,res){
-            
-// }
+async function PurchaseCourse(req , res){
+    try{
+        if(!req.user){
+            return res.status(400).json({error : "User is not logged in or Signed up"});   
+        }
+        const course_id = req.params.id;
+        const course = await Courses.findById(course_id);
+        if(!course){
+            return res.status(404).json({error : "Course not found."});
+        }
+        const purchased_courses = req.user.course_enrolled;
+        if(purchased_courses.includes(course_id)){
+            return res.status(200).json({message : "Course already purchased."});
+        }
+        purchased_courses.push(course_id);
+        req.user.course_enrolled = purchased_courses;
+        await req.user.save();
+        
+        const {transaction_id} = req.body;
+        const new_transaction = await Transactions.create({user_id : req.user._id , transaction_address : transaction_id , course_purchased : course_id});
+        return res.status(200).json({message : "Course purchased successfully." , transaction_id : new_transaction._id});
+        
+    }catch(error){
+        return res.status(500).json({error : "Error with the server"})
+    }
+}
 
 module.exports = {
-    DisplayUserHomePage,
     VerifyUser,
     CreateUser,
     DisplayMyLearning,
-    DisplayTransactionHistory 
+    DisplayTransactionHistory,
+    PurchaseCourse
+    // DisplayUserHomePage,
     // DisplayUserLoginPage,
     // DisplayUserSignupPage,
     // DisplayCourses

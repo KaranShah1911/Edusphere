@@ -6,35 +6,36 @@ import { useThemeStore } from "../store/themeStore";
 const ManageCourses = () => {
     const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: "React Basics",
-      status: "published",
-      enrollments: 120,
-      averageRating: 4.5,
-      completionRate: 90,
-      engagementTrend: "High",
-    },
-    {
-      id: 2,
-      title: "Advanced JavaScript",
-      status: "draft",
-      enrollments: 80,
-      averageRating: 4.7,
-      completionRate: 85,
-      engagementTrend: "Medium",
-    },
-    {
-      id: 3,
-      title: "Web Development Bootcamp",
-      status: "archived",
-      enrollments: 200,
-      averageRating: 4.8,
-      completionRate: 95,
-      engagementTrend: "High",
-    },
-  ]);
+  const [courses, setCourses] = useState([]);
+  // const [courses, setCourses] = useState([
+  //   {
+  //     id: 1,
+  //     title: "React Basics",
+  //     status: "published",
+  //     enrollments: 120,
+  //     averageRating: 4.5,
+  //     completionRate: 90,
+  //     engagementTrend: "High",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Advanced JavaScript",
+  //     status: "draft",
+  //     enrollments: 80,
+  //     averageRating: 4.7,
+  //     completionRate: 85,
+  //     engagementTrend: "Medium",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "Web Development Bootcamp",
+  //     status: "archived",
+  //     enrollments: 200,
+  //     averageRating: 4.8,
+  //     completionRate: 95,
+  //     engagementTrend: "High",
+  //   },
+  // ]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [walletAddress, setWalletAddress] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -43,10 +44,53 @@ const ManageCourses = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  const handleDeleteCourse = (id) => {
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const admin_id = localStorage.getItem("user")._id;
+        const response = await fetch(`http://localhost:3000/admin/get-courses/${admin_id}`); 
+
+        if(response.status==500){
+          alert(response.error);
+        }else{
+          console.log(response.message);
+          const data = response.courses;
+          setCourses(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch courses:', error);
+      }
+    };
+
+    fetchCourses();
+  }, []);  
+
+  const handleDeleteCourse = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this course?");
     if (confirmDelete) {
-      setCourses(courses.filter((course) => course.id !== id));
+      // setCourses(courses.filter((course) => course.id !== id));
+      try{
+        const response = await fetch(`http://localhost:3000/admin/delete-course/${id}`
+          ,{
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body:{
+              admin_id: localStorage.getItem("educator")._id
+            }
+          }
+        ); 
+        if(response.status==500){
+          alert(response.error);
+        }else{
+          console.log(response.message);
+          const data = response.courses;
+          setCourses(data);
+        }
+      }catch(error){
+        console.error('Error deleting course:', error);
+      }
     }
   };
 
@@ -134,16 +178,17 @@ const ManageCourses = () => {
 
         <div className="courses-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => (
-            <div className="course-card bg-blue-900 p-4 rounded-lg shadow-md" key={course.id}>
+            <div className="course-card bg-blue-900 p-4 rounded-lg shadow-md" key={course._id}>
+              <img src={course.course_image} alt={course.title} />
               <h3 className="text-xl font-semibold">{course.title}</h3>
-              <p>Status: {course.status}</p>
+              {/* <p>Status: {course.status}</p>
               <p>Enrollments: {course.enrollments}</p>
               <p>Average Rating: {course.averageRating}</p>
               <p>Completion Rate: {course.completionRate}%</p>
-              <p>Engagement Trend: {course.engagementTrend}</p>
+              <p>Engagement Trend: {course.engagementTrend}</p> */}
               <div className="course-actions mt-4">
                 <button
-                  onClick={() => handleDeleteCourse(course.id)}
+                  onClick={() => handleDeleteCourse(course._id)}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md mr-2"
                 >
                   Delete

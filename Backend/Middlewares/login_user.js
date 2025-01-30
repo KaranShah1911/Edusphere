@@ -11,7 +11,7 @@ async function allow_login_user(req , res , next){
             token = req.headers.authorization.split(' ')[1];
             //decode token id
             const decoded = getuser(token);
-            req.user = await Users.findById(decoded.id);
+            req.user = await Users.findById(decoded._id);
             next();
         }
         catch(e){

@@ -16,26 +16,20 @@ const UserSchema = new mongoose.Schema({
         unique:true
     },
     
-    course_enrolled:[{type:mongoose.Schema.ObjectId ,ref:'Courses'}],
+    courses_enrolled:[{type:mongoose.Schema.ObjectId ,ref:'Courses'}],
     
-    course_completed:[{type:mongoose.Schema.ObjectId ,ref:'Courses'}],
+    courses_completed:[{type:mongoose.Schema.ObjectId ,ref:'Courses'}],
     
     coins:
     {
         type: Number,
-        default:0
+        default:100
     },
     
     badge:
     {
         type:String,
         default:"Beginner"
-    },
-    
-    email_id:
-    {
-        type:String,
-        required:true,
     },  
 } , {
     timestamps: true

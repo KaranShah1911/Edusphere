@@ -13,6 +13,13 @@ const CreateCourse = () => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [videoFiles, setVideoFiles] = useState([]);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    pricing: ''
+  });
 
   const dropdownRef = useRef(null);
 
@@ -51,7 +58,160 @@ const CreateCourse = () => {
     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, [isDarkMode]);
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
   
+  const handleVideoUpload = (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length > 2) {
+      alert('You can only upload a maximum of 2 video files.');
+      event.target.value = '';
+    } else {
+      setVideoFiles(files);
+    }
+  };
+
+  const uploadFileToPinata = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const metadata = {
+      name: formData.title,
+      keyvalues: {
+        description: formData.description,
+        pricing: formData.pricing,
+        fileType: file.type
+      }
+    };
+
+    formData.append('pinataMetadata', JSON.stringify(metadata));
+    formData.append('pinataOptions', JSON.stringify({ cidVersion: 0 }));
+
+    try {
+      const res = await axios.post(
+        'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'pinata_api_key': '76e2889acac621d7dbae',
+            'pinata_secret_api_key': '2952643d7fd0e9eb2f46796875fa07aa98041c426d446de168e2c68f944f3b13'
+          }
+        }
+      );
+      return res.data.IpfsHash;
+    } catch (error) {
+      console.error('Error uploading file to Pinata:', error);
+      throw error;
+    }
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const uploadedFiles = {
+        image: null,
+        videos: []
+      };
+
+      // Upload image if exists
+      if (imageFile) {
+        uploadedFiles.image = await uploadFileToPinata(imageFile);
+      }
+
+      // Upload videos if exist
+      for (const videoFile of videoFiles) {
+        const videoHash = await uploadFileToPinata(videoFile);
+        uploadedFiles.videos.push(videoHash);
+      }
+      console.log('Course published successfully!');
+      
+      // Create course metadata with file references
+      const courseMetadata = {
+        ...formData,
+        thumbnail: uploadedFiles.image,
+        videoUrls: uploadedFiles.videos,
+      };
+
+      console.log(courseMetadata)
+
+      const uploadapi = 'http://localhost:3000/courses/upload-course';
+
+      try {
+        const response = await fetch(uploadapi, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body : {
+              title :  courseMetadata.name,
+              description: courseMetadata.keyvalues.description,
+              authorname : localStorage.getItem("user").admin_name,
+              author_id : localStorage.getItem("user").wallet_id, 
+              price: courseMetadata.keyvalues.pricing , 
+              image : courseMetadata.thumbnail , 
+              videos : courseMetadata.videoUrls
+          }
+        });
+
+        if (response.status===200) {
+          console.log(response.message);
+          try{
+              const course_id = response.course._id; 
+              const response1 = await fetch(`http://localhost:3000/admin/add-course/${course_id}` , {
+                method : 'POST',
+                headers : {
+                  'Content-Type' : 'application/json',
+                }
+              })
+
+              if(response1.status===200){
+                console.log(response1.message);
+              }else{
+                console.log(response1.error);
+              }
+          }catch(error){
+            alert(error);
+          }
+        }else{
+          alert(response.error);
+        }
+        } catch (error) {
+          console.error('Error submitting course data:', error);
+          alert('Failed to create the course. Please try again.');
+        }
+
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        pricing: ''
+      });
+      setImageFile(null);
+      setVideoFiles([]);
+      
+      // Reset file inputs
+      document.getElementById('image').value = '';
+      document.getElementById('videos').value = '';
+
+    } catch (error) {
+      console.error('Error publishing course:', error);
+      alert('Failed to publish the course. Please try again.');
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   // Animation variants
   const containerVariants = {
@@ -234,6 +394,7 @@ const CreateCourse = () => {
           <motion.form 
             variants={formVariants}
             className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border dark:border-gray-700"
+            onSubmit={handleFormSubmit}
           >
             <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
               Create New Course
@@ -245,28 +406,37 @@ const CreateCourse = () => {
                 label="Course Title"
                 id="title"
                 type="text"
+                name="title"
                 placeholder="Master Web3 Development"
+                value={formData.title}
+                onChange={handleInputChange}
                 required
               />
 
               <FormField 
                 label="Description"
                 id="description"
+                name="description"
                 type="textarea"
+                value={formData.description}
+                onChange={handleInputChange}
                 placeholder="Comprehensive guide to building decentralized applications..."
               />
 
               {/* Reward Coins Field */}
               <div className="relative">
                 <label className="block text-sm font-medium mb-2">
-                  Reward Coins
+                  Course Price
                 </label>
                 <div className="relative">
                   <input
                     type="number"
-                    id="reward-coins"
+                    id="pricing"
+                    name="pricing"
+                    value={formData.pricing}
+                    onChange={handleInputChange}
                     className="w-full pl-12 pr-4 py-3 bg-transparent border dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-400 outline-none transition-all"
-                    placeholder="500"
+                    placeholder="e.g 0.1 ETH"
                   />
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <span className="w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
@@ -290,9 +460,12 @@ const CreateCourse = () => {
                   </p>
                   <input
                     type="file"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                    onChange={handleImageUpload}
                     multiple
                     className="hidden"
-                    onChange={(e) => console.log(e.target.files)}
                   />
                 </motion.div>
               </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 const TransactionPage = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const [transactions, setTransactions] = useState([]);
 
   // Toggle between dark and light modes
   const toggleDarkMode = () => {
@@ -10,16 +11,43 @@ const TransactionPage = () => {
     else document.documentElement.classList.remove('dark');
   };
 
+  useEffect(() => {
+    const fetchtransactions = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/user/transaction-history'); 
+
+        if(response.status!==200){
+          alert(response.error);
+        }else{
+          console.log(response.message);
+          const data = response.map((txn) => {
+            return {
+              _id: txn._id,
+              course_purchased: txn.course_purchased,
+              transaction_address: txn.transaction_address,
+              purchase_date: txn.purchase_date,
+            };
+          });
+          setTransactions(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch courses:', error);
+      }
+    };
+
+    fetchtransactions();
+  }, []);
+
   // Mock transaction data
-  const transactions = [
-    { id: 'TXN001', date: '2025-01-20', item: 'React Course', amount: '0.02 ETH', status: 'Success' },
-    { id: 'TXN002', date: '2025-01-18', item: 'Blockchain Course', amount: '0.05 ETH', status: 'Success' },
-    { id: 'TXN003', date: '2025-01-15', item: 'Python Course', amount: '0.03 ETH', status: 'Failed' },
-    { id: 'TXN004', date: '2025-01-10', item: 'AI Course', amount: '0.04 ETH', status: 'Success' },
-    { id: 'TXN004', date: '2025-01-10', item: 'AI Course', amount: '0.04 ETH', status: 'Success' },
-    { id: 'TXN004', date: '2025-01-10', item: 'AI Course', amount: '0.04 ETH', status: 'Success' },
-    { id: 'TXN003', date: '2025-01-15', item: 'Python Course', amount: '0.03 ETH', status: 'Failed' },
-  ];
+  // const transactions = [
+  //   { id: 'TXN001', date: '2025-01-20', item: 'React Course', amount: '0.02 ETH', status: 'Success' },
+  //   { id: 'TXN002', date: '2025-01-18', item: 'Blockchain Course', amount: '0.05 ETH', status: 'Success' },
+  //   { id: 'TXN003', date: '2025-01-15', item: 'Python Course', amount: '0.03 ETH', status: 'Failed' },
+  //   { id: 'TXN004', date: '2025-01-10', item: 'AI Course', amount: '0.04 ETH', status: 'Success' },
+  //   { id: 'TXN004', date: '2025-01-10', item: 'AI Course', amount: '0.04 ETH', status: 'Success' },
+  //   { id: 'TXN004', date: '2025-01-10', item: 'AI Course', amount: '0.04 ETH', status: 'Success' },
+  //   { id: 'TXN003', date: '2025-01-15', item: 'Python Course', amount: '0.03 ETH', status: 'Failed' },
+  // ];
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-black' : 'bg-white'}`}>
@@ -60,10 +88,10 @@ const TransactionPage = () => {
             <tbody>
               {transactions.map((txn, index) => (
                 <tr key={index} className="hover:bg-gold/10">
-                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.id}</td>
-                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.date}</td>
-                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.item}</td>
-                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.amount}</td>
+                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn._id}</td>
+                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.course_purchased.title}</td>
+                  <td className="p-4 border border-gold dark:border-gold text-yellow-500"><a href={txn.transaction_address}>{txn.transaction_address}</a></td>
+                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.purchase_date}</td>
                   
                 </tr>
               ))}

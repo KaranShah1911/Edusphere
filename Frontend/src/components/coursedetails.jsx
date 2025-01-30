@@ -16,6 +16,24 @@ const CourseDetails = () => {
     } catch (error) {
       console.error('MetaMask error', error);
     }
+    if(isPurchased){
+      try{
+        const response = await fetch(`http://localhost:3000/user/purchase-course/${course._id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+  
+        if(response.status!==200){
+          alert(response.error);
+        }else{
+          console.log(response.message);
+        }
+      }catch(error){
+        console.error('Error purchasing course:', error);
+      }
+    }
   };
 
   useEffect(() => {
@@ -56,11 +74,11 @@ const CourseDetails = () => {
       <div className="px-8 py-12">
         <div className="max-w-4xl mx-auto text-center">
           <img
-            src={course.image}
-            alt={course.name}
+            src={course.course_image}
+            alt={course.title}
             className="w-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
           />
-          <h1 className="text-3xl font-bold mt-6">{course.name}</h1>
+          <h1 className="text-3xl font-bold mt-6">{course.title}</h1>
           <p className="mt-4 text-lg">{course.description}</p>
           <button
             onClick={handlePurchase}
@@ -79,11 +97,11 @@ const CourseDetails = () => {
         {isPurchased && (
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8 justify-items-center">
             <video controls className="rounded-lg shadow-md w-full max-w-md">
-              <source src="course-video1.mp4" type="video/mp4" />
+              <source src={course.course_video[0]} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             <video controls className="rounded-lg shadow-md w-full max-w-md">
-              <source src="course-video2.mp4" type="video/mp4" />
+              <source src={course.course_video[1]} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>

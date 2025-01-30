@@ -1,6 +1,7 @@
 const express = require('express')
-const cookieparser = require("cookie-parser")
-const  path = require("path")
+const cors = require('cors')
+// const cookieparser = require("cookie-parser")
+// const  path = require("path")
 require('dotenv').config();
 
 const ConnectToDB = require("./connect")
@@ -10,13 +11,14 @@ const user_router = require("./Routes/user")
 const admin_router = require("./Routes/admin")
 const course_router = require("./Routes/courses")
 
-const {allow_login_user} = require("./Middlewares/login_user")
+
+// const {allow_login_user} = require("./Middlewares/login_user")
 
 const app = express()
 const PORT = 3000;
 
-// const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
-const url = "mongodb+srv://skaran19112005:skaran19112005@cluster0.dazuu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"   // DataBase url
+const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
+// const url = "mongodb+srv://skaran19112005:skaran19112005@cluster0.dazuu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"   // DataBase url
 ConnectToDB(url)    // Establishing connection with the DataBase
 
 
@@ -28,9 +30,12 @@ ConnectToDB(url)    // Establishing connection with the DataBase
 // app.use(express.urlencoded({extended:true}))
 // app.use(cookieparser())
 app.use(express.json())
+app.use(cors({
+    origin: "http://localhost:5173",
+}));
 
 //routes
-app.use("/" , general_router)
+// app.use("/" , general_router)
 app.use("/user" , user_router)
 app.use("/admin" , admin_router)
 app.use('/courses' , course_router)
