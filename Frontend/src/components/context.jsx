@@ -1,151 +1,167 @@
 "use client";
 import React, { createContext, useState, useEffect } from "react";
-import { contractAbi, contractAddress } from "./utils/constants";
-import toast from "react-hot-toast";
 import { ethers } from "ethers";
-import { useWinnerStore } from "@/store/winnerStore";
-import useParticipantsStore from "@/store/participantStore";
+import toast from "react-hot-toast";
+import { contractAbi, contractAddress } from "./utils/constants";
 
-export const TransactionContext = createContext();
+export const CourseContext = createContext();
 
-export const TransactionProvider = ({ children }) => {
+export const CourseProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState("");
-  // const [participants, setParticipants] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
-  const [isLotteryOpen, setIsLotteryOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // New isLoading state
-  const [participantCount, setParticipantCount] = useState("0");
-  const [amountInvested, setamountInvested] = useState(0);
-  const { setWinners } = useWinnerStore();
-  const { participants, setParticipants } = useParticipantsStore();
+  const [money, setMoney] = useState("0");
+  const [courses, setCourses] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const connectWallet = async () => {
-    setIsLoading(true); // Set loading true
-    if (typeof window !== "undefined" && window.ethereum) {
-      try {
-        const { ethereum } = window;
-        if (!ethereum) return alert("Please install MetaMask!");
-
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setCurrentAccount(accounts[0]);
-        toast.success("Wallet Connected Successfully");
-      } catch (error) {
-        console.error("Wallet connection failed", error);
-        toast.error("Unable to connect the wallet");
-        throw new Error("No Ethereum account found");
-      } finally {
-        setIsLoading(false); // Set loading false
-      }
+    setIsLoading(true);
+    try {
+      if (!window.ethereum) return alert("Please install MetaMask!");
+      
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      setCurrentAccount(accounts[0]);
+      toast.success("Wallet Connected Successfully");
+    } catch (error) {
+      console.error("Wallet connection failed", error);
+      toast.error("Unable to connect the wallet");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchContractDetails = async () => {
-    setIsLoading(true); // Set loading true
+    setIsLoading(true);
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractAbi,
-        signer
-      );
-
+      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      
       const contractOwner = await contract.owner();
       setIsOwner(contractOwner.toLowerCase() === currentAccount.toLowerCase());
-
-      const lotteryStatus = await contract.isLotteryOpen();
-      setIsLotteryOpen(lotteryStatus);
+      
+      const contractMoney = await contract.money();
+      setMoney(ethers.utils.formatEther(contractMoney));
     } catch (error) {
       console.error("Error fetching contract details:", error);
       toast.error("Failed to fetch contract details");
     } finally {
-      setIsLoading(false); // Set loading false
+      setIsLoading(false);
     }
   };
 
-//   const sendTransaction = async () => {
-//     // setIsLoading(true); // Set loading true
-//     try {
-//       const { ethereum } = window;
-//       if (!ethereum)
-//         return alert("MetaMask is required to complete this action.");
-
-//       const provider = new ethers.providers.Web3Provider(ethereum);
-//       const signer = provider.getSigner();
-//       const contract = new ethers.Contract(
-//         contractAddress,
-//         contractAbi,
-//         signer
-//       );
-
-//       const name = localStorage.getItem("userName");
-//       const tx = await contract.buyTicket(name, {
-//         value: ethers.utils.parseEther("0.005"),
-//       });
-//       await tx.wait();
-//       getParticipantCount();
-//       // setIsLoading(false); // Set loading false
-//       toast.success("Ticket purchased successfully!");
-//     } catch (error) {
-//       toast.error("Transaction failed");
-//       console.error("Transaction error:", error);
-//     }
-//   };
-
-  useEffect(() => {
-    const init = async () => {
-      const { ethereum } = window;
-      if (ethereum) {
-        window.ethereum.on("chainChanged", () => {
-          window.location.reload();
-        });
-
-        window.ethereum.on("accountsChanged", () => {
-          window.location.reload();
-        });
-        const accounts = await ethereum.request({ method: "eth_accounts" });
-        if (accounts.length) setCurrentAccount(accounts[0]);
-      }
-    };
-    init();
-  }, []);
-
-  const getAmount = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-    const amount = await contract.getTotalAmountInvested();
-    setamountInvested(ethers.utils.formatEther(amount));
+  const addCourse = async (courseID, imageHash, videoHashes, courseFee) => {
+    setIsLoading(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      
+      const tx = await contract.addCourse(courseID, imageHash, videoHashes, ethers.utils.parseEther(courseFee), { value: ethers.utils.parseEther("1") });
+      await tx.wait();
+      toast.success("Course added successfully!");
+      fetchContractDetails();
+    } catch (error) {
+      console.error("Error adding course:", error);
+      toast.error("Failed to add course");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const buyCourse = async (courseID, courseFee) => {
+    setIsLoading(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      
+      const tx = await contract.buyCourse(courseID, { value: ethers.utils.parseEther(courseFee) });
+      await tx.wait();
+      toast.success("Course purchased successfully!");
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      toast.error("Failed to purchase course");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const redeemCoins = async (coins) => {
+    setIsLoading(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      
+      const tx = await contract.redeem(coins, currentAccount);
+      await tx.wait();
+      toast.success("Coins redeemed successfully!");
+      fetchContractDetails();
+    } catch (error) {
+      console.error("Redemption failed:", error);
+      toast.error("Failed to redeem coins");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const viewAllCourses = async () => {
+    setIsLoading(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = new ethers.Contract(contractAddress, contractAbi, provider);
+      
+      const allCourses = await contract.viewAllCourses();
+      setCourses(allCourses);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      toast.error("Failed to fetch courses");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const educatorCourses = async () => {
+    setIsLoading(true);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      
+      const myCourses = await contract.viewEducatorCourses();
+      setCourses(myCourses);
+    } catch (error) {
+      console.error("Error fetching educator courses:", error);
+      toast.error("Failed to fetch educator courses");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", () => window.location.reload());
+      window.ethereum.on("chainChanged", () => window.location.reload());
+    }
+    fetchContractDetails();
+  }, [currentAccount]);
+
   return (
-    <TransactionContext.Provider
+    <CourseContext.Provider
       value={{
         connectWallet,
-        sendTransaction,
+        addCourse,
+        buyCourse,
+        redeemCoins,
+        viewAllCourses,
+        educatorCourses,
         currentAccount,
-        participants,
-        fetchParticipants,
-        fetchContractDetails,
         isOwner,
-        isLotteryOpen,
-        setIsLotteryOpen,
-        setIsOwner,
-        setParticipants,
-        openLottery,
-        revealWinners,
-        closeLottery,
-        participantCount,
-        getParticipantCount,
-        amountInvested,
-        getWinner,
+        money,
         isLoading,
-        getAmount, // Include isLoading in context value
       }}
     >
       {children}
-    </TransactionContext.Provider>
+    </CourseContext.Provider>
   );
 };

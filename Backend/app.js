@@ -17,8 +17,8 @@ const course_router = require("./Routes/courses")
 const app = express()
 const PORT = 3000;
 
-const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
-// const url = "mongodb+srv://skaran19112005:skaran19112005@cluster0.dazuu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"   // DataBase url
+// const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
+const url = "mongodb+srv://karanshah19112005:karanshah19112005@cluster0.opr7d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";   // DataBase url
 ConnectToDB(url)    // Establishing connection with the DataBase
 
 
@@ -29,10 +29,13 @@ ConnectToDB(url)    // Establishing connection with the DataBase
 // Setting up middleware for parsing the request body
 // app.use(express.urlencoded({extended:true}))
 // app.use(cookieparser())
-app.use(express.json())
 app.use(cors({
-    origin: "http://localhost:5173",
-}));
+    origin: "http://localhost:5173",  // Allowing the specific frontend origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Optional: specify allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'],  // Optional: specify allowed headers
+  }));
+app.use(express.json())
+
 
 //routes
 // app.use("/" , general_router)

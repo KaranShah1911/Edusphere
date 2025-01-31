@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';  // Add useState here
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ const LoginPage = () => {
   const setCookie = (name, value, days) => {
     const expires = new Date();
     expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;`;
+    document.cookie =` ${name}=${value};expires=${expires.toUTCString()};path=/;`;
   };
 
   // State to store form data
@@ -27,7 +28,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Retrieve role from sessionStorage
-    const role = sessionStorage.getItem("role");
+    const role = localStorage.getItem("role");
 
     if (!role) {
       alert("Role is missing. Please go back and select your role.");
@@ -49,15 +50,16 @@ const LoginPage = () => {
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body:{
+                body: JSON.stringify({
                   username: formData.username,
                   wallet_id: localStorage.getItem("walletAddress"),
-                }
+                })
               });
               if(response.status===200){
-              console.log(response.message);
-              setCookie("user",response.token,1);
-              localStorage.setItem("user" , response.data);
+                const rdata = await response.json();
+              console.log(rdata.message);
+              setCookie("user",rdata.token,1);
+              localStorage.setItem("user" , rdata.data.id);
             }else{
               alert(response.error)
             }
@@ -74,17 +76,19 @@ const LoginPage = () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+
               },
-              body:{
+              body: JSON.stringify({
                 username: formData.username,
                 wallet_id: localStorage.getItem("walletAddress"),
-              }  
+              }) 
             }
           );
           if(response.status===200){
-            setCookie("user" , response.token , 1);
-            console.log(response.message);
-            localStorage.setItem("user" , response.data);
+              const rdata = await response.json();
+              console.log(rdata.message);
+              setCookie("admin",rdata.token,1);
+              localStorage.setItem("admin" , rdata.data.id);
           }else{
             alert(response.error)
           }

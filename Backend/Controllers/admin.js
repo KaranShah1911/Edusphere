@@ -12,7 +12,7 @@ async function CreateAdmin(req , res){
 
         const admin = await Admins.create({
             admin_name : username,
-            wallet_id : wallet_id
+            metamask_wallet_id : wallet_id
         });
 
         if(!admin){
@@ -23,12 +23,12 @@ async function CreateAdmin(req , res){
 
         return res.status(200).json({
             message : "Admin created successfully",
-            user : {
+            data : {
                 id : admin._id,
                 name : admin.admin_name,
-                wallet_id : admin.wallet_id,
-                token : token
-            }
+                wallet_id : admin.metamask_wallet_id
+            },
+            token : token
         });
 
     }catch(error){
@@ -73,8 +73,8 @@ async function AddCourse(req,res){
         if(!req.user){
             return res.status(401).json({error : "Unauthorized Access"})
         }
-        const id = req.params.id;
-        req.user.courses_created.push(id);
+        const {course_id} = req.body;
+        req.user.courses_created.push(course_id);
         await req.user.save();
         return res.status(200).json({message : "Course added Successfully"});
     }catch(error){

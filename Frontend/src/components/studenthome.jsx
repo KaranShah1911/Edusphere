@@ -2,68 +2,36 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Link } from "react-router-dom";
-import { FiUser, FiDollarSign, FiBook, FiGift } from "react-icons/fi";
+import { FiUser, FiDollarSign, FiBook, FiGift,FiCopy } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useWallet } from "../context/WalletProvider";
+import { useThemeStore } from "../store/themeStore";
 
-const Edusphere = () => {
-  const [walletAddress, setWalletAddress] = useState("");
+const Studenthome = () => {
+  
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
+  
+  const { walletAddress, walletConnected, connectWallet, disconnectWallet} = useWallet();
+   const isDarkMode = useThemeStore((state) => state.isDarkMode);
+     const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const dropdownRef = useRef(null);
 
-  const setCookie = (name, value, days) => {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;`;
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    setTheme(isDarkMode ? "light" : "dark");
   };
 
-  // Connect wallet to MetaMask
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        const address = accounts[0];
-        setWalletAddress(address);
-        localStorage.setItem("walletAddress", walletAddress);
-        try{
-          const response = await fetch(
-            "http://localhost:3000/user/VerifyUser",{
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body:{
-                wallet_id : walletAddress
-              }
-            }
-          );
+
+  const handleWalletClick = () => {
+    console.log("Wallet Address:", walletAddress);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(walletAddress);
+    alert("Wallet address copied to clipboard!");
+  };
   
-          if(response.status === 200){
-            console.log(response.message);
-            localStorage.setItem("user", response.data);
-            setCookie("user", response.token, 1);
-          }else{
-            console.log(response.error);
-          }
-        }catch(error){
-          console.log(error);
-        } 
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-      }
-    } else {
-      alert("MetaMask is not installed. Please install it to connect your wallet.");
-    }
-  };
-
-  const disconnectWallet = () => {
-    localStorage.removeItem("walletAddress");
-    setWalletAddress("");
-  };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -82,38 +50,10 @@ const Edusphere = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const savedWalletAddress = localStorage.getItem("walletAddress");
-    if (savedWalletAddress) {
-      setWalletAddress(savedWalletAddress);
-    }
-  }, []);
+  
+  
 
-  useEffect(() => {
-    if (window.ethereum) {
-      const handleAccountsChanged = (accounts) => {
-        if (accounts.length > 0) {
-          setWalletAddress(accounts[0]);
-          localStorage.setItem("walletAddress", accounts[0]);
-        } else {
-          setWalletAddress("");
-          localStorage.removeItem("walletAddress");
-        }
-      };
-
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-
-      return () => {
-        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-      };
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    setTheme(isDarkMode ? "light" : "dark");
-  };
-
+ 
   return (
     <div
       className={`${
@@ -134,7 +74,7 @@ const Edusphere = () => {
         </div>
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
-            <Link to="/studenthome" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
+            <Link to="/role-selection" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
                              Home
                              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
                            </Link>
@@ -149,16 +89,39 @@ const Edusphere = () => {
           </div>
 
           {/* Wallet Button */}
-          <button
-            className="text-lg bg-gradient-to-r from-amber-500 to-amber-300 text-black py-2 px-4 rounded-full"
-            onClick={connectWallet}
-          >
-            {walletAddress ? (
-              `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-            ) : (
-              "Connect Wallet"
-            )}
-          </button>
+              <motion.button
+                      
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                          walletConnected ? 
+                          'bg-emerald-500/20 text-emerald-400' : 
+                          'bg-amber-500 hover:bg-amber-600 text-white'
+                        } transition-colors`}
+                        onClick={walletConnected ? handleWalletClick : connectWallet}
+                      >
+                        {walletConnected ? (
+                          <>
+                            <span className="hidden sm:inline">
+                            {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : ""}
+                            </span>
+                            <FiCopy 
+                              className="hover:text-amber-400 transition-colors"
+                              onClick={copyToClipboard}
+                              data-tooltip-id="copy-tooltip"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <span>Connect Wallet</span>
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 2a1 1 0 011 1v1.323l3.954.99a1 1 0 01.686.828L15.667 8H17a1 1 0 110 2h-1.333l-.012.082a5 5 0 01-4.245 4.245L11 14.667V17a1 1 0 11-2 0v-2.333l-.082-.012a5 5 0 01-4.245-4.245L4.333 10H3a1 1 0 110-2h1.333l.027-.86a1 1 0 01.686-.827L9 4.323V3a1 1 0 011-1z"/>
+                            </svg>
+                          </>
+                        )}
+                        
+                      </motion.button>
+                      
 
           {/* Theme toggle */}
           <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
@@ -202,7 +165,7 @@ const Edusphere = () => {
                       <span>Coins</span>
                     </Link>
                     <Link
-                      to="/transactions"
+                      to="/transaction"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
                     >
                       <FiDollarSign className="text-amber-500" />
@@ -246,7 +209,7 @@ const Edusphere = () => {
             <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent leading-tight">
               Revolutionizing Education with Blockchain
             </h2>
-            <p className="text-xl text-gray-600 dark:text-amber-100/80 leading-relaxed">
+            <p className={`text-xl ${isDarkMode? "text-white" : "text-black"}  leading-relaxed}`}>
               Empower your learning journey with decentralized education. Take control of your academic credentials, 
               earn rewards for your achievements, and access a world of knowledge powered by Web3 technology.
             </p>
@@ -254,9 +217,9 @@ const Edusphere = () => {
                          <Link to="/courses" className="bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-600 hover:to-amber-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-amber-500/30 transition-all duration-300">
                            Explore Courses
                          </Link>
-                         <button className="px-8 py-4 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500/10 transition-colors duration-300 font-semibold">
+                         <Link to="/howitworks" className="px-8 py-4 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500/10 transition-colors duration-300 font-semibold">
                            How It Works
-                         </button>
+                         </Link>
                        </div>
           </div>
         </div>
@@ -276,4 +239,4 @@ const Edusphere = () => {
   );
 };
 
-export default Edusphere;
+export default Studenthome;

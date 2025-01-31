@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUploadCloud, FiCopy, FiSun, FiMoon, FiMenu, FiAlertCircle } from 'react-icons/fi';
+import { FiUploadCloud, FiCopy, FiDollarSign, FiBook, FiGift,FiUser,FiSun, FiMoon, FiMenu, FiAlertCircle } from 'react-icons/fi';
 import { Tooltip } from 'react-tooltip';
 import { useThemeStore } from '../store/themeStore';
+import { useWallet } from "../context/WalletProvider";
+import axios from 'axios';
 
 const CreateCourse = () => {
 
     const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [walletConnected, setWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState(null);
+  const { theme, setTheme } = useTheme();
+  const { walletAddress, walletConnected, connectWallet } = useWallet(); 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [videoFiles, setVideoFiles] = useState([]);
@@ -38,6 +41,13 @@ const CreateCourse = () => {
       setDropdownOpen(false);
     }
   };
+
+   useEffect(() => {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, []);
 
   const handleWalletClick = () => {
     console.log("Wallet Address:", walletAddress);
@@ -81,11 +91,9 @@ const CreateCourse = () => {
 
     const metadata = {
       name: formData.title,
-      keyvalues: {
-        description: formData.description,
-        pricing: formData.pricing,
-        fileType: file.type
-      }
+      description: formData.description,
+      pricing: formData.pricing,
+      fileType: file.type 
     };
 
     formData.append('pinataMetadata', JSON.stringify(metadata));
@@ -148,32 +156,37 @@ const CreateCourse = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body : {
+          body : JSON.stringify({
               title :  courseMetadata.name,
-              description: courseMetadata.keyvalues.description,
-              authorname : localStorage.getItem("user").admin_name,
-              author_id : localStorage.getItem("user").wallet_id, 
-              price: courseMetadata.keyvalues.pricing , 
+              description: courseMetadata.description,
+              authorname : localStorage.getItem("admin"),
+              author_id : localStorage.getItem("walletAddress"), 
+              price: courseMetadata.pricing , 
               image : courseMetadata.thumbnail , 
               videos : courseMetadata.videoUrls
-          }
+          })
         });
 
         if (response.status===200) {
-          console.log(response.message);
+          const rdata = await response.json();
+          console.log(rdata.message);
           try{
-              const course_id = response.course._id; 
-              const response1 = await fetch(`http://localhost:3000/admin/add-course/${course_id}` , {
+              const course_id = rdata.course._id; 
+              const response1 = await fetch(`http://localhost:3000/admin/add-course `, {
                 method : 'POST',
                 headers : {
                   'Content-Type' : 'application/json',
-                }
+                },
+                body : JSON.stringify({
+                  course_id : course_id ,
+                })
               })
 
+              const rdata1 = await response1.json();
               if(response1.status===200){
-                console.log(response1.message);
+                console.log(rdata1.message);
               }else{
-                console.log(response1.error);
+                console.log(rdata1.error);
               }
           }catch(error){
             alert(error);
@@ -213,6 +226,8 @@ const CreateCourse = () => {
     }));
   };
 
+  
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -224,27 +239,37 @@ const CreateCourse = () => {
     visible: { y: 0, opacity: 1, transition: { duration: 0.4 } },
   };
 
-  // Enhanced connect wallet function
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ 
-          method: 'eth_requestAccounts' 
-        });
-        setWalletAddress(accounts[0]);
-        setWalletConnected(true);
-        setDropdownOpen(false);
-        // Add success notification
-      } catch (error) {
-        // Add error notification
-        console.error("Error connecting to MetaMask:", error);
-      }
-    } else {
-      // Show modal instead of alert
-      const installMetaMask = confirm("MetaMask is required. Would you like to install it?");
-      if (installMetaMask) window.open("https://metamask.io/download/", "_blank");
-    }
+  
+  
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    setTheme(isDarkMode ? "light" : "dark");
   };
+  
+  // State for file upload
+const [selectedFiles, setSelectedFiles] = useState([]);
+
+const handleFileChange = (event) => {
+  const files = event.target.files;
+  if (files.length > 0) {
+    setSelectedFiles([...selectedFiles, ...files]);
+  }
+};
+
+const handleDrop = (event) => {
+  event.preventDefault();
+  const files = event.dataTransfer.files;
+  if (files.length > 0) {
+    setImageFile(files[0]); // Take only the first file
+  }
+};
+const handleDragOver = (event) => {
+  event.preventDefault();
+};
+
+
+
 
   return (
     <motion.div
@@ -256,101 +281,150 @@ const CreateCourse = () => {
         "bg-gradient-to-br from-amber-50 to-white text-gray-800"}`}
     >
       {/* Enhanced Navigation */}
-      <nav className="sticky top-0 z-50 backdrop-blur-lg border-b border-amber-100/20">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-3">
-            <img
-              src="/images/Edusphere logo.png"
-              alt="Edusphere Logo"
-              className="w-16 h-12 hover:scale-105 transition-transform"
-            />
-            <motion.h1 
-              className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent"
-              whileHover={{ scale: 1.02 }}
-            >
-              Edusphere
-            </motion.h1>
-          </Link>
-
-          <div className="flex items-center gap-6">
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center gap-6">
-              <NavLink to="/courses">Courses</NavLink>
-              <NavLink to="/contest">Contest</NavLink>
-              <NavLink to="/manage-courses">Manage</NavLink>
-            </div>
-
-            {/* Wallet Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                walletConnected ? 
-                'bg-emerald-500/20 text-emerald-400' : 
-                'bg-amber-500 hover:bg-amber-600 text-white'
-              } transition-colors`}
-              onClick={walletConnected ? handleWalletClick : connectWallet}
-            >
-              {walletConnected ? (
-                <>
-                  <span className="hidden sm:inline">
-                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                  </span>
-                  <FiCopy 
-                    className="hover:text-amber-400 transition-colors"
-                    onClick={copyToClipboard}
-                    data-tooltip-id="copy-tooltip"
-                  />
-                </>
-              ) : (
-                <>
-                  <span>Connect Wallet</span>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2a1 1 0 011 1v1.323l3.954.99a1 1 0 01.686.828L15.667 8H17a1 1 0 110 2h-1.333l-.012.082a5 5 0 01-4.245 4.245L11 14.667V17a1 1 0 11-2 0v-2.333l-.082-.012a5 5 0 01-4.245-4.245L4.333 10H3a1 1 0 110-2h1.333l.027-.86a1 1 0 01.686-.827L9 4.323V3a1 1 0 011-1z"/>
-                  </svg>
-                </>
-              )}
-            </motion.button>
-
-            {/* Dark Mode Toggle */}
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              className="p-2 rounded-full hover:bg-amber-100/20"
-              onClick={toggleDarkMode}
-            >
-              {isDarkMode ? (
-                <FiSun className="w-6 h-6 text-amber-400" />
-              ) : (
-                <FiMoon className="w-6 h-6 text-gray-600" />
-              )}
-            </motion.button>
-
-            {/* Mobile Menu */}
-            <div className="relative md:hidden" ref={dropdownRef}>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                className="p-2 rounded-full hover:bg-amber-100/20"
-                onClick={toggleDropdown}
-              >
-                <FiMenu className="w-6 h-6" />
-              </motion.button>
-
-              <AnimatePresence>
-                {dropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border dark:border-gray-700"
-                  >
-                    {/* ... dropdown items ... */}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-      </nav>
+     {/* Navbar Section */}
+           <nav className="flex justify-between items-center p-6">
+             <div className="flex items-center space-x-2">
+               <img
+                 src="/images/Edusphere logo.png"
+                 alt="Logo"
+                 className="w-12 h-12 rounded-full shadow-lg"
+               />
+     
+               <h1 className="text-4xl font-bold ">Edusphere</h1>
+             </div>
+             <div className="flex items-center space-x-8">
+               <div className="flex space-x-8">
+                 <Link
+                   to="/educatorhome"
+                   className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
+                 >
+                   Home
+                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                 </Link>
+                 <Link
+                   to="/createcourses"
+                   className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
+                 >
+                   Create Courses
+                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                 </Link>
+                 <Link
+                   to="/contest"
+                   className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
+                 >
+                   Student Insights
+                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                 </Link>
+               </div>
+     
+               {/* Wallet Button */}
+               <motion.button
+                             whileHover={{ scale: 1.05 }}
+                             whileTap={{ scale: 0.95 }}
+                             className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+                               walletConnected ? 
+                               'bg-emerald-500/20 text-emerald-400' : 
+                               'bg-amber-500 hover:bg-amber-600 text-white'
+                             } transition-colors`}
+                             onClick={walletConnected ? handleWalletClick : connectWallet}
+                           >
+                             {walletConnected ? (
+                               <>
+                                 <span className="hidden sm:inline">
+                                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                                 </span>
+                                 <FiCopy 
+                                   className="hover:text-amber-400 transition-colors"
+                                   onClick={copyToClipboard}
+                                   data-tooltip-id="copy-tooltip"
+                                 />
+                               </>
+                             ) : (
+                               <>
+                                 <span>Connect Wallet</span>
+                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                   <path d="M10 2a1 1 0 011 1v1.323l3.954.99a1 1 0 01.686.828L15.667 8H17a1 1 0 110 2h-1.333l-.012.082a5 5 0 01-4.245 4.245L11 14.667V17a1 1 0 11-2 0v-2.333l-.082-.012a5 5 0 01-4.245-4.245L4.333 10H3a1 1 0 110-2h1.333l.027-.86a1 1 0 01.686-.827L9 4.323V3a1 1 0 011-1z"/>
+                                 </svg>
+                               </>
+                             )}
+                           </motion.button>
+     
+               {/* Theme toggle */}
+               <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
+                 {isDarkMode ? "🌙" : "☀️"}
+               </button>
+     
+               {/* Dropdown Menu */}
+               <div className="relative" ref={dropdownRef}>
+                 <button
+                   onClick={toggleDropdown}
+                   className={`text-lg bg-gradient-to-r from-amber-500 to-amber-300 text-black py-2 px-4 rounded-full ${
+                     walletAddress ? "" : "cursor-not-allowed opacity-50"
+                   }`}
+                   disabled={!walletAddress}
+                 >
+                   ☰
+                 </button>
+                 <AnimatePresence>
+                   {dropdownOpen && walletAddress && (
+                     <motion.div
+                       initial={{ opacity: 0, y: -10 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       exit={{ opacity: 0, y: -10 }}
+                       className={`absolute right-0 mt-2 w-64 origin-top-right rounded-xl shadow-xl backdrop-blur-lg ${
+                         isDarkMode
+                           ? "bg-gray-800/95 border border-gray-700"
+                           : "bg-white/95 border border-amber-100"
+                       } z-50`}
+                     >
+                       <div className="p-2 space-y-1">
+                         <Link
+                           to={walletAddress ? "/signup" : "#"}
+                           className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+                             walletAddress
+                               ? "hover:bg-amber-500/10"
+                               : "opacity-50 cursor-not-allowed"
+                           }`}
+                         >
+                           <FiUser className="text-amber-500" />
+                           <span>Add Details</span>
+                         </Link>
+                         <Link
+                           to="/coins"
+                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                         >
+                           <FiDollarSign className="text-amber-500" />
+                           <span>Coins</span>
+                         </Link>
+                         <Link
+                           to="/transaction"
+                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                         >
+                           <FiDollarSign className="text-amber-500" />
+                           <span>Transactions</span>
+                         </Link>
+                         <Link
+                           to="/managecourses"
+                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                         >
+                           <FiBook className="text-amber-500" />
+                           <span>Manage Courses</span>
+                         </Link>
+                         <Link
+                           to="/redeem"
+                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                         >
+                           <FiGift className="text-amber-500" />
+                           <span>Redeem</span>
+                         </Link>
+                       </div>
+                     </motion.div>
+                   )}
+                 </AnimatePresence>
+               </div>
+             </div>
+           </nav>
+           <div className="border-b-4 border-gold"></div>
 
       {/* Main Content */}
       <motion.div 
@@ -426,7 +500,7 @@ const CreateCourse = () => {
               {/* Reward Coins Field */}
               <div className="relative">
                 <label className="block text-sm font-medium mb-2">
-                  Course Price
+                  Pricing
                 </label>
                 <div className="relative">
                   <input
@@ -434,9 +508,9 @@ const CreateCourse = () => {
                     id="pricing"
                     name="pricing"
                     value={formData.pricing}
-                    onChange={handleInputChange}
+                onChange={handleInputChange}
                     className="w-full pl-12 pr-4 py-3 bg-transparent border dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-amber-400 outline-none transition-all"
-                    placeholder="e.g 0.1 ETH"
+                    placeholder="eg 0.1 ETH"
                   />
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <span className="w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
@@ -447,28 +521,51 @@ const CreateCourse = () => {
               </div>
 
               {/* File Upload */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">Course Content</label>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="group border-2 border-dashed dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer transition-colors hover:border-amber-400 hover:bg-amber-50/20"
-                >
-                  <FiUploadCloud className="mx-auto w-8 h-8 text-gray-400 mb-4 group-hover:text-amber-400" />
-                  <p className="text-gray-500 group-hover:text-amber-400">
-                    Drag & drop files or{' '}
-                    <span className="text-amber-500 font-medium">browse</span>
-                  </p>
-                  <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    multiple
-                    className="hidden"
-                  />
-                </motion.div>
-              </div>
+{/* File Upload */}
+
+<div className="space-y-2">
+  <label className="block text-sm font-medium">Course Thumbnail</label>
+  <motion.label
+    whileHover={{ scale: 1.02 }}
+    htmlFor="image"
+    className="group border-2 border-dashed dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer transition-colors hover:border-amber-400 hover:bg-amber-50/20 block"
+    onDrop={handleDrop}
+    onDragOver={handleDragOver}
+  >
+    <FiUploadCloud className="mx-auto w-8 h-8 text-gray-400 mb-4 group-hover:text-amber-400" />
+    <p className="text-gray-500 group-hover:text-amber-400">
+      Drag & drop an image or{" "}
+      <span className="text-amber-500 font-medium">click to upload</span>
+    </p>
+  </motion.label>
+  
+  {/* <input
+    id="image"
+    type="file"
+    accept="image/*"
+    className="hidden"
+    onChange={handleImageUpload}
+  /> */}
+  <input
+    type="file"
+    id="image"
+    name="image"
+    accept="image/*"
+    multiple
+    className="hidden"
+    onChange={handleImageUpload}
+  />
+
+  {/* Display selected files */}
+  {imageFile && (
+    <div className="mt-4">
+      <h3 className="text-sm font-medium">Selected Image:</h3>
+      <p className="mt-2 text-gray-700 dark:text-gray-300 text-sm">
+        {imageFile.name}
+      </p>
+    </div>
+  )}
+</div>
 
               {/* Form Actions */}
               <div className="flex flex-col gap-4 mt-8">

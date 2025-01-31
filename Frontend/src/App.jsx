@@ -1,5 +1,6 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { WalletProvider } from "./context/WalletProvider.jsx";
+import { BrowserRouter as Router, Route, Routes,Navigate } from 'react-router-dom';
 import Edusphere from './components/Edusphere.jsx'; // Import EduSphere component
 import RoleSelection from './components/role-selection.jsx'; // Import RoleSelection component
 import { ThemeProvider,useTheme } from './components/Themecontext.jsx';
@@ -16,6 +17,7 @@ import SignUp from './components/signup.jsx';
 import ThemeToggle from './components/themetoggle.jsx';
 import MyLearning from './components/mylearning.jsx';
 import CourseDetails from './components/coursedetails1.jsx';
+import HowItWorks from './components/howitworks.jsx';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
@@ -26,9 +28,19 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 
 const App = () => {
+  const [walletAddress, setWalletAddress] = useState("");
+
+  // Check if wallet is connected when the app loads
+  useEffect(() => {
+    const savedWallet = localStorage.getItem("walletAddress");
+    if (savedWallet) {
+      setWalletAddress(savedWallet);
+    }
+  }, []);
   return (
     
     <ThemeProvider> {/* Wrap ThemeProvider around the entire router */}
+     <WalletProvider>
       <Router>
         <div>
         <Routes>
@@ -39,15 +51,19 @@ const App = () => {
           <Route path="/educatorhome" element={<EduSphere2 />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/course/:id" element={<CourseDetailsPage />} />
+          <Route path="/coursedetails" element={<CourseDetailsPage />} />
+          
           <Route path="/createcourses" element={<CreateCourse />} />
           <Route path="/managecourses" element={<Managecourse />} />
           <Route path="/redeem" element={<Redeem />} />
           <Route path="/transaction" element={<Transaction />} />
           <Route path="/contest" element={<Contest />} />
+          
           <Route path="/signup" element={<SignUp />} />
           <Route path="/themetoggle" element={<ThemeToggle />} />
             <Route path="/mylearning" element={<MyLearning />} />
             <Route path="/mylearning/:id" element={<CourseDetails />} />
+              <Route path="/howitworks" element={<HowItWorks />} />
          
          {/* Route for the animation */}
          <Route
@@ -65,6 +81,7 @@ const App = () => {
         </Routes>
         </div>
       </Router>
+      </WalletProvider>
     </ThemeProvider>
 
             

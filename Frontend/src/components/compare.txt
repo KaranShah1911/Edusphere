@@ -1,0 +1,253 @@
+import { motion } from 'framer-motion';
+import { FiLock, FiShield, FiDatabase, FiDollarSign, FiCloud, FiAward, FiMoon, FiSun } from 'react-icons/fi';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useThemeStore } from '../store/themeStore';
+import '../styles/global.css'; // Add this at the top of your component file
+
+const HowItWorks = () => {
+  const { isDarkMode, toggleTheme } = useThemeStore();
+  
+  // Animation variants
+  const slideIn = (direction = 'left') => ({
+    hidden: { opacity: 0, x: direction === 'left' ? -100 : 100 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: 'easeOut' } }
+  });
+
+  const fadeIn = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const features = [
+    {
+      icon: <FiLock className="w-8 h-8" />,
+      title: "Decentralized Ownership",
+      content: "Your purchased courses are stored permanently on the blockchain. Even if administrators remove a course, your access remains intact through smart contracts.",
+      animation: "https://lottie.host/5603972b-ac23-48b5-84d9-19ac7ed462a3/FIokjQbPsW.lottie",
+    },
+    {
+      icon: <FiShield className="w-8 h-8" />,
+      title: "Immutable Credentials",
+      content: "All certifications and achievements are permanently recorded on-chain, creating tamper-proof academic records recognized globally.",
+      animation: "https://lottie.host/c35cafd9-47c8-40d1-b8da-b1ec5f438ce8/BOkx6yNfDC.lottie",
+    },
+    {
+      icon: <FiDatabase className="w-8 h-8" />,
+      title: "Blockchain Backend",
+      content: "Leveraging Ethereum smart contracts for enrollments and Hyperledger Fabric for secure academic records storage.",
+      animation: "https://lottie.host/35b0410c-5260-4043-982f-3abc2d505971/DgMX7iJaVi.lottie",
+    }
+  ];
+
+  const steps = [
+    {
+      title: "1. Earn EdusTokens",
+      content: "Complete courses and challenges to earn our native EdusTokens (EDU)",
+      icon: <FiDollarSign className="w-6 h-6" />
+    },
+    {
+      title: "2. Decentralized Storage",
+      content: "Course content secured on IPFS with blockchain-based access control",
+      icon: <FiCloud className="w-6 h-6" />
+    },
+    {
+      title: "3. Lifetime Access",
+      content: "Your educational achievements permanently stored on-chain",
+      icon: <FiAward className="w-6 h-6" />
+    }
+  ];
+
+  return (
+    <div className={`min-h-screen ${
+      isDarkMode
+        ? "bg-gradient-to-r from-black to-gray-700 text-gold"
+        : "bg-gradient-to-r from-yellow-100 to-white text-black"
+    } transition-colors duration-300`}>
+      {/* Dark Mode Toggle */}
+      <motion.button
+        onClick={toggleTheme}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.1 }}
+        className={`fixed top-6 right-6 p-3 rounded-full z-50 ${
+          isDarkMode 
+            ? 'bg-gray-800 text-amber-400 hover:bg-gray-700' 
+            : 'bg-amber-100 text-amber-600 hover:bg-amber-200'
+        } transition-colors duration-300`}
+      >
+        {isDarkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
+      </motion.button>
+
+      <div className="container mx-auto px-6 py-16 relative">
+        {/* Animated Background Grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isDarkMode ? 0.1 : 0.05 }}
+          className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"
+        />
+
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent"
+        >
+          How Edusphere Works
+        </motion.h1>
+
+        {/* Core Features Section */}
+        <motion.div 
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="space-y-28 mb-28"
+        >
+          {features.map((feature, index) => (
+            <motion.div 
+              key={index}
+              variants={slideIn(index % 2 === 0 ? 'left' : 'right')}
+              className="flex flex-col lg:flex-row items-center gap-12 even:lg:flex-row-reverse"
+            >
+              <div className="flex-1 relative">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="relative overflow-hidden rounded-3xl"
+                >
+                  <DotLottieReact
+                    src={feature.animation}
+                    loop
+                    autoplay
+                    className="w-full h-96"
+                  />
+                  <div className="absolute inset-0 border-2 border-amber-400/20 rounded-3xl pointer-events-none" />
+                </motion.div>
+              </div>
+              
+              <motion.div 
+                variants={fadeIn}
+                className="flex-1 space-y-6 relative"
+              >
+                <div className={`absolute -top-4 -left-4 w-24 h-24 bg-amber-400/10 blur-3xl rounded-full`} />
+                <div className={`inline-flex items-center gap-3 p-4 rounded-xl backdrop-blur-sm ${
+                  isDarkMode ? "bg-gray-800/30" : "bg-amber-100/50"
+                }`}>
+                  {feature.icon}
+                  <h3 className="text-3xl font-bold">{feature.title}</h3>
+                </div>
+                <p className="text-xl leading-relaxed opacity-90">
+                  {feature.content}
+                </p>
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Blockchain Architecture Section */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          className="mb-28 p-8 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-white relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-noise opacity-10 pointer-events-none" />
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
+            className="absolute -right-48 -top-48 w-96 h-96 bg-gradient-to-r from-amber-600/30 to-transparent rounded-full"
+          />
+          <h2 className="text-4xl font-bold mb-8 relative">Blockchain Architecture</h2>
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {[
+              "Smart Contracts",
+              "IPFS Storage",
+              "Hyperledger Fabric"
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                className="p-6 bg-white/10 rounded-xl backdrop-blur-sm hover:bg-white/20 transition-all duration-300"
+              >
+                <h3 className="text-2xl font-bold mb-4">{item}</h3>
+                <p>{/* Content */}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Process Steps */}
+        <motion.div 
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          className="grid md:grid-cols-3 gap-8 mb-28"
+        >
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              variants={fadeIn}
+              className={`p-8 rounded-2xl ${
+                isDarkMode ? "bg-gray-800/30" : "bg-white"
+              } backdrop-blur-sm hover:shadow-2xl transition-all duration-300`}
+            >
+              <div className="inline-block p-4 mb-4 rounded-lg bg-amber-500/20 text-amber-500">
+                {step.icon}
+              </div>
+              <h3 className="text-2xl font-bold mb-4">{step.title}</h3>
+              <p className="opacity-90">{step.content}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Unique Selling Points */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="text-center"
+        >
+          <h2 className="text-4xl font-bold mb-8">Why Choose Edusphere?</h2>
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            className="grid md:grid-cols-2 gap-8"
+          >
+            {[
+              "True Ownership",
+              "Secure Verification"
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                variants={slideIn(index % 2 === 0 ? 'left' : 'right')}
+                className={`p-8 rounded-2xl ${
+                  isDarkMode ? "bg-gray-800/30" : "bg-amber-50"
+                } backdrop-blur-sm hover:transform hover:translate-y-[-10px] transition-all duration-300`}
+              >
+                <h3 className="text-2xl font-bold mb-4">{item}</h3>
+                <p>{/* Content */}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default HowItWorks;

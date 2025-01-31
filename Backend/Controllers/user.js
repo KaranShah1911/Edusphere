@@ -31,7 +31,6 @@ async function VerifyUser(req ,res){
             message : "Student Logged in successfully",
             data : {
                 id : user._id,
-                name : user.user_name,
                 wallet_id : user.metamask_wallet_id
             },
             token : token
@@ -74,7 +73,6 @@ async function CreateUser(req , res){
             message : "Student Signed up successfully",
             data:{
                 id : user._id,
-                name : user.user_name,
                 wallet_id : user.metamask_wallet_id,
             },
             token : token
@@ -117,7 +115,7 @@ async function DisplayMyLearning(req , res){
 async function DisplayTransactionHistory(req , res){
     try{
         if(!req.user){
-            return res.status(400).json({error : "User is not logged in or Signed up"});   
+            return res.status(201).json({error : "User is not logged in or Signed up"});   
         }
 
         const id = req.user._id;
@@ -125,7 +123,7 @@ async function DisplayTransactionHistory(req , res){
         try{
             const user_transactions = await Transactions.findById(id).populate("course_purchased");
             if(!user_transactions){
-                return res.status(201).json({error : "No Transaction done yet"});
+                return res.status(201).json({error : "No Transaction done yet" , transaction_history: []});
             }else{
                 return res.status(200).json({message : "Transactions history fetched successfully", transaction_history : user_transactions});
             }

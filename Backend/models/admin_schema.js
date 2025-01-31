@@ -7,7 +7,7 @@ const AdminSchema = new mongoose.Schema({
         required:true
     },
     
-    wallet_id:
+    metamask_wallet_id:
     {
         type: String,
         required:true,
