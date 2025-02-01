@@ -392,21 +392,24 @@ const CoursesPage = () => {
               </h3>
               
               <div className="flex items-center justify-between mb-4">
+                {
+                course.category.map((category, index) => (
                 <span className={`px-3 py-1 rounded-full text-sm ${
                   isDarkMode ?
                   'bg-purple-900/30 text-purple-400' :
                   'bg-purple-100 text-purple-600'
                 }`}>
-                  {course.category}
+                  {category}
                 </span>
+                ))}
               </div>
-                {/* <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <span className={`text-lg font-bold ${
-                    isDarkMode ? 'text-green-400' : 'text-green-600'
+                    isDarkMode ? 'text-blue-400' : 'text-blue-600'
                   }`}>
-                    ${course.sale_price_usd}
+                    Price : {course.course_price} ETH
                   </span>
-                </div> */}
+                </div>
 
               <button
                 onClick={() => handleVisitCourse(course)}

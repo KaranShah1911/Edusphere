@@ -147,12 +147,10 @@ async function PurchaseCourse(req , res){
         if(!course){
             return res.status(404).json({error : "Course not found."});
         }
-        const purchased_courses = req.user.courses_enrolled;
-        if(purchased_courses.includes(course_id)){
+        if(req.user.courses_enrolled.includes(course_id)){
             return res.status(200).json({message : "Course already purchased."});
         }
-        purchased_courses.push(course_id);
-        req.user.courses_enrolled = purchased_courses;
+        req.user.courses_enrolled.push(course_id);
         await req.user.save();
     
         const new_transaction = await Transactions.create({user_id : req.user._id , transaction_address : transaction_id , courses_purchased : course_id});
@@ -182,9 +180,8 @@ async function UpdateCoins(req,res){
             return res.status(401).json({error : "Unauthorized Access"})
         }
         const user = await Users.findById(req.user._id);
-        const {coins} = req.body;
-        const usercoins = user.coins;
-        user.coins = usercoins + coins;
+        const {coins} = req.body;   
+        user.coins = coins;
         await user.save();
 
         return res.status(200).json({message : "Coins updated successfully", coins : coins});

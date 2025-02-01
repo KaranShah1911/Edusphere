@@ -136,7 +136,7 @@ const Edusphere = () => {
 
             <div className="flex items-center gap-6">
               <Link
-                to="/Edusphere"
+                to="/"
                 className={`group relative text-lg font-medium ${
                   isDarkMode ? "text-white" : "text-gray-900"
                 } hover:text-amber-500 transition-colors`}

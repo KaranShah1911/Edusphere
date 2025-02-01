@@ -7,6 +7,7 @@ import { Tooltip } from 'react-tooltip';
 import { useThemeStore } from '../store/themeStore';
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
+import process from 'process';
 
 const CreateCourse = () => {
 
@@ -22,7 +23,7 @@ const CreateCourse = () => {
     title: '',
     description: '',
     pricing: '',
-    category: ''
+    category: []
   });
 
   const dropdownRef = useRef(null);
@@ -95,7 +96,6 @@ const CreateCourse = () => {
       keyvalues: {
         description: formData.description,
         pricing: formData.pricing,
-        category: formData.category,
         fileType: file.type
       },
     };
@@ -104,14 +104,16 @@ const CreateCourse = () => {
     pinataFormData.append('pinataOptions', JSON.stringify({ cidVersion: 0 }));
 
     try {
+      console.log(import.meta.env.VITE_PINATA_API_KEY);
+      console.log(import.meta.env.VITE_PINATA_API_SECRET);
       const res = await axios.post(
         'https://api.pinata.cloud/pinning/pinFileToIPFS',
         pinataFormData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'pinata_api_key': process.env.REACT_APP_PINATA_API_KEY,
-            'pinata_secret_api_key': process.env.REACT_APP_PINATA_SECRET_API_KEY
+            'pinata_api_key': import.meta.env.VITE_PINATA_API_KEY,
+            'pinata_secret_api_key': import.meta.env.VITE_PINATA_API_SECRET
           }
         }
       );
@@ -156,7 +158,7 @@ const CreateCourse = () => {
           title: courseMetadata.title,
           description: courseMetadata.description,
           price: Number(courseMetadata.pricing),
-          category: courseMetadata.category,
+          category: courseMetadata.category.split(','),
           image_hash: courseMetadata.thumbnail,
           video_hash: courseMetadata.videoUrls,
       };

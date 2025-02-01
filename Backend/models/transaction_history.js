@@ -10,7 +10,7 @@ const TransactionSchema = new mongoose.Schema({
         required : true
     },
 
-    purchases_date: 
+    purchased_date: 
     {
         type: Date, 
         default: Date.now()

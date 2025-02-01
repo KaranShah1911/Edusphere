@@ -10,24 +10,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useThemeStore } from '../store/themeStore';
 import { useWallet } from "../context/WalletProvider";
+import axios from 'axios';
 
-// Define courses
-const courses = [
-  {
-    name: "React for Beginners",
-    category: "Web Development",
-    image: "/images/react-course.jpg",
-    description: "Python And Flask Framework Complete Course, Depth Introduction To Python Programming And Python Web framework Flask.",
-    sale_price_usd: 19.99
-  },
-  {
-    name: "Mastering JavaScript",
-    category: "Programming",
-    image: "/images/js-course.jpg",
-    description: "Python And Flask Framework Complete Course, Depth Introduction To Python Programming And Python Web framework Flask.",
-    sale_price_usd: 0 // Mark as free/completed
-  }
-];
+
 
 const MyLearningPage = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -47,7 +32,6 @@ const MyLearningPage = () => {
   const menuRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  // const purchasedCourses = courses;// Use the defined courses array
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -64,8 +48,8 @@ const MyLearningPage = () => {
         const response = await axios.get(`http://localhost:4000/user/my-learning`,
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
             }
           }
         );
@@ -73,9 +57,10 @@ const MyLearningPage = () => {
         if (response.status !== 200) {
           alert(response.data.error);
         } else {
+          console.log(response.data)
           alert(response.data.message);
           completedCourse(response.data.courses_completed);
-          purchasedCourses(response.data.course_enrolled);
+          purchasedCourses(response.data.courses_enrolled);
         }
       } catch (error) {
         console.error('Failed to fetch courses:', error);
@@ -136,12 +121,12 @@ const MyLearningPage = () => {
   const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const filteredCourses = purchasedCourses.filter(course =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCourses = purchased.filter(course =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleVisitCourse = (course) => {
-    navigate(`/mylearning/${course.name}`, { state: { course } });
+    navigate(`/mylearning/${course.title}`, { state: { course } });
   };
 
   const DashboardDropdown = () => (
@@ -393,8 +378,8 @@ const MyLearningPage = () => {
             >
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={course.image}
-                  alt={course.name}
+                  src={"https://gateway.pinata.cloud/ipfs/"+course.course_image}
+                  alt={course.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -402,28 +387,34 @@ const MyLearningPage = () => {
 
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className={`text-sm font-medium ${darkMode ? 'text-purple-400' : 'text-purple-600'
-                    }`}>
-                    {course.category}
-                  </span>
+                {
+                course.category.map((category, index) => (
+                <span className={`px-3 py-1 rounded-full text-sm ${
+                  isDarkMode ?
+                  'bg-purple-400/30 text-purple-900' :
+                  'bg-purple-100 text-purple-600'
+                }`}>
+                  {category}
+                </span>
+                ))}
                   <div className="flex items-center gap-2 text-sm">
                     <FiClock className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-                    <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>12h 45m</span>
+                    <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>{course.updatedAt.slice(0,10)}</span>
                   </div>
                 </div>
 
                 <h3 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'
                   }`}>
-                  {course.name}
+                  {course.title}
                 </h3>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${course.sale_price_usd === 0 ? 'bg-green-500' : 'bg-blue-500'
+                    <div className={`w-2 h-2 rounded-full ${course.course_price === 0 ? 'bg-green-500' : 'bg-blue-500'
                       }`} />
                     <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'
                       }`}>
-                      {course.sale_price_usd === 0 ? 'Completed' : 'In Progress'}
+                      {course.course_price === 0 ? 'Completed' : 'In Progress'}
                     </span>
                   </div>
 

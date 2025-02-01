@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate} from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Web3 from 'web3';
 import { FiUser, FiDollarSign, FiBook, FiGift, FiCopy } from "react-icons/fi";
@@ -12,12 +12,13 @@ const CourseDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { state } = useLocation();
   const { course } = state || {};
-  const [isPurchased, setIsPurchased] = useState(false);
+  let [isPurchased, setIsPurchased] = useState(false);
   const { walletAddress, walletConnected, connectWallet } = useWallet();
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const { theme, setTheme } = useTheme();
-
+  const navigate = useNavigate();
+  
   const dropdownRef = useRef(null);
 
   const toggleTheme = () => {
@@ -54,9 +55,12 @@ const CourseDetails = () => {
 
   const handlePurchase = async () => {
     try {
-      const web3 = new Web3(window.ethereum);
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setIsPurchased(true);
+      // const web3 = new Web3(window.ethereum);
+      // await window.ethereum.request({ method: 'eth_requestAccounts' });
+      // setIsPurchased(true);
+      isPurchased = true;
+
+      console.log(isPurchased)
     } catch (error) {
       console.error('MetaMask error', error);
     }
@@ -90,11 +94,15 @@ const CourseDetails = () => {
           alert(response.data.error);
         } else {
           alert(response.data.message);
+          
         }
       } catch (error) {
         console.error('Error purchasing course:', error);
       }
+    } else {
+      alert("Course not purchased");
     }
+    navigate("/mylearning");
   };
 
   useEffect(() => {
@@ -141,8 +149,8 @@ const CourseDetails = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`flex items-center gap-2 px-4 py-2 rounded-full ${walletConnected ?
-                'bg-emerald-500/20 text-emerald-400' :
-                'bg-amber-500 hover:bg-amber-600 text-white'
+              'bg-emerald-500/20 text-emerald-400' :
+              'bg-amber-500 hover:bg-amber-600 text-white'
               } transition-colors`}
             onClick={walletConnected ? handleWalletClick : connectWallet}
           >
@@ -249,19 +257,22 @@ const CourseDetails = () => {
           <h1 className="text-3xl font-bold mt-6">{course.title}</h1>
           <p className="mt-4 text-lg">{course.description}</p>
           <div className="text flex items-center justify-between mb-4">
-            <span className={`px-3 py-1 rounded-full text-sm ${isDarkMode ?
-                'bg-purple-900/30 text-purple-400' :
-                'bg-purple-100 text-purple-600'
-              }`}>
-              {course.category}
-            </span>
+            {
+              course.category.map((category, index) => (
+                <span className={`m-auto mt-5 px-3 py-1 rounded-full text-xl ${isDarkMode ?
+                    'bg-purple-900/30 text-purple-400' :
+                    'bg-purple-100 text-purple-600'
+                  }`}>
+                  {category}
+                </span>
+              ))}
           </div>
           <button
             onClick={handlePurchase}
             disabled={isPurchased}
             className={`mt-6 px-6 py-3 rounded-lg text-white font-semibold ${isPurchased
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600 transition-colors duration-300'
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600 transition-colors duration-300'
               }`}
           >
             {isPurchased ? 'Course Purchased' : 'Buy Now'}
@@ -269,14 +280,14 @@ const CourseDetails = () => {
         </div>
 
         {/* Video Section */}
-        {isPurchased && course.course_video.map((video, index) => (
+        {/* {isPurchased && course.course_video.map((video, index) => (
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8 justify-items-center">
             <video controls className="rounded-lg shadow-md w-full max-w-md">
               <source src={"https://gateway.pinata.cloud/ipfs/" + video} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
-        ))}
+        ))} */}
       </div>
 
       {/* Footer */}
