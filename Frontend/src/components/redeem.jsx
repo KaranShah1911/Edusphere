@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
+import {CourseContext, CourseProvider} from "./context"
 import { FiUser, FiDollarSign, FiBook, FiGift, FiCopy } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWallet } from "../context/WalletProvider";
@@ -15,6 +16,9 @@ const RedeemPage = () => {
   const [account, setAccount] = useState(null);
   const { walletAddress, walletConnected, connectWallet } = useWallet();
   const [coins, setCoins] = useState(0);
+  const {
+    redeemCoins,
+  } = useContext(CourseContext);
 
   const dropdownRef = useRef(null);
 
@@ -56,8 +60,22 @@ const RedeemPage = () => {
   }, []);
 
   const handleWalletClick = async (reqcoins) => {
-    console.log(reqcoins);
+    console.log("handleWalletClick called with:", reqcoins);
     console.log("Wallet Address:", walletAddress);
+    console.log("redeemCoins function:", redeemCoins);
+
+    if (!redeemCoins) {
+      console.error("redeemCoins is undefined! CourseContext might not be wrapping this component.");
+      return;
+    }
+
+    try {
+      console.log("Calling redeemCoins...");
+      await redeemCoins(reqcoins);
+      console.log("redeemCoins completed successfully!");
+    } catch (error) {
+      console.error("Error calling redeemCoins:", error);
+  }
 
     try {
       // Get token from cookies
@@ -65,7 +83,7 @@ const RedeemPage = () => {
         .split("; ")
         .find((row) => row.startsWith("user="));
       if (!cookie) {
-        throw new Error("User is not logged in or registered");
+        // throw new Error("User is not logged in or registered");
       }
 
       const token = cookie.split("=")[1];
@@ -154,40 +172,20 @@ const RedeemPage = () => {
   }, [isDarkMode]);
 
   // Handle Buy functionality
-  const handleBuy = async (coinsRequired, ethers) => {
-    if (window.ethereum) {
-      try {
-        if (!account) {
-          alert("Please connect your wallet first!");
-          return;
-        }
-
-        const transactionParameters = {
-          to: account, // Placeholder: Replace with recipient's wallet address
-          from: account,
-          value: ethersToHex(ethers), // Convert Ether value to Hexadecimal
-        };
-
-        await window.ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [transactionParameters],
-        });
-
-        alert(`Transaction successful! You spent ${coinsRequired} coins.`);
-      } catch (error) {
-        console.error("Transaction failed:", error);
-        alert("Transaction failed. Please try again.");
-      }
-    } else {
-      alert('MetaMask is not installed!');
-    }
-  };
-
-  // Helper function to convert Ether to Hex
-  const ethersToHex = (ethers) => {
-    const wei = ethers * 1e18; // Convert Ether to Wei
-    return `0x${parseInt(wei).toString(16)}`; // Convert Wei to Hex
-  };
+  // const handleBuy = async (coinsRequired) => {
+  //   if (!walletConnected) {
+  //     alert("Please connect your wallet first!");
+  //     return;
+  //   }
+  //   try {
+  //     const transaction = await CourseProvider.redeemCoins(coinsRequired);
+  //     await transaction.wait();
+  //     alert(`Redemption successful! You spent ${coinsRequired} coins.`);
+  //   } catch (error) {
+  //     console.error("Error redeeming coins:", error);
+  //     alert("Failed to redeem coins.");
+  //   }
+  // };
 
   const offers = [
     { coinsRequired: 20 , ethers: '0.01' },

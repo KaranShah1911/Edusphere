@@ -18,8 +18,8 @@ const app = express()
 const PORT = 4000;
 
 // const url = "mongodb://127.0.0.1:27017/Edusphere"   // DataBase url
-// const url = "mongodb+srv://karanshah19112005:karanshah19112005@cluster0.opr7d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";   // DataBase url
-ConnectToDB()    // Establishing connection with the DataBase
+mongo_url = "mongodb+srv://darshitshah506092:edusphere@cluster0.cph3z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+ConnectToDB(mongo_url)    // Establishing connection with the DataBase
 
 
 //Setting up engine
