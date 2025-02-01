@@ -1,4 +1,5 @@
 const Courses = require("../models/course_schema")
+const Admins = require("../models/admin_schema")
 
 async function DisplayCourses(req ,res){
     try{
@@ -16,16 +17,21 @@ async function DisplayCourses(req ,res){
 
 async function UploadCourse(req , res){
     try{
-        const{title , description , authorname , author_id , pricing , image_hash , video_hash} = req.body;
-        if(!title || !description || !authorname || !author_id || !pricing || !image_hash || !video_hash){
+        if(!req.user){
+            return res.status(401).json({error : "Unauthorized Access"});
+        }
+        const{title , description , price , category , image_hash , video_hash} = req.body;
+        if(!title || !description || !price || !image_hash || !video_hash){
             return res.status(400).json({error : "Please fill all fields."});
         }
+        const admin = await Admins.findById(req.user._id);
         const course = await Courses.create({
             title : title,
             description : description,
-            author_name : authorname,
-            author_wallet_id : author_id,
-            course_price : pricing,
+            category : category,
+            author_name : admin.admin_name,
+            author_wallet_id : admin.metamask_wallet_id,
+            course_price : price,
             course_image : image_hash,
             course_video : video_hash
         });

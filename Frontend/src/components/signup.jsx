@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';  // Add useState here
+import axios from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -37,64 +38,62 @@ const LoginPage = () => {
     }
 
       // Log form data (for debugging or API submission)
-      console.log("Form Data:", formData , localStorage.getItem("walletAddress"));
+      console.log( formData.username , localStorage.getItem("walletAddress"));
 
       // Posting the data to Database
       if(role==="student"){
-        const studentapi = "http://localhost:3000/user/add-details";
-        try{
-            const response = await fetch(
-              studentapi,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  username: formData.username,
-                  wallet_id: localStorage.getItem("walletAddress"),
-                })
-              });
-              if(response.status===200){
-                const rdata = await response.json();
-              console.log(rdata.message);
-              setCookie("user",rdata.token,1);
-              localStorage.setItem("user" , rdata.data.id);
-            }else{
-              alert(response.error)
+        try {
+          const response = await axios.post("http://localhost:4000/user/add-details", {
+            username: formData.username,
+            wallet_id: localStorage.getItem("walletAddress"),
+          }, {
+            headers: {
+              "Content-Type": "application/json",
             }
-            console.log(response);
-        }catch(error){
-          alert(error);
+          });
+        
+          if (response.status === 200) {
+            alert(response.data.message);
+            console.log(response.data.message);
+            setCookie("user", response.data.token, 1);
+            localStorage.setItem("user", response.data.data.id);
+          } else {
+            alert(response.data.error);
+          }
+          
+          console.log(response);
+        } catch (error) {
+          alert(error.response ? error.response.data.error : error.message);
         }
       }else{
-        const educatorapi = "http://localhost:3000/admin/add-details";
-        try{
-          const response = await fetch(
-            educatorapi, 
+        try {
+          const response = await axios.post(
+            "http://localhost:4000/admin/add-details",
             {
-              method: "POST",
+              username: formData.username,
+              wallet_id: localStorage.getItem("walletAddress"),
+            },
+            {
               headers: {
                 "Content-Type": "application/json",
-
               },
-              body: JSON.stringify({
-                username: formData.username,
-                wallet_id: localStorage.getItem("walletAddress"),
-              }) 
             }
           );
-          if(response.status===200){
-              const rdata = await response.json();
-              console.log(rdata.message);
-              setCookie("admin",rdata.token,1);
-              localStorage.setItem("admin" , rdata.data.id);
-          }else{
-            alert(response.error)
+          
+          if (response.status === 200) {
+            alert(response.data.message);
+            const rdata = response.data;
+            console.log(rdata.message);
+            setCookie("admin", rdata.token, 1);
+            localStorage.setItem("admin", rdata.data.id);
+          } else {
+            alert(response.data.error);
           }
+
           console.log(response);
-        }catch(error){
-          alert(error);
+        } catch (error) {
+          console.error("Error:", error);
+          alert(error.response?.data?.error || "Something went wrong");
         }
       }
 

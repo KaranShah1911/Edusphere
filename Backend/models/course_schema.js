@@ -20,6 +20,11 @@ const CourseSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    category:
+    {
+        type: String,
+        required:true
+    },
     course_points:
     {
         type: Number,

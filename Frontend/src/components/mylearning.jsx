@@ -1,7 +1,7 @@
-import React, { useState,useRef,useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronRight, FiClock, FiBookOpen,FiUploadCloud, FiCopy, FiDollarSign, FiBook, FiGift,FiUser } from 'react-icons/fi';
+import { FiChevronRight, FiClock, FiBookOpen, FiUploadCloud, FiCopy, FiDollarSign, FiBook, FiGift, FiUser } from 'react-icons/fi';
 import { useTheme } from "next-themes";
 import { MdOutlineLibraryAdd, MdOutlineAccountBalance } from 'react-icons/md';
 import { RiCoinsLine } from 'react-icons/ri';
@@ -33,44 +33,49 @@ const MyLearningPage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { theme, setTheme } = useTheme();
-  const { walletAddress, walletConnected, connectWallet } = useWallet(); 
+  const { walletAddress, walletConnected, connectWallet } = useWallet();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-    const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const [account, setAccount] = useState(null);
   const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [courses , setCourses] = useState([])
+  const [completed, completedCourse] = useState([])
+  const [purchased, purchasedCourses] = useState([])
   const navigate = useNavigate();
- 
+
   const menuRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  const purchasedCourses = courses;// Use the defined courses array
+  // const purchasedCourses = courses;// Use the defined courses array
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const user_id = localStorage.getItem("user");
-        var token = document.cookie.split('; ').find(row => row.startsWith('user=')).split('=')[1];
-        console.log(token);
-        const response = await fetch(`http://localhost:3000/admin/get-courses/${user_id}`,
+        const cookie = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("user="));
+        if (!cookie) {
+          throw new Error("User is not logged in or registered");
+        }
+        const token = cookie.split("=")[1];
+        console.log("Token:", token);
+
+        const response = await axios.get(`http://localhost:4000/user/my-learning`,
           {
-            method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
-            } 
+            }
           }
-        ); 
+        );
 
-        if(response.status==500){
-          alert(response.error);
-        }else{
-          const rdata = await response.json();
-          console.log(rdata.message);
-          const data = rdata.courses;
-          setCourses(data);
+        if (response.status !== 200) {
+          alert(response.data.error);
+        } else {
+          alert(response.data.message);
+          completedCourse(response.data.courses_completed);
+          purchasedCourses(response.data.course_enrolled);
         }
       } catch (error) {
         console.error('Failed to fetch courses:', error);
@@ -78,58 +83,58 @@ const MyLearningPage = () => {
     };
 
     fetchCourses();
-  }, []); 
+  }, []);
 
-    const handleWalletClick = () => {
-      console.log("Wallet Address:", walletAddress);
-    };
-  
-    const copyToClipboard = () => {
-      navigator.clipboard.writeText(walletAddress);
-      alert("Wallet address copied to clipboard!");
-    };
+  const handleWalletClick = () => {
+    console.log("Wallet Address:", walletAddress);
+  };
 
-    const toggleDropdown = () => {
-      setDropdownOpen(!dropdownOpen);
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(walletAddress);
+    alert("Wallet address copied to clipboard!");
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
     };
-  
-  
-    const handleClickOutside = (event) => {
-       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-         setDropdownOpen(false);
-       }
-     };
-   
-      useEffect(() => {
-         document.addEventListener("click", handleClickOutside);
-         return () => {
-           document.removeEventListener("click", handleClickOutside);
-         };
-       }, []);
-   
-  
-    const handleAccountsChanged = (accounts) => {
-      if (accounts.length === 0) {
-        setAccount(null);
-      } else {
-        setAccount(accounts[0]);
-      }
-    };
-  
-    const loadAccount = async () => {
-      if (window.ethereum && window.ethereum.selectedAddress) {
-        setAccount(window.ethereum.selectedAddress);
-      }
-    };
-  
-   
-  
-    const disconnectWallet = () => {
+  }, []);
+
+
+  const handleAccountsChanged = (accounts) => {
+    if (accounts.length === 0) {
       setAccount(null);
-      setIsMenuOpen(false);
-    };
-    const toggleDarkMode = () => setDarkMode(!darkMode);
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    } else {
+      setAccount(accounts[0]);
+    }
+  };
+
+  const loadAccount = async () => {
+    if (window.ethereum && window.ethereum.selectedAddress) {
+      setAccount(window.ethereum.selectedAddress);
+    }
+  };
+
+
+
+  const disconnectWallet = () => {
+    setAccount(null);
+    setIsMenuOpen(false);
+  };
+  const toggleDarkMode = () => setDarkMode(!darkMode);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const filteredCourses = purchasedCourses.filter(course =>
     course.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -140,59 +145,57 @@ const MyLearningPage = () => {
   };
 
   const DashboardDropdown = () => (
-      <div className="relative group" ref={menuRef}>
-        <button 
-          onClick={() => account && setIsMenuOpen(!isMenuOpen)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-            account 
-              ? 'hover:bg-opacity-20 hover:bg-white' 
-              : 'opacity-50 cursor-not-allowed'
+    <div className="relative group" ref={menuRef}>
+      <button
+        onClick={() => account && setIsMenuOpen(!isMenuOpen)}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${account
+            ? 'hover:bg-opacity-20 hover:bg-white'
+            : 'opacity-50 cursor-not-allowed'
           }`}
-          disabled={!account}
-        >
-          <span>☰</span>
-          <div className={`transform transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
-        </button>
-        
-        {isMenuOpen && (
-          <div className={`absolute top-12 right-0 w-64 rounded-xl shadow-2xl p-2 ${
-            darkMode ? 
-            'bg-gray-800 border border-gray-700' : 
+        disabled={!account}
+      >
+        <span>☰</span>
+        <div className={`transform transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isMenuOpen && (
+        <div className={`absolute top-12 right-0 w-64 rounded-xl shadow-2xl p-2 ${darkMode ?
+            'bg-gray-800 border border-gray-700' :
             'bg-white border border-gray-200'
           }`}>
-            <Link to="/signup">
+          <Link to="/signup">
             <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-opacity-10 hover:bg-white">
               <MdOutlineLibraryAdd className="text-xl" />
               Add Details
             </button>
-            </Link>
-            <Link to="/coins">
+          </Link>
+          <Link to="/coins">
             <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-opacity-10 hover:bg-white">
               <RiCoinsLine className="text-xl" />
               Coins Transaction
             </button>
-            </Link>
-            <Link to="/mylearning">
+          </Link>
+          <Link to="/mylearning">
             <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-opacity-10 hover:bg-white">
               <BiBook className="text-xl" />
               My Learning
             </button>
-            </Link>
-            <Link to="/redeem">
+          </Link>
+          <Link to="/redeem">
             <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-opacity-10 hover:bg-white">
               <BiGift className="text-xl" />
               Redeem
             </button>
-            </Link>
-          </div>
-        )}
-      </div>
-    );
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 
   const cardVariants = {
     offscreen: { y: 50, opacity: 0 },
-    onscreen: { 
-      y: 0, 
+    onscreen: {
+      y: 0,
       opacity: 1,
       transition: { type: "spring", bounce: 0.4, duration: 0.8 }
     }
@@ -202,182 +205,176 @@ const MyLearningPage = () => {
     setIsDarkMode(!isDarkMode);
     setTheme(isDarkMode ? "light" : "dark");
   };
-  
+
   return (
     <div
-      className={`${
-        isDarkMode
+      className={`${isDarkMode
           ? "bg-gradient-to-r from-black to-gray-700 text-white"
           : "bg-gradient-to-r from-yellow-100 to-white text-black"
-      } transition-colors duration-300`}
-       >
+        } transition-colors duration-300`}
+    >
       {/* Navigation Header */}
       <nav className="flex justify-between items-center p-6">
-             <div className="flex items-center space-x-2">
-               <img
-                 src="/images/Edusphere logo.png"
-                 alt="Logo"
-                 className="w-12 h-12 rounded-full shadow-lg"
-               />
-     
-               <h1 className="text-4xl font-bold ">Edusphere</h1>
-             </div>
-             <div className="flex items-center space-x-8">
-               <div className="flex space-x-8">
-                 <Link
-                   to="/Edusphere"
-                   className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
-                 >
-                   Home
-                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-300 group-hover:w-full transition-all duration-300"></span>
-                 </Link>
-                 <Link
-                   to="/courses"
-                   className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
-                 >
-                   Courses
-                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-300 group-hover:w-full transition-all duration-300"></span>
-                 </Link>
-                 <Link
-                   to="/contest"
-                   className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
-                 >
-                   Contest
-                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-300 group-hover:w-full transition-all duration-300"></span>
-                 </Link>
-               </div>
-     
-               {/* Wallet Button */}
-               <motion.button
-                             whileHover={{ scale: 1.05 }}
-                             whileTap={{ scale: 0.95 }}
-                             className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                               walletConnected ? 
-                               'bg-emerald-500/20 text-emerald-400' : 
-                               'bg-amber-500 hover:bg-amber-600 text-white'
-                             } transition-colors`}
-                             onClick={walletConnected ? handleWalletClick : connectWallet}
-                           >
-                             {walletConnected ? (
-                               <>
-                                 <span className="hidden sm:inline">
-                                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                                 </span>
-                                 <FiCopy 
-                                   className="hover:text-amber-400 transition-colors"
-                                   onClick={copyToClipboard}
-                                   data-tooltip-id="copy-tooltip"
-                                 />
-                               </>
-                             ) : (
-                               <>
-                                 <span>Connect Wallet</span>
-                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                   <path d="M10 2a1 1 0 011 1v1.323l3.954.99a1 1 0 01.686.828L15.667 8H17a1 1 0 110 2h-1.333l-.012.082a5 5 0 01-4.245 4.245L11 14.667V17a1 1 0 11-2 0v-2.333l-.082-.012a5 5 0 01-4.245-4.245L4.333 10H3a1 1 0 110-2h1.333l.027-.86a1 1 0 01.686-.827L9 4.323V3a1 1 0 011-1z"/>
-                                 </svg>
-                               </>
-                             )}
-                           </motion.button>
-     
-               {/* Theme toggle */}
-               <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
-                 {isDarkMode ? "🌙" : "☀️"}
-               </button>
-     
-               {/* Dropdown Menu */}
-               <div className="relative" ref={dropdownRef}>
-                 <button
-                   onClick={toggleDropdown}
-                   className={`text-lg bg-gradient-to-r from-amber-500 to-amber-300 text-black py-2 px-4 rounded-full ${
-                     walletAddress ? "" : "cursor-not-allowed opacity-50"
-                   }`}
-                   disabled={!walletAddress}
-                 >
-                   ☰
-                 </button>
-                 <AnimatePresence>
-                   {dropdownOpen && walletAddress && (
-                     <motion.div
-                       initial={{ opacity: 0, y: -10 }}
-                       animate={{ opacity: 1, y: 0 }}
-                       exit={{ opacity: 0, y: -10 }}
-                       className={`absolute right-0 mt-2 w-64 origin-top-right rounded-xl shadow-xl backdrop-blur-lg ${
-                         isDarkMode
-                           ? "bg-gray-800/95 border border-gray-700"
-                           : "bg-white/95 border border-amber-100"
-                       } z-50`}
-                     >
-                       <div className="p-2 space-y-1">
-                         <Link
-                           to={walletAddress ? "/signup" : "#"}
-                           className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                             walletAddress
-                               ? "hover:bg-amber-500/10"
-                               : "opacity-50 cursor-not-allowed"
-                           }`}
-                         >
-                           <FiUser className="text-amber-500" />
-                           <span>Add Details</span>
-                         </Link>
-                         <Link
-                           to="/coins"
-                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                         >
-                           <FiDollarSign className="text-amber-500" />
-                           <span>Coins</span>
-                         </Link>
-                         <Link
-                           to="/transaction"
-                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                         >
-                           <FiDollarSign className="text-amber-300" />
-                           <span>Transactions</span>
-                         </Link>
-                         <Link
-                           to="/mylearning"
-                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                         >
-                           <FiBook className="text-amber-300" />
-                           <span>My Learning</span>
-                         </Link>
-                         <Link
-                           to="/redeem"
-                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                         >
-                           <FiGift className="text-amber-300" />
-                           <span>Redeem</span>
-                         </Link>
-                       </div>
-                     </motion.div>
-                   )}
-                 </AnimatePresence>
-               </div>
-             </div>
-           </nav>
-           <div className="border-b-4 border-gold"></div>
+        <div className="flex items-center space-x-2">
+          <img
+            src="/images/Edusphere logo.png"
+            alt="Logo"
+            className="w-12 h-12 rounded-full shadow-lg"
+          />
+
+          <h1 className="text-4xl font-bold ">Edusphere</h1>
+        </div>
+        <div className="flex items-center space-x-8">
+          <div className="flex space-x-8">
+            <Link
+              to="/Edusphere"
+              className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
+            >
+              Home
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-300 group-hover:w-full transition-all duration-300"></span>
+            </Link>
+            <Link
+              to="/courses"
+              className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
+            >
+              Courses
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-300 group-hover:w-full transition-all duration-300"></span>
+            </Link>
+            <Link
+              to="/contest"
+              className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
+            >
+              Contest
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-300 group-hover:w-full transition-all duration-300"></span>
+            </Link>
+          </div>
+
+          {/* Wallet Button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full ${walletConnected ?
+                'bg-emerald-500/20 text-emerald-400' :
+                'bg-amber-500 hover:bg-amber-600 text-white'
+              } transition-colors`}
+            onClick={walletConnected ? handleWalletClick : connectWallet}
+          >
+            {walletConnected ? (
+              <>
+                <span className="hidden sm:inline">
+                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                </span>
+                <FiCopy
+                  className="hover:text-amber-400 transition-colors"
+                  onClick={copyToClipboard}
+                  data-tooltip-id="copy-tooltip"
+                />
+              </>
+            ) : (
+              <>
+                <span>Connect Wallet</span>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a1 1 0 011 1v1.323l3.954.99a1 1 0 01.686.828L15.667 8H17a1 1 0 110 2h-1.333l-.012.082a5 5 0 01-4.245 4.245L11 14.667V17a1 1 0 11-2 0v-2.333l-.082-.012a5 5 0 01-4.245-4.245L4.333 10H3a1 1 0 110-2h1.333l.027-.86a1 1 0 01.686-.827L9 4.323V3a1 1 0 011-1z" />
+                </svg>
+              </>
+            )}
+          </motion.button>
+
+          {/* Theme toggle */}
+          <button className="dark-mode-toggle text-3xl" onClick={toggleTheme}>
+            {isDarkMode ? "🌙" : "☀️"}
+          </button>
+
+          {/* Dropdown Menu */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={toggleDropdown}
+              className={`text-lg bg-gradient-to-r from-amber-500 to-amber-300 text-black py-2 px-4 rounded-full ${walletAddress ? "" : "cursor-not-allowed opacity-50"
+                }`}
+              disabled={!walletAddress}
+            >
+              ☰
+            </button>
+            <AnimatePresence>
+              {dropdownOpen && walletAddress && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className={`absolute right-0 mt-2 w-64 origin-top-right rounded-xl shadow-xl backdrop-blur-lg ${isDarkMode
+                      ? "bg-gray-800/95 border border-gray-700"
+                      : "bg-white/95 border border-amber-100"
+                    } z-50`}
+                >
+                  <div className="p-2 space-y-1">
+                    <Link
+                      to={walletAddress ? "/signup" : "#"}
+                      className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${walletAddress
+                          ? "hover:bg-amber-500/10"
+                          : "opacity-50 cursor-not-allowed"
+                        }`}
+                    >
+                      <FiUser className="text-amber-500" />
+                      <span>Add Details</span>
+                    </Link>
+                    <Link
+                      to="/coins"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiDollarSign className="text-amber-500" />
+                      <span>Coins</span>
+                    </Link>
+                    <Link
+                      to="/transaction"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiDollarSign className="text-amber-300" />
+                      <span>Transactions</span>
+                    </Link>
+                    <Link
+                      to="/mylearning"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiBook className="text-amber-300" />
+                      <span>My Learning</span>
+                    </Link>
+                    <Link
+                      to="/redeem"
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
+                    >
+                      <FiGift className="text-amber-300" />
+                      <span>Redeem</span>
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </nav>
+      <div className="border-b-4 border-gold"></div>
 
 
       <div className="pt-32 px-8 pb-12 max-w-7xl mx-auto">
         <div className="mb-12 text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-amber-300'}`}
           >
             My Learning
           </motion.h1>
-          
+
           <div className="relative max-w-2xl mx-auto">
             <input
               type="text"
               placeholder="Search your courses..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full px-6 py-3 rounded-xl border ${
-                darkMode 
-                  ? 'bg-gray-800 border-gray-700 text-white' 
+              className={`w-full px-6 py-3 rounded-xl border ${darkMode
+                  ? 'bg-gray-800 border-gray-700 text-white'
                   : 'bg-white border-gray-200 text-gray-900'
-              } pr-12 transition-all`}
+                } pr-12 transition-all`}
             />
             <FiBookOpen className={`absolute right-4 top-3.5 text-xl ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
           </div>
@@ -391,9 +388,8 @@ const MyLearningPage = () => {
               initial="offscreen"
               whileInView="onscreen"
               viewport={{ once: true, amount: 0.2 }}
-              className={`group relative rounded-2xl overflow-hidden shadow-lg ${
-                darkMode ? 'bg-gray-800' : 'bg-white'
-              }`}
+              className={`group relative rounded-2xl overflow-hidden shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'
+                }`}
             >
               <div className="relative h-48 overflow-hidden">
                 <img
@@ -406,9 +402,8 @@ const MyLearningPage = () => {
 
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className={`text-sm font-medium ${
-                    darkMode ? 'text-purple-400' : 'text-purple-600'
-                  }`}>
+                  <span className={`text-sm font-medium ${darkMode ? 'text-purple-400' : 'text-purple-600'
+                    }`}>
                     {course.category}
                   </span>
                   <div className="flex items-center gap-2 text-sm">
@@ -417,31 +412,27 @@ const MyLearningPage = () => {
                   </div>
                 </div>
 
-                <h3 className={`text-lg font-semibold mb-3 ${
-                  darkMode ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h3 className={`text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
                   {course.name}
                 </h3>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${
-                      course.sale_price_usd === 0 ? 'bg-green-500' : 'bg-blue-500'
-                    }`} />
-                    <span className={`text-sm ${
-                      darkMode ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
+                    <div className={`w-2 h-2 rounded-full ${course.sale_price_usd === 0 ? 'bg-green-500' : 'bg-blue-500'
+                      }`} />
+                    <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
                       {course.sale_price_usd === 0 ? 'Completed' : 'In Progress'}
                     </span>
                   </div>
-                  
+
                   <button
                     onClick={() => handleVisitCourse(course)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                      darkMode
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${darkMode
                         ? 'bg-purple-600 hover:bg-purple-700 text-white'
                         : 'bg-purple-100 hover:bg-purple-200 text-purple-700'
-                    }`}
+                      }`}
                   >
                     Continue
                     <FiChevronRight className="text-lg" />
@@ -451,8 +442,8 @@ const MyLearningPage = () => {
 
               {/* Progress Bar */}
               <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gray-200">
-                <div 
-                  className="h-full bg-purple-500 transition-all duration-500" 
+                <div
+                  className="h-full bg-purple-500 transition-all duration-500"
                   style={{ width: `${Math.random() * 100}%` }}
                 />
               </div>
@@ -464,14 +455,12 @@ const MyLearningPage = () => {
           <div className="text-center py-20">
             <div className="inline-block p-8 rounded-2xl bg-gradient-to-r from-purple-100 to-blue-100">
               <FiBookOpen className="text-6xl text-purple-600 mx-auto mb-6" />
-              <h3 className={`text-2xl font-semibold mb-4 ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h3 className={`text-2xl font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                 No courses found
               </h3>
-              <p className={`mb-6 ${
-                darkMode ? 'text-gray-400' : 'text-gray-600'
-              }`}>
+              <p className={`mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
                 Start your learning journey by exploring our courses
               </p>
               <Link
@@ -486,14 +475,11 @@ const MyLearningPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className={`py-8 text-center ${
-        darkMode ? 'bg-gray-900/80' : 'bg-white/80'
-      } backdrop-blur-lg border-t ${
-        darkMode ? 'border-gray-800' : 'border-gray-100'
-      }`}>
-        <p className={`text-sm ${
-          darkMode ? 'text-gray-400' : 'text-gray-600'
+      <footer className={`py-8 text-center ${darkMode ? 'bg-gray-900/80' : 'bg-white/80'
+        } backdrop-blur-lg border-t ${darkMode ? 'border-gray-800' : 'border-gray-100'
         }`}>
+        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'
+          }`}>
           © 2025 Edusphere. All rights reserved.<br />
           Empowering learners through blockchain technology
         </p>

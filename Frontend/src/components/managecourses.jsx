@@ -167,6 +167,7 @@ import { useThemeStore } from "../store/themeStore";
 import { useWallet } from "../context/WalletProvider";
 import { useTheme } from "next-themes";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const ManageCourses = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -186,36 +187,6 @@ const ManageCourses = () => {
     navigator.clipboard.writeText(walletAddress);
     alert("Wallet address copied to clipboard!");
   };
-
-  // const [courses, setCourses] = useState([
-  //   {
-  //     id: 1,
-  //     title: "React Basics",
-  //     status: "published",
-  //     enrollments: 120,
-  //     averageRating: 4.5,
-  //     completionRate: 90,
-  //     engagementTrend: "High",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Advanced JavaScript",
-  //     status: "draft",
-  //     enrollments: 80,
-  //     averageRating: 4.7,
-  //     completionRate: 85,
-  //     engagementTrend: "Medium",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Web Development Bootcamp",
-  //     status: "archived",
-  //     enrollments: 200,
-  //     averageRating: 4.8,
-  //     completionRate: 95,
-  //     engagementTrend: "High",
-  //   },
-  // ]);
 
   const [filterStatus, setFilterStatus] = useState("all");
   
@@ -262,29 +233,37 @@ const ManageCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const admin_id = localStorage.getItem("admin");
-        var token = document.cookie.split('; ').find(row => row.startsWith('admin=')).split('=')[1];
-        console.log(token);
-        const response = await fetch(`http://localhost:3000/admin/get-courses/${admin_id}`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              // 'Content-Type': 'application/json'
-            } 
-          }
-        ); 
+      
+        // Get token from cookies
+        const cookie = document.cookie.split("; ").find(row => row.startsWith("admin="));
 
-        if(response.status==500){
+        if (!cookie) throw new Error("Admin is not logged in");
+      
+        const token = cookie.split("=")[1];
+        console.log("Token:", token);
+      
+        // Make the GET request using Axios
+        const response = await axios.get("http://localhost:4000/admin/get-courses", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      
+        // Handle response
+        // const rdata = await response.json();
+        if(response.status!=200){
           alert(response.error);
         }else{
-          const rdata = await response.json();
-          console.log(rdata.message);
-          const data = rdata.courses;
-          setCourses(data);
+          // const data = response.json;
+          console.log(response)
+          alert(response.data.message);
+          console.log(response.data.courses);
+          setCourses(response.data.courses);
         }
+        
       } catch (error) {
-        console.error('Failed to fetch courses:', error);
+        console.error("Failed to fetch courses:", error);
+        alert(error.response?.data?.error || "Something went wrong");
       }
     };
 
@@ -294,26 +273,28 @@ const ManageCourses = () => {
   const handleDeleteCourse = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this course?");
     if (confirmDelete) {
-      // setCourses(courses.filter((course) => course.id !== id));
-      try{
-        const response = await fetch(`http://localhost:3000/admin/delete-course/${id}`
-          ,{
-            method: 'DELETE',
+      const cookie = document.cookie.split("; ").find(row => row.startsWith("admin="));
+      if (!cookie) throw new Error("Admin is not logged in");
+      const token = cookie.split("=")[1];
+      console.log("Token:", token);
+      try {
+        const response = await axios.post("http://localhost:4000/admin/delete-course",{
+          courseid : id
+        },
+          {
             headers: {
-              'Content-Type': 'application/json',
-            }
-            
+              Authorization: `Bearer ${token}`,
+            },
           }
-        ); 
-        if(response.status!=200){
-          alert(response.error);
-        }else{
-          const rdata = await response.json();
-          console.log(rdata.message);
-          const data = rdata.courses;
-          setCourses(data);
+        );
+        
+        if (response.status !== 200) {
+          alert(response.data.error);
+        } else {
+          console.log(response.data.message);
+          setCourses(response.data.courses);
         }
-      }catch(error){
+      } catch (error) {
         console.error('Error deleting course:', error);
       }
     }
@@ -522,8 +503,9 @@ const ManageCourses = () => {
               style={{ animationDelay: `${index * 100}ms` }}
             >
               
-<img src={course.course_image} alt={course.title}/>
+<img src={"https://gateway.pinata.cloud/ipfs/"+course.course_image} alt={course.title}/>
 <h3 className="text-xl font-bold mb-4">{course.title}</h3>
+<h3 className="text-small mb-4">{course.description.slice(0,100)+"..."}</h3>
     {/* <div className="space-y-2">
       <div className="flex items-center">
         <span className={`inline-block w-2 h-2 rounded-full mr-2 ${

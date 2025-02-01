@@ -87,10 +87,13 @@ async function GetCourses(req,res){
         if(!req.user){
             return res.status(401).json({error : "Unauthorized Access"})
         }
-        const id = req.params.id;
+        const id = req.user._id;
         const admin = await Admins.findById(id).populate('courses_created');
         if(!admin){
             return res.status(404).json({error : "No Admin Found."})
+        }
+        if(admin.courses_created.length === 0){
+            return res.status(200).json({message : "No Courses Found" , courses : []});
         }
         return res.status(200).json({message : "Courses fetched Successfully" , courses : admin.courses_created});
     }catch(error){
@@ -103,13 +106,13 @@ async function DeleteCourse(req,res){
         if(!req.user){
             return res.status(401).json({error : "Unauthorized Access"})
         }
-        const id = req.params.id;
+        const {courseid} = req.body;
         const admin = await Admins.findById(req.user._id);
         if(!admin){
             return res.status(404).json({error : "No Admin Found."})
         }
         const courses = admin.courses_created;
-        const new_courses = courses.filter(course_id => course_id!=id);
+        const new_courses = courses.filter(course_id => course_id !== courseid);
         admin.courses_created = new_courses;
         await admin.save();
         const updated_courses = new_courses.map(course_id => Courses.findById(course_id))

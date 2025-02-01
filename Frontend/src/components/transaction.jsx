@@ -6,6 +6,7 @@ import { FiUser, FiDollarSign, FiBook, FiGift,FiCopy } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWallet } from "../context/WalletProvider";
 import { useThemeStore } from '../store/themeStore';
+import axios from "axios";
 
 const TransactionPage = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -46,54 +47,52 @@ const TransactionPage = () => {
           };
         }, []);
       
-      
-        
-      
         const toggleTheme = () => {
           setIsDarkMode(!isDarkMode);
           setTheme(isDarkMode ? "light" : "dark");
         };
 
         useEffect(() => {
-          const fetchtransactions = async () => {
-              try{
-                var token = document.cookie.split('; ').find(row => row.startsWith('user=')).split('=')[1];
-                console.log(token);
-                try{
-                  const response = await fetch('http://localhost:3000/user/transaction-history',
-                    {
-                      method: 'GET',
-                      headers: {
-                        'Authorization': `Bearer ${token}`,
-                        // 'Content-Type': 'application/json',
-                        }
-                    }
-                  ); 
-          
-                  const rdata = await response.json();
-                  if(response.status!==200){
-                    alert(rdata.error);
-                  }else{
-                    console.log(rdata.message);
-                    const data = rdata.transaction_history.map((txn) => {
-                      return {
-                        _id: txn._id,
-                        course_purchased: txn.course_purchased,
-                        transaction_address: txn.transaction_address,
-                        purchase_date: txn.purchase_date,
-                      };
-                    });
-                    setTransactions(data);
-                  }
-                }catch(error){
-                  console.log(error);
-                }
-              }catch(error){
-                alert("User is not logged in or register");
-              } 
-            };
+          const fetchTransactions = async () => {
+            try {
+              // Get token from cookies
+              const cookie = document.cookie
+                .split("; ")
+                .find((row) => row.startsWith("user="));
+              if (!cookie) {
+                throw new Error("User is not logged in or registered");
+              }
       
-          fetchtransactions();
+              const token = cookie.split("=")[1];
+              console.log("Token:", token);
+      
+              // Make the GET request using Axios
+              const response = await axios.get("http://localhost:4000/user/transaction-history", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+      
+              // Handle response
+              if (response.status !== 200) {
+                alert(response.data.error);
+              } else {
+                console.log(response.data.message);
+                const data = response.data.transaction_history.map((txn) => ({
+                  _id: txn._id,
+                  course_purchased: txn.course_purchased,
+                  transaction_address: txn.transaction_address,
+                  purchase_date: txn.purchase_date,
+                }));
+                setTransactions(data);
+              }
+            } catch (error) {
+              console.error("Error fetching transactions:", error);
+              alert(error.response?.data?.error || "User is not logged in or registered");
+            }
+          };
+      
+          fetchTransactions();
         }, []);
       
 

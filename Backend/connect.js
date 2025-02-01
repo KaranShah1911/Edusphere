@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 
 async function ConnectToDB(url){
     try{
-        await mongoose.connect(url)
+        await mongoose.connect(process.env.mongo_url , {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
         console.log("Database connected Successfully")
     }
     catch{

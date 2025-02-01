@@ -1,10 +1,17 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
+import axios from "axios";
 
 const WalletContext = createContext();
 
 export const WalletProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState(localStorage.getItem("walletAddress") || null);
   const [walletConnected, setWalletConnected] = useState(!!walletAddress);
+
+  const setCookie = (name, value, days) => {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration
+    document.cookie =` ${name}=${value};expires=${expires.toUTCString()};path=/;`;
+  };
 
   // Connect wallet function
   const connectWallet = async () => {
@@ -19,57 +26,56 @@ export const WalletProvider = ({ children }) => {
           console.log(account)
           setWalletConnected(true);
           const role = localStorage.getItem("role");
-          if(role==="admin"){
-            try{
-              const response = await fetch(
-                "http://localhost:3000/admin/login",{
-                  method: "POST",
+          if(role==="educator"){
+            try {
+              const response = await axios.post(
+                'http://localhost:4000/admin/login',
+                {
+                  wallet_id: account,
+                },
+                {
                   headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({
-                    wallet_id : account
-                  })
                 }
               );
-      
-              if(response.status === 200){
-                const rdata = await response.json();
-                console.log(rdata.message);
-                localStorage.setItem("admin", rdata.data.id);
-                setCookie("admin", rdata.token, 1);
-              }else{
-                console.log(response.error);
+            
+              if (response.status === 200) {
+                alert(response.data.message);
+                console.log(response.data.message);
+                localStorage.setItem('admin', response.data.id);
+                setCookie('admin', response.data.token, 1);
+              } else {
+                console.log(response.data.error);
               }
-            }catch(error){
+            } catch (error) {
               console.log(error);
             }
 
           }
           else{
-            try{
-              const response = await fetch(
-                "http://localhost:3000/user/login",{
-                  method: "POST",
+            try {
+              const response = await axios.post(
+                'http://localhost:4000/user/login',
+                {
+                  wallet_id: account,
+                },
+                {
                   headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({
-                    wallet_id : account
-                  })
                 }
               );
-      
-              if(response.status === 200){
-                const rdata = await response.json()
-                console.log(rdata.message);
-                console.log(rdata.data.id)
-                localStorage.setItem("user", rdata.data.id);
-                setCookie("user", rdata.token, 1);
-              }else{
-                console.log(response.error);
+            
+              if (response.status === 200) {
+                alert(response.data.message);
+                console.log(response.data.message);
+                localStorage.setItem('user', response.data.id);
+                setCookie('user', response.data.token, 1);
+              } else {
+                console.log(response.data.error);
               }
-            }catch(error){
+            } catch (error) {
               console.log(error);
             }
 

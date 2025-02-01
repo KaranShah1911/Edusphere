@@ -99,6 +99,7 @@ async function DisplayMyLearning(req , res){
     
         
         return res.status(200).json({
+            message : "Courses fetched successfully",
             courses_enrolled : user.courses_enrolled ,
             courses_completed : user.courses_completed
         });
@@ -121,7 +122,7 @@ async function DisplayTransactionHistory(req , res){
         const id = req.user._id;
 
         try{
-            const user_transactions = await Transactions.findById(id).populate("course_purchased");
+            const user_transactions = await Transactions.findById(id).populate("courses_purchased");
             if(!user_transactions){
                 return res.status(201).json({error : "No Transaction done yet" , transaction_history: []});
             }else{
@@ -141,23 +142,52 @@ async function PurchaseCourse(req , res){
         if(!req.user){
             return res.status(400).json({error : "User is not logged in or Signed up"});   
         }
-        const course_id = req.params.id;
+        const {course_id , transaction_id} = req.body;
         const course = await Courses.findById(course_id);
         if(!course){
             return res.status(404).json({error : "Course not found."});
         }
-        const purchased_courses = req.user.course_enrolled;
+        const purchased_courses = req.user.courses_enrolled;
         if(purchased_courses.includes(course_id)){
             return res.status(200).json({message : "Course already purchased."});
         }
         purchased_courses.push(course_id);
-        req.user.course_enrolled = purchased_courses;
+        req.user.courses_enrolled = purchased_courses;
         await req.user.save();
-        
-        const {transaction_id} = req.body;
-        const new_transaction = await Transactions.create({user_id : req.user._id , transaction_address : transaction_id , course_purchased : course_id});
+    
+        const new_transaction = await Transactions.create({user_id : req.user._id , transaction_address : transaction_id , courses_purchased : course_id});
         return res.status(200).json({message : "Course purchased successfully." , transaction_id : new_transaction._id});
         
+    }catch(error){
+        return res.status(500).json({error : "Error with the server"})
+    }
+}
+
+async function GetCoins(req,res){
+    try{
+        if(!req.user){
+            return res.status(401).json({error : "Unauthorized Access"})
+        }
+        const user = await Users.findById(req.user._id);
+        const coins = user.coins;
+        return res.status(200).json({message : "Coins fetched successfully", coins : coins});
+    }catch(error){
+        return res.status(500).json({error : "Error with the server"})
+    }
+}
+
+async function UpdateCoins(req,res){
+    try{
+        if(!req.user){
+            return res.status(401).json({error : "Unauthorized Access"})
+        }
+        const user = await Users.findById(req.user._id);
+        const {coins} = req.body;
+        const usercoins = user.coins;
+        user.coins = usercoins + coins;
+        await user.save();
+
+        return res.status(200).json({message : "Coins updated successfully", coins : coins});
     }catch(error){
         return res.status(500).json({error : "Error with the server"})
     }
@@ -168,7 +198,9 @@ module.exports = {
     CreateUser,
     DisplayMyLearning,
     DisplayTransactionHistory,
-    PurchaseCourse
+    PurchaseCourse,
+    GetCoins,
+    UpdateCoins
     // DisplayUserHomePage,
     // DisplayUserLoginPage,
     // DisplayUserSignupPage,

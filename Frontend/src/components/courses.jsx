@@ -8,6 +8,7 @@ import { MdOutlineLibraryAdd, MdOutlineAccountBalance } from 'react-icons/md';
 import { RiCoinsLine } from 'react-icons/ri';
 import { BiBook, BiGift } from 'react-icons/bi';
 import { useWallet } from "../context/WalletProvider";
+import axios from 'axios';
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -96,7 +97,7 @@ import { useThemeStore } from "../store/themeStore";
 
 const CoursesPage = () => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-    const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
+  const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [account, setAccount] = useState(null);
@@ -106,8 +107,9 @@ const CoursesPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const menuRef = useRef(null);
-    const { walletAddress, walletConnected, connectWallet } = useWallet();
+  const { walletAddress, walletConnected, connectWallet } = useWallet();
   const { theme, setTheme } = useTheme();
+
 
    const dropdownRef = useRef(null);
 
@@ -175,7 +177,7 @@ const CoursesPage = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const filteredCourses = courses.filter(course =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+    course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleVisitCourse = (course) => {
@@ -185,21 +187,23 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('http://localhost:3000/courses'); 
-        
-        if(response.status!==200){
-          alert(response.error);
-        }else{
-          const rdata = await response.json();
+        const response = await axios.get('http://localhost:4000/courses');
+  
+        if (response.status !== 200) {
+          alert(response.data.error);
+        } else {
+          const rdata = response.data;
           console.log(rdata.message);
           const data = rdata.courses;
+          console.log(data);
           setCourses(data);
         }
       } catch (error) {
         console.error('Failed to fetch courses:', error);
+        alert('An error occurred while fetching courses.');
       }
     };
-
+  
     fetchCourses();
   }, []);
  
@@ -366,14 +370,14 @@ const CoursesPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-12 pb-20">
         {filteredCourses.map((course, index) => (
           <div
-            key={index}
+            key={course._id}
             className={`group relative rounded-2xl overflow-hidden shadow-xl transition-transform duration-300 hover:scale-[1.02] ${
               isDarkMode ? 'bg-gray-800' : 'bg-white'
             }`}
           >
             <div className="relative h-60 overflow-hidden">
               <img 
-                src={course.course_image} 
+                src={"https://gateway.pinata.cloud/ipfs/"+course.course_image} 
                 alt={course.title} 
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
               />
@@ -395,6 +399,7 @@ const CoursesPage = () => {
                 }`}>
                   {course.category}
                 </span>
+              </div>
                 {/* <div className="flex items-center gap-2">
                   <span className={`text-lg font-bold ${
                     isDarkMode ? 'text-green-400' : 'text-green-600'
@@ -402,7 +407,6 @@ const CoursesPage = () => {
                     ${course.sale_price_usd}
                   </span>
                 </div> */}
-              </div>
 
               <button
                 onClick={() => handleVisitCourse(course)}
