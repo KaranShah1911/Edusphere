@@ -277,6 +277,7 @@ const ManageCourses = () => {
       if (!cookie) throw new Error("Admin is not logged in");
       const token = cookie.split("=")[1];
       console.log("Token:", token);
+      console.log(id)
       try {
         const response = await axios.post("http://localhost:4000/admin/delete-course",{
           courseid : id
@@ -291,7 +292,7 @@ const ManageCourses = () => {
         if (response.status !== 200) {
           alert(response.data.error);
         } else {
-          console.log(response.data.message);
+          alert(response.data.message);
           setCourses(response.data.courses);
         }
       } catch (error) {
@@ -339,7 +340,7 @@ const ManageCourses = () => {
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
             <Link
-              to="/Edusphere"
+              to="/educatorhome"
               className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
             >
               Home
@@ -350,13 +351,6 @@ const ManageCourses = () => {
               className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
             >
               Create Courses
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link
-              to="/contest"
-              className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
-            >
-              Student Insights
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </div>
@@ -433,20 +427,8 @@ const ManageCourses = () => {
                       <FiUser className="text-amber-500" />
                       <span>Add Details</span>
                     </Link>
-                    <Link
-                      to="/coins"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiDollarSign className="text-amber-500" />
-                      <span>Coins</span>
-                    </Link>
-                    <Link
-                      to="/transaction"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiDollarSign className="text-amber-500" />
-                      <span>Transactions</span>
-                    </Link>
+                    
+                    
                     <Link
                       to="/managecourses"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
@@ -454,13 +436,7 @@ const ManageCourses = () => {
                       <FiBook className="text-amber-500" />
                       <span>Manage Courses</span>
                     </Link>
-                    <Link
-                      to="/redeem"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiGift className="text-amber-500" />
-                      <span>Redeem</span>
-                    </Link>
+                    
                   </div>
                 </motion.div>
               )}

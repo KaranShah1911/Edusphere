@@ -114,7 +114,6 @@ const Contest = () => {
 
   
   useEffect(() => {
-    document.title = 'Coding Contests - Codeforces';
     
     const fetchContests = async () => {
       let url = `https://codeforces.com/api/contest.list?gym=true/contest`;
@@ -134,10 +133,6 @@ const Contest = () => {
 
     fetchContests();
   }, []);
-
-      
-
- 
 
   
   const toggleDropdown = () => {

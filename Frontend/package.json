@@ -43,7 +43,7 @@
     "react-tooltip": "^5.28.0",
     "slick-carousel": "^1.8.1",
     "viem": "^2.22.10",
-    "wagmi": "^2.14.8",
+    "wagmi": "^2.14.9",
     "web3": "^4.16.0"
   },
   "devDependencies": {

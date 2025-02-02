@@ -188,6 +188,7 @@ const CreateCourse = () => {
             abi: contractAbi,
             address: contractAddress,
             functionName: 'addCourse',
+            value: 10000000000000000n
           });
           
           alert(response.data.message);
@@ -331,13 +332,7 @@ const CreateCourse = () => {
               Create Courses
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link
-              to="/contest"
-              className="group relative text-lg font-medium hover:text-amber-500 transition-colors"
-            >
-              Student Insights
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-            </Link>
+            
           </div>
 
           {/* Wallet Button */}
@@ -408,20 +403,8 @@ const CreateCourse = () => {
                       <FiUser className="text-amber-500" />
                       <span>Add Details</span>
                     </Link>
-                    <Link
-                      to="/coins"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiDollarSign className="text-amber-500" />
-                      <span>Coins</span>
-                    </Link>
-                    <Link
-                      to="/transaction"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiDollarSign className="text-amber-500" />
-                      <span>Transactions</span>
-                    </Link>
+                    
+                    
                     <Link
                       to="/managecourses"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
@@ -429,13 +412,7 @@ const CreateCourse = () => {
                       <FiBook className="text-amber-500" />
                       <span>Manage Courses</span>
                     </Link>
-                    <Link
-                      to="/redeem"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiGift className="text-amber-500" />
-                      <span>Redeem</span>
-                    </Link>
+                    
                   </div>
                 </motion.div>
               )}

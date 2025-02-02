@@ -228,7 +228,7 @@ const RedeemPage = () => {
         </div>
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
-            <Link to="/Edusphere" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
+            <Link to="/studenthome" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
               Home
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
@@ -308,13 +308,7 @@ const RedeemPage = () => {
                       <FiUser className="text-amber-500" />
                       <span>Add Details</span>
                     </Link>
-                    <Link
-                      to="/coins"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiDollarSign className="text-amber-500" />
-                      <span>Coins</span>
-                    </Link>
+                    
                     <Link
                       to="/transaction"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"

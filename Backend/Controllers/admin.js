@@ -101,26 +101,34 @@ async function GetCourses(req,res){
     }
 }
 
-async function DeleteCourse(req,res){
-    try{
-        if(!req.user){
-            return res.status(401).json({error : "Unauthorized Access"})
+async function DeleteCourse(req, res) {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ error: "Unauthorized Access" });
         }
-        const {courseid} = req.body;
+
+        const { courseid } = req.body;
         const admin = await Admins.findById(req.user._id);
-        if(!admin){
-            return res.status(404).json({error : "No Admin Found."})
+        if (!admin) {
+            return res.status(404).json({ error: "No Admin Found." });
         }
-        const courses = admin.courses_created;
-        const new_courses = courses.filter(course_id => course_id !== courseid);
+
+        // Convert to string before filtering to ensure proper comparison
+        const new_courses = admin.courses_created.filter(course_id => course_id.toString() !== courseid);
+
         admin.courses_created = new_courses;
         await admin.save();
-        const updated_courses = new_courses.map(course_id => Courses.findById(course_id))
-        return res.status(200).json({message : "Course Deleted Successfully" , courses : updated_courses});
-    }catch(error){
-        return res.status(500).json({error : "Error with the server"});
+
+        // Use Promise.all to fetch updated courses properly
+        const updated_courses = await Promise.all(new_courses.map(course_id => Courses.findById(course_id)));
+
+        return res.status(200).json({ message: "Course Deleted Successfully", courses: updated_courses });
+    } catch (error) {
+        console.error("Error deleting course:", error);
+        return res.status(500).json({ error: "Error with the server" });
     }
 }
+
 
 module.exports = {
     CreateAdmin,

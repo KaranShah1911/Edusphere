@@ -157,7 +157,7 @@ const MyLearningPage = () => {
           <Link to="/coins">
             <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-opacity-10 hover:bg-white">
               <RiCoinsLine className="text-xl" />
-              Coins Transaction
+              Transaction
             </button>
           </Link>
           <Link to="/mylearning">
@@ -212,7 +212,7 @@ const MyLearningPage = () => {
         <div className="flex items-center space-x-8">
           <div className="flex space-x-8">
             <Link
-              to="/Edusphere"
+              to="/studenthome"
               className="group relative text-lg font-medium hover:text-amber-300 transition-colors"
             >
               Home
@@ -302,13 +302,7 @@ const MyLearningPage = () => {
                       <FiUser className="text-amber-500" />
                       <span>Add Details</span>
                     </Link>
-                    <Link
-                      to="/coins"
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                    >
-                      <FiDollarSign className="text-amber-500" />
-                      <span>Coins</span>
-                    </Link>
+                    
                     <Link
                       to="/transaction"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"

@@ -65,13 +65,14 @@ const CourseDetails = () => {
       // setIsPurchased(true);
       let wei_price = course.course_price * 1e18; 
       isPurchased = true;
-      await writeContract({
+      writeContract({
         abi: contractAbi,
         address: contractAddress,
         functionName: 'buyCourse',
         args: [wei_price, course.author_wallet_id],
+        value: BigInt(wei_price)
       });
-
+      
       console.log(isPurchased)
     } catch (error) {
       console.error('MetaMask error', error);
@@ -92,7 +93,7 @@ const CourseDetails = () => {
           "http://localhost:4000/user/purchase-course",
           {
             course_id: course._id,
-            transaction_id: ""
+            transaction_id: " "
           },
           {
             headers: {

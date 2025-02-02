@@ -80,9 +80,9 @@ const TransactionPage = () => {
                 console.log(response.data.message);
                 const data = response.data.transaction_history.map((txn) => ({
                   _id: txn._id,
-                  course_purchased: txn.course_purchased,
+                  course_purchased: txn.courses_purchased.title,
                   transaction_address: txn.transaction_address,
-                  purchase_date: txn.purchase_date,
+                  purchase_date: txn.purchased_date.slice(0,10),
                 }));
                 setTransactions(data);
               }
@@ -136,7 +136,7 @@ const TransactionPage = () => {
              </div>
              <div className="flex items-center space-x-8">
                <div className="flex space-x-8">
-                 <Link to="/Edusphere" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
+                 <Link to="/studenthome" className="group relative text-lg font-medium hover:text-amber-500 transition-colors">
                                   Home
                                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
                                 </Link>
@@ -220,13 +220,6 @@ const TransactionPage = () => {
                            <span>Add Details</span>
                          </Link>
                          <Link
-                           to="/coins"
-                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                         >
-                           <FiDollarSign className="text-amber-500" />
-                           <span>Coins</span>
-                         </Link>
-                         <Link
                            to="/transactions"
                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
                          >
@@ -268,9 +261,9 @@ const TransactionPage = () => {
             <thead>
               <tr className="bg-gradient-to-r from-gold to-black text-white dark:from-black dark:to-gold">
                 <th className="p-4 border border-gold dark:border-gold text-yellow-200">Transaction ID</th>
+                <th className="p-4 border border-gold dark:border-gold text-gold">Course Purchased</th>
+                <th className="p-4 border border-gold dark:border-gold text-gold">Transaction Address</th>
                 <th className="p-4 border border-gold dark:border-gold text-gold">Date</th>
-                <th className="p-4 border border-gold dark:border-gold text-gold">Item</th>
-                <th className="p-4 border border-gold dark:border-gold text-gold">Amount</th>
                 
               </tr>
             </thead>
@@ -278,7 +271,7 @@ const TransactionPage = () => {
               {transactions.map((txn, index) => (
                 <tr key={index} className="hover:bg-gold/10">
                   <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn._id}</td>
-                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.course_purchased.title}</td>
+                  <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.course_purchased}</td>
                   <td className="p-4 border border-gold dark:border-gold text-yellow-500"><a href={txn.transaction_address}>{txn.transaction_address}</a></td>
                   <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.purchase_date}</td>
                   

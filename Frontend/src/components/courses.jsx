@@ -235,13 +235,7 @@ const CoursesPage = () => {
                            <FiUser className="text-amber-500" />
                            <span>Add Details</span>
                          </Link>
-                         <Link
-                           to="/coins"
-                           className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"
-                         >
-                           <FiDollarSign className="text-amber-500" />
-                           <span>Coins</span>
-                         </Link>
+                         
                          <Link
                            to="/transaction"
                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-amber-500/10 transition-colors"

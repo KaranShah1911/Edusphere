@@ -122,7 +122,7 @@ async function DisplayTransactionHistory(req , res){
         const id = req.user._id;
 
         try{
-            const user_transactions = await Transactions.findById(id).populate("courses_purchased");
+            const user_transactions = await Transactions.find({user_id : id}).populate("courses_purchased");;
             if(!user_transactions){
                 return res.status(201).json({error : "No Transaction done yet" , transaction_history: []});
             }else{
