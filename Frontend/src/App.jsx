@@ -1,3 +1,6 @@
+import { WagmiProvider } from 'wagmi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { config } from '../config.ts'
 import React, { useState, useEffect } from "react";
 import { WalletProvider } from "./context/WalletProvider.jsx";
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
@@ -35,11 +38,15 @@ const ProtectedRoute = ({ element }) => {
   return walletAddress ? element : <Navigate to="/role-selection" replace />;
 };
 
+const queryClient = new QueryClient()
+
 const App = () => {
   return (
+    <WalletProvider>
+    <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <CourseProvider>
-        <WalletProvider>
           <Router>
             <Routes>
               {/* Routes accessible to everyone */}
@@ -79,9 +86,11 @@ const App = () => {
               />
             </Routes>
           </Router>
-        </WalletProvider>
       </CourseProvider>
     </ThemeProvider>
+    </QueryClientProvider>
+    </WagmiProvider>
+    </WalletProvider>
   );
 };
 

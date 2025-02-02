@@ -8,6 +8,9 @@ import { useThemeStore } from '../store/themeStore';
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
 import process from 'process';
+import { contractAbi, contractAddress } from "../utils/constants";
+import { useWriteContract, useAccount } from 'wagmi'
+import {CourseContext, CourseProvider} from "./context1"
 
 const CreateCourse = () => {
 
@@ -25,7 +28,9 @@ const CreateCourse = () => {
     pricing: '',
     category: []
   });
-
+  const { writeContract, writeContractAsync } = useWriteContract()
+  const { address } = useAccount()
+  
   const dropdownRef = useRef(null);
 
   const toggleDarkMode = () => {
@@ -178,6 +183,13 @@ const CreateCourse = () => {
         });
 
         if (response.status === 200) {
+          // let wei_pricing = response.data.course.course_price * 1e18; 
+          writeContract({
+            abi: contractAbi,
+            address: contractAddress,
+            functionName: 'addCourse',
+          });
+          
           alert(response.data.message);
           console.log(response.data.message);
           console.log(response.data);

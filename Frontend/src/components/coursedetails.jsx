@@ -7,6 +7,8 @@ import { useTheme } from "next-themes";
 import { useThemeStore } from "../store/themeStore";
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
+import { contractAbi, contractAddress } from "../utils/constants";
+import { useWriteContract, useAccount } from 'wagmi'
 
 const CourseDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,6 +20,9 @@ const CourseDetails = () => {
   const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
+
+  const { writeContract, writeContractAsync } = useWriteContract()
+  const { address } = useAccount()
   
   const dropdownRef = useRef(null);
 
@@ -58,7 +63,14 @@ const CourseDetails = () => {
       // const web3 = new Web3(window.ethereum);
       // await window.ethereum.request({ method: 'eth_requestAccounts' });
       // setIsPurchased(true);
+      let wei_price = course.course_price * 1e18; 
       isPurchased = true;
+      await writeContract({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: 'buyCourse',
+        args: [wei_price, course.author_wallet_id],
+      });
 
       console.log(isPurchased)
     } catch (error) {

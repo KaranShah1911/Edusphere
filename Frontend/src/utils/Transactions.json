@@ -33,24 +33,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": true,
-                "internalType": "address",
-                "name": "student",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "educator",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "price",
-                "type": "uint256"
-            },
-            {
                 "indexed": false,
                 "internalType": "bytes32",
                 "name": "transactionId",
@@ -80,40 +62,6 @@
         "type": "event"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "AllCourses",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "courseID",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "imageHash",
-                "type": "string"
-            },
-            {
-                "internalType": "address",
-                "name": "educatorAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "courseFee",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [],
         "name": "CONVERSION_RATE",
         "outputs": [
@@ -127,90 +75,40 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "addCourse",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
         "inputs": [
-            {
-                "internalType": "string",
-                "name": "_courseID",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_imageHash",
-                "type": "string"
-            },
-            {
-                "internalType": "string[]",
-                "name": "videoIPFSHash",
-                "type": "string[]"
-            },
             {
                 "internalType": "uint256",
-                "name": "_courseFeeInWei",
+                "name": "_courseFee",
                 "type": "uint256"
-            }
-        ],
-        "name": "addCourse",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
+            },
             {
-                "internalType": "string",
-                "name": "_courseID",
-                "type": "string"
-            }
-        ],
-        "name": "buyCourse",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_educatorAddress",
+                "internalType": "address payable",
+                "name": "educator",
                 "type": "address"
             }
         ],
-        "name": "educatorCourses",
+        "name": "buyCourse",
         "outputs": [
             {
-                "components": [
-                    {
-                        "internalType": "string",
-                        "name": "courseID",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "imageHash",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "educatorAddress",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "string[]",
-                        "name": "videoHash",
-                        "type": "string[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "courseFee",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct Main.Courses[]",
+                "internalType": "bool",
                 "name": "",
-                "type": "tuple[]"
+                "type": "bool"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -280,46 +178,6 @@
             }
         ],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "viewAllCourses",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "string",
-                        "name": "courseID",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "imageHash",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "educatorAddress",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "string[]",
-                        "name": "videoHash",
-                        "type": "string[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "courseFee",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct Main.Courses[]",
-                "name": "",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

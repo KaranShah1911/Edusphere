@@ -9,91 +9,14 @@ import { RiCoinsLine } from 'react-icons/ri';
 import { BiBook, BiGift } from 'react-icons/bi';
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
+import { contractAbi, contractAddress } from "../utils/constants";
+import { useWriteContract, useAccount } from 'wagmi'
+import {CourseContext, CourseProvider} from "./context1"
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useTheme } from "next-themes";
 import { useThemeStore } from "../store/themeStore";
-
-// export const courses = [
-//   {
-//     name: "Python For Beginners Course In-Depth",
-//     category: "IT & Software",
-//     image: "https://img-c.udemycdn.com/course/480x270/3495852_8004.jpg",
-//     actual_price_usd: 19.99,
-//     sale_price_usd: 19.99,
-//     sale_end: "2025-01-10T14:20:00",
-//     description: "Python For Beginners Course In-Depth, This course is a depth introduction to both fundamental python programming concepts and the Python programming language.",
-//     url: "https://www.udemy.com/course/python-for-beginners-course-in-depth/?couponCode=20A74E86411E0A67A146",
-//     clean_url: "https://www.udemy.com/course/python-for-beginners-course-in-depth/"
-//   },
-//   {
-//     name: "Python For Beginners Course In-Depth",
-//     category: "IT & Software",
-//     image: "https://img-c.udemycdn.com/course/480x270/3495852_8004.jpg",
-//     actual_price_usd: 19.99,
-//     sale_price_usd: 19.99,
-//     sale_end: "2025-01-10T14:20:00",
-//     description: "Python For Beginners Course In-Depth, This course is a depth introduction to both fundamental python programming concepts and the Python programming language.",
-//     url: "https://www.udemy.com/course/python-for-beginners-course-in-depth/?couponCode=20A74E86411E0A67A146",
-//     clean_url: "https://www.udemy.com/course/python-for-beginners-course-in-depth/"
-//   },
-//   {
-//     name: "100% OFF- Python And Flask Framework Complete Course",
-//     category: "Flask",
-//     image: "https://img-c.udemycdn.com/course/480x270/3407178_5bd8_3.jpg",
-//     actual_price_usd: 24.99,
-//     sale_price_usd: 24.99,
-//     sale_end: "2025-01-11T02:46:00",
-//     description: "Python And Flask Framework Complete Course, Depth Introduction To Python Programming And Python Web framework Flask.",
-//     url: "https://www.udemy.com/course/flask-framework-complete-course-for-beginners/?couponCode=2FA8E12A82CA9E38B840",
-//     clean_url: "https://www.udemy.com/course/flask-framework-complete-course-for-beginners/"
-//   },
-//   {
-//     name: "HTML 5 With Quizzes And Python 3 Complete Course 2023",
-//     category: "IT & Software",
-//     image: "https://img-c.udemycdn.com/course/480x270/5009916_fc64.jpg",
-//     actual_price_usd: 74.99,
-//     sale_price_usd: 74.99,
-//     sale_end: "2025-01-14T02:31:00",
-//     description: "Learn HTML5 With HTML 5 Quizzes And Python 3 From the Beginning in HTML 5 And Python Complete Course 2023...",
-//     url: "https://www.udemy.com/course/html-5-with-quizzes-and-python-3-complete-course-2023/?couponCode=F20BD8C3C7516F1CC0AF",
-//     clean_url: "https://www.udemy.com/course/html-5-with-quizzes-and-python-3-complete-course-2023/"
-//   },
-//   {
-//     name: "Master the Machine Muse Build Generative AI with ML",
-//     category: "Data Science",
-//     image: "https://img-c.udemycdn.com/course/480x270/6085251_5113_6.jpg",
-//     actual_price_usd: 74.99,
-//     sale_price_usd: 74.99,
-//     sale_end: "2025-01-10T18:00:00",
-//     description: "Unlock the creative potential of artificial intelligence with “Master the Machine Muse: Build Generative AI with ML.”...",
-//     url: "https://www.udemy.com/course/master-the-machine-muse-build-generative-ai-with-ml/?couponCode=AKHIL_JAN1",
-//     clean_url: "https://www.udemy.com/course/master-the-machine-muse-build-generative-ai-with-ml/"
-//   },
-//   {
-//     name: "100% OFF- Python Demonstrations For Practice Course",
-//     category: "Development",
-//     image: "https://img-c.udemycdn.com/course/480x270/3518698_0aff.jpg",
-//     actual_price_usd: 19.99,
-//     sale_price_usd: 19.69,
-//     sale_end: "2025-01-12T11:43:00",
-//     description: "Python Demonstrations For Practice Course, This course is a depth introduction to fundamental python programming concepts by demonstrations in Python.",
-//     url: "https://www.udemy.com/course/python-for-beginners-demonstration-course/?couponCode=CD29D02165FB7D76A1F0",
-//     clean_url: "https://www.udemy.com/course/python-for-beginners-demonstration-course/"
-//   },
-//   {
-//     name: "Mastering Deep Learning for Generative AI",
-//     category: "Data Science",
-//     image: "https://img-c.udemycdn.com/course/480x270/6085269_ee3f_4.jpg",
-//     actual_price_usd: 64.99,
-//     sale_price_usd: 0.0,
-//     sale_end: "2025-01-10T18:00:00",
-//     description: "Unlock the potential of Generative AI through Deep Learning. ‘Mastering Deep Learning for Generative AI’ is your comprehensive guide to mastering the art of creating AI models that can generate new, original content. This course is designed for anyone looking to take their machine learning skills to the next level by exploring the creative possibilities of AI...",
-//     url: "https://www.udemy.com/course/mastering-deep-learning-for-generative-ai/?couponCode=AKHIL_JAN2",
-//     clean_url: "https://www.udemy.com/course/mastering-deep-learning-for-generative-ai/"
-//   }
-// ];
 
 const CoursesPage = () => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
@@ -109,6 +32,9 @@ const CoursesPage = () => {
   const menuRef = useRef(null);
   const { walletAddress, walletConnected, connectWallet } = useWallet();
   const { theme, setTheme } = useTheme();
+
+  const { writeContract, writeContractAsync } = useWriteContract()
+  const { address } = useAccount()
 
 
    const dropdownRef = useRef(null);
@@ -166,7 +92,6 @@ const CoursesPage = () => {
       setAccount(window.ethereum.selectedAddress);
     }
   };
-
   
 
   const disconnectWallet = () => {

@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { ethers } from "ethers";
 import toast from "react-hot-toast";
 import { contractAbi, contractAddress } from "../utils/constants";
+import { useWriteContract, useAccount } from 'wagmi'
 
 export const CourseContext = createContext();
 
@@ -9,6 +10,8 @@ export const CourseProvider = ({ children }) => {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { writeContract, writeContractAsync } = useWriteContract()
+  const { address } = useAccount()
 
   useEffect(() => {
     const initializeContract = async () => {
@@ -26,13 +29,15 @@ export const CourseProvider = ({ children }) => {
     initializeContract();
   }, []);
 
-  const addCourse = async (courseID, imageHash, videoHashes, courseFee) => {
+  const addCourse = async (courseFee) => {
     if (!contract) return;
     setIsLoading(true);
     try {
-      const feeInWei = ethers.utils.parseEther("1");
-      const transaction = await contract.addCourse(courseID, imageHash, videoHashes, ethers.utils.parseUnits(courseFee, "wei"), { value: feeInWei });
-      await transaction.wait();
+      await writeContractAsync({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: 'addCourse',
+      });
       toast.success("Course added successfully!");
     } catch (error) {
       console.error("Error adding course:", error);
@@ -41,12 +46,16 @@ export const CourseProvider = ({ children }) => {
     setIsLoading(false);
   };
 
-  const buyCourse = async (courseID, priceInWei) => {
+  const buyCourse = async (priceInWei, addr) => {
     if (!contract) return;
     setIsLoading(true);
     try {
-      const transaction = await contract.buyCourse(courseID, { value: ethers.utils.parseUnits(priceInWei, "wei") });
-      await transaction.wait();
+      await writeContractAsync({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: 'buyCourse',
+        args: [priceInWei, addr],
+      })
       toast.success("Course purchased successfully!");
     } catch (error) {
       console.error("Error purchasing course:", error);
@@ -66,20 +75,36 @@ export const CourseProvider = ({ children }) => {
   };
 
   const redeemCoins = async (coins) => {
-    console.log("Done Redeeming");
+    // console.log("Done Redeeming");
 
     if (!contract) return;
     setIsLoading(true);
     try {
       console.log("Calling contract.redeem with coins:", coins, "and account:", account);
 
-      const transaction = await contract.redeem(coins, account);
-      console.log("Transaction sent:", transaction);
+      // const transaction = await contract.methods.redeem(coins, account).call();
 
-      console.log("Waiting for transaction confirmation...");
-      await transaction.wait();
+      // console.log("Transaction sent:", transaction);
 
-      console.log("Transaction confirmed!");
+      // console.log("Waiting for transaction confirmation...");
+      // await transaction.wait();
+
+      // const txObject = {
+      //   from: account,
+      //   to: contractAddress,
+      //   data: contract.methods.redeem(coins, account).encodeABI(),        
+      //   gas: 2000000, // Specify your desired gas limit
+      // };
+      // const txHash = await web3.eth.sendTransaction(txObject);
+      // console.log(txHash);
+
+      // console.log("Transaction confirmed!");
+      await writeContractAsync({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: 'redeem',
+        args: [coins, address],
+      });
       toast.success("Redemption successful!");
   } catch (error) {
       console.error("Error redeeming coins:", error);

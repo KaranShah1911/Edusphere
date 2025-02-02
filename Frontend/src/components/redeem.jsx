@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useWallet } from "../context/WalletProvider";
 import { useThemeStore } from "../store/themeStore";
 import axios from "axios";
+import { contractAbi, contractAddress } from "../utils/constants";
+import { useWriteContract, useAccount } from 'wagmi'
 
 const RedeemPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -19,6 +21,9 @@ const RedeemPage = () => {
   const {
     redeemCoins,
   } = useContext(CourseContext);
+
+  const { writeContract, writeContractAsync } = useWriteContract()
+  const { address } = useAccount()
 
   const dropdownRef = useRef(null);
 
@@ -60,9 +65,9 @@ const RedeemPage = () => {
   }, []);
 
   const handleWalletClick = async (reqcoins) => {
-    console.log("handleWalletClick called with:", reqcoins);
-    console.log("Wallet Address:", walletAddress);
-    console.log("redeemCoins function:", redeemCoins);
+    // console.log("handleWalletClick called with:", reqcoins);
+    // console.log("Wallet Address:", walletAddress);
+    // console.log("redeemCoins function:", redeemCoins);
 
     if (!redeemCoins) {
       console.error("redeemCoins is undefined! CourseContext might not be wrapping this component.");
@@ -70,8 +75,14 @@ const RedeemPage = () => {
     }
 
     try {
-      console.log("Calling redeemCoins...");
-      await redeemCoins(reqcoins);
+      // console.log("Calling redeemCoins...");
+      // await redeemCoins(reqcoins);
+      await writeContract({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: 'redeem',
+        args: [reqcoins, address],
+      });
       console.log("redeemCoins completed successfully!");
     } catch (error) {
       console.error("Error calling redeemCoins:", error);
