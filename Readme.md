@@ -70,6 +70,7 @@ You can use icons too - find them [here](https://github.com/get-icon/geticon)
 #### Blockchain
 - Solidity
 - Wagmi For integrating the Smart Contract
+- IPFS via Pinata
   
 #### Database
 - MongoDB
