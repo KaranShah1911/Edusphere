@@ -262,7 +262,7 @@ const TransactionPage = () => {
               <tr className="bg-gradient-to-r from-gold to-black text-white dark:from-black dark:to-gold">
                 <th className="p-4 border border-gold dark:border-gold text-yellow-200">Transaction ID</th>
                 <th className="p-4 border border-gold dark:border-gold text-gold">Course Purchased</th>
-                <th className="p-4 border border-gold dark:border-gold text-gold">Transaction Address</th>
+                {/* <th className="p-4 border border-gold dark:border-gold text-gold">Transaction Address</th> */}
                 <th className="p-4 border border-gold dark:border-gold text-gold">Date</th>
                 
               </tr>
@@ -272,7 +272,7 @@ const TransactionPage = () => {
                 <tr key={index} className="hover:bg-gold/10">
                   <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn._id}</td>
                   <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.course_purchased}</td>
-                  <td className="p-4 border border-gold dark:border-gold text-yellow-500"><a href={txn.transaction_address}>{txn.transaction_address}</a></td>
+                  {/* <td className="p-4 border border-gold dark:border-gold text-yellow-500"><a href={txn.transaction_address}>{txn.transaction_address}</a></td> */}
                   <td className="p-4 border border-gold dark:border-gold text-yellow-500">{txn.purchase_date}</td>
                   
                 </tr>

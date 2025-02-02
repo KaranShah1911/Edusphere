@@ -265,20 +265,24 @@ const CourseDetails = () => {
           <img
             src={"https://gateway.pinata.cloud/ipfs/" + course.course_image}
             alt={course.title}
-            className="w-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
+           className="w-3/4 mx-auto rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
           />
           <h1 className="text-3xl font-bold mt-6">{course.title}</h1>
           <p className="mt-4 text-lg">{course.description}</p>
-          <div className="text flex items-center justify-between mb-4">
-            {
-              course.category.map((category, index) => (
-                <span className={`m-auto mt-5 px-3 py-1 rounded-full text-xl ${isDarkMode ?
-                    'bg-purple-900/30 text-purple-400' :
-                    'bg-purple-100 text-purple-600'
-                  }`}>
-                  {category}
-                </span>
+          <div className={`mt-6 p-4 border border-amber-500 rounded-lg ${isDarkMode?"bg-black":"bg-yellow-100"} `}>
+      <div className="flex items-center justify-between">
+        {course.category.map((category, index) => (
+          <span
+            key={index}
+            className={`m-2 px-3 py-1 rounded-full text-xl ${isDarkMode ?
+              'bg-purple-900/30 text-purple-400' :
+              'bg-purple-100 text-purple-600'
+            }`}
+          >
+            {category}
+          </span>
               ))}
+          </div>
           </div>
           <button
             onClick={handlePurchase}
@@ -291,7 +295,6 @@ const CourseDetails = () => {
             {isPurchased ? 'Course Purchased' : 'Buy Now'}
           </button>
         </div>
-
         {/* Video Section */}
         {/* {isPurchased && course.course_video.map((video, index) => (
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8 justify-items-center">

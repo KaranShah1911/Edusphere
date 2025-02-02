@@ -193,26 +193,31 @@ const CourseDetails = () => {
       </nav>
       <div className="border-b-4 border-gold"></div>
 
-      {/* Course Details */}
-      <div className="px-8 py-12">
+       {/* Course Details */}
+       <div className="px-8 py-12">
         <div className="max-w-4xl mx-auto text-center">
           <img
             src={"https://gateway.pinata.cloud/ipfs/" + course.course_image}
             alt={course.title}
-            className="w-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
+            className="w-3/4 mx-auto rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
           />
           <h1 className="text-3xl font-bold mt-6">{course.title}</h1>
           <p className="mt-4 text-lg">{course.description}</p>
-          <div className="text flex items-center justify-between mb-4">
+          <div className={`mt-6 p-4 border border-amber-500 rounded-lg ${isDarkMode?"bg-black":"bg-yellow-100"} `}>
+          <div className="flex items-center justify-between">
             {
               course.category.map((category, index) => (
-                <span className={`m-auto mt-5 px-3 py-1 rounded-full text-xl ${isDarkMode ?
-                    'bg-purple-900/30 text-purple-400' :
-                    'bg-purple-100 text-purple-600'
-                  }`}>
-                  {category}
-                </span>
+                <span
+                key={index}
+                className={`m-2 px-3 py-1 rounded-full text-xl ${isDarkMode ?
+                  'bg-purple-900/30 text-purple-400' :
+                  'bg-purple-100 text-purple-600'
+                }`}
+              >
+                {category}
+              </span>
               ))}
+              </div>
           </div>
         </div>
 

@@ -224,7 +224,7 @@ const CreateCourse = () => {
         }
       } catch (error) {
         console.error('Error submitting course data:', error);
-        alert('Failed to create the course. Please try again.');
+        // alert('Failed to create the course. Please try again.');
       }
 
       // Reset form
@@ -243,7 +243,7 @@ const CreateCourse = () => {
 
     } catch (error) {
       console.error('Error publishing course:', error);
-      alert('Failed to publish the course. Please try again.');
+      // alert('Failed to publish the course. Please try again.');
     }
   };
 
