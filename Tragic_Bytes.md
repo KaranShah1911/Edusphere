@@ -45,7 +45,7 @@ Edusphere is a decentralized platform designed for learning, teaching, and buyin
 ## 🔗Links
 
 - [GitHub Repository](https://github.com/DARSHITSHAH-2906/Inheritance_Edusphere)
-- [Demo Video]()
+- [Demo Video](https://drive.google.com/file/d/1A1JiiTXZY2mY4AgW294rtE2c8LXkjePg/view?usp=sharing)
 - [Drive Link to Screenshots of your project](https://drive.google.com/drive/folders/1AUFPzK9yaPfYAL0EGEkEaTZ2XZz0PhYZ)
 - [Hosted Website Link]()
 - [Hosted Backend Link]()
@@ -137,10 +137,10 @@ git clone <https://github.com/DARSHITSHAH-2906/Inheritance_Edusphere.git>
 
 ## 👨‍💻Team Members
 
-- [Karan Shah]()
+- [Karan Shah](https://github.com/KaranShah1911)
 - [Darshit Shah ](https://github.com/DARSHITSHAH-2906)
-- [Harsh Pimple ](https://github.com/)
-- [Kavya Shah ](https://github.com/)
+- [Harsh Pimple ](https://github.com/harshp1321)
+- [Kavya Shah ](https://github.com/KavyaShah1105)
 
 ## 👨‍🏫Mentors
 
