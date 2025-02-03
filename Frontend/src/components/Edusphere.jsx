@@ -101,7 +101,7 @@ const Edusphere = () => {
       branch: "Computer Engineering",
       contribution: "Blockchain Development",
       image: "/images/karanshah.jpg",
-      github: 'https://github.com',
+      github: 'https://github.com/KaranShah1911',
       linkedin: 'https://linkedin.com',
       instagram: 'https://instagram.com',
       description: 'A passionate developer with expertise in Blockchain.'
@@ -112,7 +112,7 @@ const Edusphere = () => {
       branch:"Computer Engineering",
       contribution: "Frontend Developer",
       image: "/images/harshimage.jpg",
-      github: 'https://github.com/johndoe',
+      github: 'https://github.com/harshp1321',
       linkedin: 'https://linkedin.com/in/johndoe',
       instagram: 'https://instagram.com/johndoe',
       description: 'A passionate developer with expertise in Frontend.'
@@ -123,7 +123,7 @@ const Edusphere = () => {
       branch: "Computer Engineering",
       contribution: "Backend Developer",
       image: "/images/darshitimage.jpg",
-      github: 'https://github.com/johndoe',
+      github: 'https://github.com/DARSHITSHAH-2906',
       linkedin: 'https://linkedin.com/in/johndoe',
       instagram: 'https://instagram.com/johndoe',
       description: 'A passionate developer with expertise in Backend.'
@@ -134,7 +134,7 @@ const Edusphere = () => {
       branch: "Computer Engineering",
       contribution: "Frontend Developer",
       image: "/images/2B8A4005.JPG",
-      github: 'https://github.com/johndoe',
+      github: 'https://github.com/KavyaShah1105',
       linkedin: 'https://linkedin.com/in/johndoe',
       instagram: 'https://instagram.com/johndoe',
       description: 'A passionate developer with expertise in Frontend.'
@@ -646,7 +646,7 @@ const Edusphere = () => {
             {['twitter', 'linkedin', 'github'].map((platform) => (
               <motion.a
                 key={platform}
-                href={`https://${platform}.com`}
+                href={`https://github.com/DARSHITSHAH-2906/Inheritance_Edusphere`}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 className={`p-2 rounded-lg ${
@@ -722,7 +722,7 @@ const Edusphere = () => {
       >
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-amber-500 dark:text-gray-400">
-            © 2024 Edusphere. All rights reserved.
+            © 2025 Edusphere. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <motion.a 
