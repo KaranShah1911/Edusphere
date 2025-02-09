@@ -4,8 +4,6 @@ const {allow_login_admin } = require('../Middlewares/login_user');
 
 const admin_router = express.Router()
 
-// admin_router.get('/' , DisplayAdminPage)
-// admin_router.get('/login' , DisplayAdminLoginPage)
 admin_router.post("/add-details" , CreateAdmin);
 admin_router.post('/login' , VerifyAdmin);
 admin_router.get("/get-courses", allow_login_admin , GetCourses);

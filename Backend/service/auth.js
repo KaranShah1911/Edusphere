@@ -1,12 +1,11 @@
 const jwt = require('jsonwebtoken');
-const key = 'edusphere';
 
 function getuser(token){
     if(!token){
         return null;
     }
     try{
-        return jwt.verify(token,key);
+        return jwt.verify(token,process.env.jwt_key);
     } catch{
         return null;
     }
@@ -17,7 +16,7 @@ function get_token(user){
     const token = jwt.sign({
         id:user._id,
         wallet_id : user.metamask_wallet_id
-    },key);
+    },process.env.jwt_key);
 
     return token;
 }

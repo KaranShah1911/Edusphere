@@ -5,7 +5,6 @@ const {allow_login_user, allow_login_admin } = require("../Middlewares/login_use
 const course_router = express.Router();
 
 course_router.get("/", DisplayCourses);
-// course_router.post("/" ,allow_login_user, UploadCourse);
 course_router.post("/" , allow_login_admin , UploadCourse);
 
 

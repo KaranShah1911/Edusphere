@@ -3,13 +3,6 @@ const Courses = require("../models/course_schema");
 const Transactions = require("../models/transaction_history")
 const {get_token} = require('../service/auth');
 
-// function DisplayUserLoginPage(req , res){
-//     res.render('user_login');
-// }
-
-// function DisplayUserHomePage(req , res){
-//     return res.status(200).json({message : "User home page rendered successfully."})
-// }
 
 async function VerifyUser(req ,res){
     try{
@@ -40,18 +33,9 @@ async function VerifyUser(req ,res){
         return res.status(500).json({error : "Error with the server"})
     } 
 
-    // if(!user){
-    //     res.redirect("/user/login");
-    // }
-    // const token = setuser(user);
-    // res.cookie("uid",token);
-    // res.redirect('/user');
 
 }
 
-// function DisplayUserSignupPage(req , res){
-//     res.render('user_signup');
-// }
 
 async function CreateUser(req , res){
     try{
@@ -94,9 +78,6 @@ async function DisplayMyLearning(req , res){
     
         const user = await Users.findById(id).populate("courses_enrolled").populate("courses_completed");
     
-        // const courses_enrolled = user.course_enrolled.map(course => Courses.findById(course));
-        // const courses_completed = user.course_completed.map(course => Courses.findById(course));
-    
         
         return res.status(200).json({
             message : "Courses fetched successfully",
@@ -104,10 +85,6 @@ async function DisplayMyLearning(req , res){
             courses_completed : user.courses_completed
         });
         
-        // res.render('courses' , {
-        //     courses_purchased: courses_enrolled ,
-        //     courses_completed : courses_completed}
-        // );
     }catch(error){
         return res.status(500).json({error : "Error with the server"})
     }
@@ -198,8 +175,4 @@ module.exports = {
     PurchaseCourse,
     GetCoins,
     UpdateCoins
-    // DisplayUserHomePage,
-    // DisplayUserLoginPage,
-    // DisplayUserSignupPage,
-    // DisplayCourses
 };
