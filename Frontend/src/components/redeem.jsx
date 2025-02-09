@@ -74,19 +74,7 @@ const RedeemPage = () => {
       return;
     }
 
-    try {
-      // console.log("Calling redeemCoins...");
-      // await redeemCoins(reqcoins);
-      await writeContract({
-        abi: contractAbi,
-        address: contractAddress,
-        functionName: 'redeem',
-        args: [reqcoins, address],
-      });
-      console.log("redeemCoins completed successfully!");
-    } catch (error) {
-      console.error("Error calling redeemCoins:", error);
-  }
+    
 
     try {
       // Get token from cookies
@@ -94,7 +82,7 @@ const RedeemPage = () => {
         .split("; ")
         .find((row) => row.startsWith("user="));
       if (!cookie) {
-        // throw new Error("User is not logged in or registered");
+        throw new Error("User is not logged in or registered");
       }
 
       const token = cookie.split("=")[1];
@@ -117,6 +105,17 @@ const RedeemPage = () => {
         }else{
           const choice = confirm("Are you sure you want to redeem this offer?");
           if(choice){
+            try {
+              await writeContract({
+                abi: contractAbi,
+                address: contractAddress,
+                functionName: 'redeem',
+                args: [reqcoins, address],
+              });
+              console.log("redeemCoins completed successfully!");
+            } catch (error) {
+              console.error("Error calling redeemCoins:", error);
+            }
             const newcoins = usercoins - reqcoins;
             const response = await axios.post("http://localhost:4000/user/redeem", {
               coins: newcoins,
@@ -182,21 +181,6 @@ const RedeemPage = () => {
     }
   }, [isDarkMode]);
 
-  // Handle Buy functionality
-  // const handleBuy = async (coinsRequired) => {
-  //   if (!walletConnected) {
-  //     alert("Please connect your wallet first!");
-  //     return;
-  //   }
-  //   try {
-  //     const transaction = await CourseProvider.redeemCoins(coinsRequired);
-  //     await transaction.wait();
-  //     alert(`Redemption successful! You spent ${coinsRequired} coins.`);
-  //   } catch (error) {
-  //     console.error("Error redeeming coins:", error);
-  //     alert("Failed to redeem coins.");
-  //   }
-  // };
 
   const offers = [
     { coinsRequired: 20 , ethers: '0.01' },
