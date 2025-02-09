@@ -90,7 +90,7 @@ const CourseDetails = () => {
         const token = cookie.split("=")[1];
         console.log("Token:", token);
         const response = await axios.post(
-          "http://localhost:4000/user/purchase-course",
+          "https://edusphere-77qx.onrender.com/user/purchase-course",
           {
             course_id: course._id,
             transaction_id: " "

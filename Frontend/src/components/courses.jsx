@@ -112,7 +112,7 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/courses');
+        const response = await axios.get('https://edusphere-77qx.onrender.com/courses');
   
         if (response.status !== 200) {
           alert(response.data.error);

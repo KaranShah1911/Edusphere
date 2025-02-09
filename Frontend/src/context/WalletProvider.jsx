@@ -29,7 +29,7 @@ export const WalletProvider = ({ children }) => {
           if(role==="educator"){
             try {
               const response = await axios.post(
-                'http://localhost:4000/admin/login',
+                'https://edusphere-77qx.onrender.com/admin/login',
                 {
                   wallet_id: account,
                 },
@@ -56,7 +56,7 @@ export const WalletProvider = ({ children }) => {
           else{
             try {
               const response = await axios.post(
-                'http://localhost:4000/user/login',
+                'https://edusphere-77qx.onrender.com/user/login',
                 {
                   wallet_id: account,
                 },

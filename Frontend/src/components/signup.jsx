@@ -43,7 +43,7 @@ const LoginPage = () => {
       // Posting the data to Database
       if(role==="student"){
         try {
-          const response = await axios.post("http://localhost:4000/user/add-details", {
+          const response = await axios.post("https://edusphere-77qx.onrender.com/user/add-details", {
             username: formData.username,
             wallet_id: localStorage.getItem("walletAddress"),
           }, {
@@ -68,7 +68,7 @@ const LoginPage = () => {
       }else{
         try {
           const response = await axios.post(
-            "http://localhost:4000/admin/add-details",
+            "https://edusphere-77qx.onrender.com/admin/add-details",
             {
               username: formData.username,
               wallet_id: localStorage.getItem("walletAddress"),

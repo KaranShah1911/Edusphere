@@ -45,7 +45,7 @@ const MyLearningPage = () => {
         const token = cookie.split("=")[1];
         console.log("Token:", token);
 
-        const response = await axios.get(`http://localhost:4000/user/my-learning`,
+        const response = await axios.get(`https://edusphere-77qx.onrender.com/user/my-learning`,
           {
             headers: {
               'Content-Type': 'application/json',

@@ -175,7 +175,7 @@ const CreateCourse = () => {
         const token = cookie.split("=")[1];
         console.log("Token:", token);
 
-        const response = await axios.post("http://localhost:4000/courses", courseData , {
+        const response = await axios.post("https://edusphere-77qx.onrender.com/courses", courseData , {
           headers: {
             "Content-Type" : 'application/json',
             "Authorization" : `Bearer ${token}`,
@@ -202,7 +202,7 @@ const CreateCourse = () => {
             console.log("Token:", token);
 
             const course_id = response.data.course._id;
-            const response1 = await axios.post('http://localhost:4000/admin/add-course', {
+            const response1 = await axios.post('https://edusphere-77qx.onrender.com/admin/add-course', {
               course_id: course_id,
             }, {
               headers: {
