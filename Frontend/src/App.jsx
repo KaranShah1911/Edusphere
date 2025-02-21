@@ -43,53 +43,53 @@ const queryClient = new QueryClient()
 const App = () => {
   return (
     <WalletProvider>
-    <WagmiProvider config={config}>
-    <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <CourseProvider>
-          <Router>
-            <Routes>
-              {/* Routes accessible to everyone */}
-              <Route path="/" element={<Edusphere />} />
-              <Route path="/Edusphere" element={<Edusphere />} />
-              <Route path="/role-selection" element={<RoleSelection />} />
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <CourseProvider>
+                <Router>
+                  <Routes>
+                    {/* Routes accessible to everyone */}
+                    <Route path="/" element={<Edusphere />} />
+                    <Route path="/Edusphere" element={<Edusphere />} />
+                    <Route path="/role-selection" element={<RoleSelection />} />
 
-              {/* Protected routes */}
-              <Route path="/studenthome"  element={<EduSphere1 />} />
-              <Route path="/educatorhome"  element={<EduSphere2 />} />
-              <Route path="/courses"  element={<Courses />}  />
-              <Route path="/course/:id" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
-              <Route path="/coursedetails" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
-              <Route path="/createcourses" element={<ProtectedRoute element={<CreateCourse />} />} />
-              <Route path="/managecourses" element={<ProtectedRoute element={<Managecourse />} />} />
-              <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
-              <Route path="/transaction" element={<ProtectedRoute element={<Transaction />} />} />
-              <Route path="/contest" element={<ProtectedRoute element={<Contest />} />} />
-              <Route path="/signup" element={<ProtectedRoute element={<SignUp />} />} />
-              <Route path="/themetoggle" element={<ProtectedRoute element={<ThemeToggle />} />} />
-              <Route path="/mylearning" element={<ProtectedRoute element={<MyLearning />} />} />
-              <Route path="/mylearning/:id" element={<ProtectedRoute element={<CourseDetails />} />} />
-              <Route path="/howitworks" element={<ProtectedRoute element={<HowItWorks />} />} />
+                    {/* Protected routes */}
+                    <Route path="/studenthome"  element={<EduSphere1 />} />
+                    <Route path="/educatorhome"  element={<EduSphere2 />} />
+                    <Route path="/courses"  element={<Courses />}  />
+                    <Route path="/course/:id" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
+                    <Route path="/coursedetails" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
+                    <Route path="/createcourses" element={<ProtectedRoute element={<CreateCourse />} />} />
+                    <Route path="/managecourses" element={<ProtectedRoute element={<Managecourse />} />} />
+                    <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
+                    <Route path="/transaction" element={<ProtectedRoute element={<Transaction />} />} />
+                    <Route path="/contest" element={<ProtectedRoute element={<Contest />} />} />
+                    <Route path="/signup" element={<ProtectedRoute element={<SignUp />} />} />
+                    <Route path="/themetoggle" element={<ProtectedRoute element={<ThemeToggle />} />} />
+                    <Route path="/mylearning" element={<ProtectedRoute element={<MyLearning />} />} />
+                    <Route path="/mylearning/:id" element={<ProtectedRoute element={<CourseDetails />} />} />
+                    <Route path="/howitworks" element={<ProtectedRoute element={<HowItWorks />} />} />
 
-              {/* Route for the animation */}
-              <Route
-                path="/animation"
-                element={
-                  <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <DotLottieReact
-                      src="https://lottie.host/2fa8ee19-3348-4358-92c0-c3331ca12c20/BbbdUxJoOR.lottie"
-                      loop
-                      autoplay
+                    {/* Route for the animation */}
+                    <Route
+                      path="/animation"
+                      element={
+                        <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                          <DotLottieReact
+                            src="https://lottie.host/2fa8ee19-3348-4358-92c0-c3331ca12c20/BbbdUxJoOR.lottie"
+                            loop
+                            autoplay
+                          />
+                        </div>
+                      }
                     />
-                  </div>
-                }
-              />
-            </Routes>
-          </Router>
-      </CourseProvider>
-    </ThemeProvider>
-    </QueryClientProvider>
-    </WagmiProvider>
+                  </Routes>
+                </Router>
+            </CourseProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </WalletProvider>
   );
 };
