@@ -212,9 +212,9 @@ const Edusphere = () => {
               >
                 Create Courses
               </Link>
-              <button className="px-8 py-4 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500/10 transition-colors duration-300 font-semibold">
-                How It Works
-              </button>
+              <Link to="/howitworks" className="px-8 py-4 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500/10 transition-colors duration-300 font-semibold">
+                  How It Works
+              </Link>
             </div>
           </div>
         </div>
