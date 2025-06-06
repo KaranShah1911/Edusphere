@@ -4,9 +4,10 @@ import axios from "axios";
 const WalletContext = createContext();
 
 export const WalletProvider = ({ children }) => {
-  const [walletAddress, setWalletAddress] = useState(document.cookie
+  const savedWalletAddress = document.cookie
     .split("; ")
-    .find((row) => row.startsWith("walletAddress=")).split("=")[1] || null);
+    .find((row) => row.startsWith("walletAddress="));
+  const [walletAddress, setWalletAddress] = useState(savedWalletAddress? savedWalletAddress.split("=")[1] : null);
   const [walletConnected, setWalletConnected] = useState(!walletAddress);
 
   const setCookie = (name, value, days) => {
