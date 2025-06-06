@@ -2,7 +2,6 @@ import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { config } from '../config.ts'
 import React, { useState, useEffect } from "react";
-import { WalletProvider } from "./context/WalletProvider.jsx";
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import Edusphere from './components/Edusphere.jsx';
 import RoleSelection from './components/role-selection.jsx';
@@ -23,18 +22,12 @@ import CourseDetails from './components/coursedetails1.jsx';
 import HowItWorks from './components/howitworks.jsx';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { CourseProvider } from "./components/context.jsx";
+import { ToastContainer } from "react-toastify"
+import { useWallet } from './context/WalletProvider.jsx';
 
 
 const ProtectedRoute = ({ element }) => {
-  const [walletAddress, setWalletAddress] = useState(localStorage.getItem("walletAddress"));
-  const location = useLocation();
-  
-
-  useEffect(() => {
-    const savedWallet = localStorage.getItem("walletAddress");
-    setWalletAddress(savedWallet);
-  }, [location]);
-
+  const { walletAddress } = useWallet()
   return walletAddress ? element : <Navigate to="/role-selection" replace />;
 };
 
@@ -42,56 +35,57 @@ const queryClient = new QueryClient()
 
 const App = () => {
   return (
-    <WalletProvider>
+    <>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
             <CourseProvider>
-                <Router>
-                  <Routes>
-                    {/* Routes accessible to everyone */}
-                    <Route path="/" element={<Edusphere />} />
-                    <Route path="/Edusphere" element={<Edusphere />} />
-                    <Route path="/role-selection" element={<RoleSelection />} />
+              <Router>
+                <Routes>
+                  {/* Routes accessible to everyone */}
+                  <Route path="/" element={<Edusphere />} />
+                  <Route path="/Edusphere" element={<Edusphere />} />
+                  <Route path="/role-selection" element={<RoleSelection />} />
 
-                    {/* Protected routes */}
-                    <Route path="/studenthome"  element={<EduSphere1 />} />
-                    <Route path="/educatorhome"  element={<EduSphere2 />} />
-                    <Route path="/courses"  element={<Courses />}  />
-                    <Route path="/course/:id" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
-                    <Route path="/coursedetails" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
-                    <Route path="/createcourses" element={<ProtectedRoute element={<CreateCourse />} />} />
-                    <Route path="/managecourses" element={<ProtectedRoute element={<Managecourse />} />} />
-                    <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
-                    <Route path="/transaction" element={<ProtectedRoute element={<Transaction />} />} />
-                    <Route path="/contest" element={<ProtectedRoute element={<Contest />} />} />
-                    <Route path="/signup" element={<ProtectedRoute element={<SignUp />} />} />
-                    <Route path="/themetoggle" element={<ProtectedRoute element={<ThemeToggle />} />} />
-                    <Route path="/mylearning" element={<ProtectedRoute element={<MyLearning />} />} />
-                    <Route path="/mylearning/:id" element={<ProtectedRoute element={<CourseDetails />} />} />
-                    <Route path="/howitworks" element={<ProtectedRoute element={<HowItWorks />} />} />
+                  {/* Protected routes */}
+                  <Route path="/studenthome" element={<EduSphere1 />} />
+                  <Route path="/educatorhome" element={<EduSphere2 />} />
+                  <Route path="/courses" element={<Courses />} />
+                  <Route path="/course/:id" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
+                  <Route path="/coursedetails" element={<ProtectedRoute element={<CourseDetailsPage />} />} />
+                  <Route path="/createcourses" element={<ProtectedRoute element={<CreateCourse />} />} />
+                  <Route path="/managecourses" element={<ProtectedRoute element={<Managecourse />} />} />
+                  <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
+                  <Route path="/transaction" element={<ProtectedRoute element={<Transaction />} />} />
+                  <Route path="/contest" element={<ProtectedRoute element={<Contest />} />} />
+                  <Route path="/signup" element={<ProtectedRoute element={<SignUp />} />} />
+                  <Route path="/themetoggle" element={<ProtectedRoute element={<ThemeToggle />} />} />
+                  <Route path="/mylearning" element={<ProtectedRoute element={<MyLearning />} />} />
+                  <Route path="/mylearning/:id" element={<ProtectedRoute element={<CourseDetails />} />} />
+                  <Route path="/howitworks" element={<ProtectedRoute element={<HowItWorks />} />} />
 
-                    {/* Route for the animation */}
-                    <Route
-                      path="/animation"
-                      element={
-                        <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          <DotLottieReact
-                            src="https://lottie.host/2fa8ee19-3348-4358-92c0-c3331ca12c20/BbbdUxJoOR.lottie"
-                            loop
-                            autoplay
-                          />
-                        </div>
-                      }
-                    />
-                  </Routes>
-                </Router>
+                  {/* Route for the animation */}
+                  <Route
+                    path="/animation"
+                    element={
+                      <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <DotLottieReact
+                          src="https://lottie.host/2fa8ee19-3348-4358-92c0-c3331ca12c20/BbbdUxJoOR.lottie"
+                          loop
+                          autoplay
+                        />
+                      </div>
+                    }
+                  />
+                </Routes>
+              </Router>
             </CourseProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiProvider>
-    </WalletProvider>
-  );
+      <ToastContainer position='top-center' autoClose={1500} />
+    </>
+    );
 };
 
 const GlobalDarkModeToggle = () => {

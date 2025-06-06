@@ -39,7 +39,6 @@ const RedeemPage = () => {
         }
 
         const token = cookie.split("=")[1];
-        console.log("Token:", token);
 
         // Make the GET request using Axios
         const response = await axios.get("https://edusphere-77qx.onrender.com/user/redeem", {

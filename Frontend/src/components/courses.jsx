@@ -1,17 +1,18 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useNavigate, useLocation ,Link} from 'react-router-dom';
-import Web3 from 'web3';
+// import Web3 from 'web3';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronDown,FiCopy } from 'react-icons/fi';
 import { FiUser, FiDollarSign, FiBook, FiGift } from "react-icons/fi";
-import { MdOutlineLibraryAdd, MdOutlineAccountBalance } from 'react-icons/md';
-import { RiCoinsLine } from 'react-icons/ri';
-import { BiBook, BiGift } from 'react-icons/bi';
+// import { MdOutlineLibraryAdd, MdOutlineAccountBalance } from 'react-icons/md';
+// import { RiCoinsLine } from 'react-icons/ri';
+// import { BiBook, BiGift } from 'react-icons/bi';
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
-import { contractAbi, contractAddress } from "../utils/constants";
+// import { contractAbi, contractAddress } from "../utils/constants";
 import { useWriteContract, useAccount } from 'wagmi'
-import {CourseContext, CourseProvider} from "./context1"
+// import {CourseContext, CourseProvider} from "./context1"
+import { toast } from 'react-toastify';
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -115,17 +116,17 @@ const CoursesPage = () => {
         const response = await axios.get('https://edusphere-77qx.onrender.com/courses');
   
         if (response.status !== 200) {
-          alert(response.data.error);
+          toast.error(response.data.error);
         } else {
           const rdata = response.data;
-          console.log(rdata.message);
+          // console.log(rdata.message);
           const data = rdata.courses;
-          console.log(data);
+          // console.log(data);
           setCourses(data);
         }
       } catch (error) {
-        console.error('Failed to fetch courses:', error);
-        alert('An error occurred while fetching courses.');
+        // console.error('Failed to fetch courses:', error);
+        toast.error('An error occurred while fetching courses.');
       }
     };
   

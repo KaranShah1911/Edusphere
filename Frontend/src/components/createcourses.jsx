@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUploadCloud, FiCopy, FiDollarSign, FiBook, FiGift, FiUser, FiSun, FiMoon, FiMenu, FiAlertCircle } from 'react-icons/fi';
+import { FiUploadCloud, FiCopy, FiBook , FiUser } from 'react-icons/fi';
 import { Tooltip } from 'react-tooltip';
 import { useThemeStore } from '../store/themeStore';
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
-import process from 'process';
 import { contractAbi, contractAddress } from "../utils/constants";
 import { useWriteContract, useAccount } from 'wagmi'
 import {CourseContext, CourseProvider} from "./context1"
+import { toast , ToastContainer} from "react-toastify"
 
 const CreateCourse = () => {
 
@@ -48,13 +48,6 @@ const CreateCourse = () => {
       setDropdownOpen(false);
     }
   };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   const handleWalletClick = () => {
     console.log("Wallet Address:", walletAddress);
@@ -681,61 +674,3 @@ const NavLink = ({ to, children }) => (
 );
 
 export default CreateCourse;
-
-//   const isDarkMode = useThemeStore((state) => state.isDarkMode);
-// const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
-//   const [currentIndex, setCurrentIndex] = useState(0);
-//   const [walletConnected, setWalletConnected] = useState(false);
-//   const [walletAddress, setWalletAddress] = useState(null);
-//   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-//   const dropdownRef = useRef(null);
-
-//   const toggleDarkMode = () => {
-//     setIsDarkMode(!isDarkMode);
-//   };
-
-//   const connectWallet = async () => {
-//     if (window.ethereum) {
-//       try {
-//         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-//         setWalletAddress(accounts[0]);
-//         setWalletConnected(true);
-//         setDropdownOpen(false); // Close dropdown after connecting wallet
-//         console.log("Connected to MetaMask");
-//       } catch (error) {
-//         console.error("Error connecting to MetaMask:", error);
-//       }
-//     } else {
-//       alert("Please install MetaMask to connect your wallet.");
-//     }
-//   };
-
-//   const toggleDropdown = () => {
-//     setDropdownOpen(!dropdownOpen);
-//   };
-
-//   const handleClickOutside = (event) => {
-//     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-//       setDropdownOpen(false);
-//     }
-//   };
-
-//   const handleWalletClick = () => {
-//     console.log("Wallet Address:", walletAddress);
-//   };
-
-//   const copyToClipboard = () => {
-//     navigator.clipboard.writeText(walletAddress);
-//     alert("Wallet address copied to clipboard!");
-//   };
-
-//   useEffect(() => {
-//     document.body.classList.toggle('dark', isDarkMode);
-
-//     const intervalId = setInterval(() => {
-//       setCurrentIndex((prevIndex) => (prevIndex + 1) % 3); // Loop through 3 images
-//     }, 3000); // 3 seconds interval
-
-//     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-//   }, [isDarkMode]);
