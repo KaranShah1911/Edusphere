@@ -6,6 +6,7 @@ import { FiUser, FiDollarSign, FiBook, FiGift,FiCopy } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStore } from "../store/themeStore";
 import { useWallet } from "../context/WalletProvider";
+import { useNavigate } from "react-router-dom";
 
 const Edusphere = () => {
   
@@ -17,6 +18,8 @@ const Edusphere = () => {
 
   const dropdownRef = useRef(null);
 
+  const navigate = useNavigate();
+
   const handleWalletClick = () => {
     console.log("Wallet Address:", walletAddress);
   };
@@ -25,12 +28,6 @@ const Edusphere = () => {
     navigator.clipboard.writeText(walletAddress);
     alert("Wallet address copied to clipboard!");
   };
-
-  
-  
-   
-
-  
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -102,7 +99,7 @@ const Edusphere = () => {
                           'bg-emerald-500/20 text-emerald-400' : 
                           'bg-amber-500 hover:bg-amber-600 text-white'
                         } transition-colors`}
-                        onClick={walletConnected ? handleWalletClick : connectWallet}
+                        onClick={walletConnected ? handleWalletClick : ()=>connectWallet(()=>navigate('/signup'))}
                       >
                         {walletConnected ? (
                           <>

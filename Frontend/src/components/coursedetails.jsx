@@ -9,6 +9,7 @@ import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
 import { contractAbi, contractAddress } from "../utils/constants";
 import { useWriteContract, useAccount } from 'wagmi'
+import { toast } from 'react-toastify';
 
 const CourseDetails = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -88,9 +89,8 @@ const CourseDetails = () => {
         }
 
         const token = cookie.split("=")[1];
-        console.log("Token:", token);
         const response = await axios.post(
-          "https://edusphere-77qx.onrender.com/user/purchase-course",
+          "http://localhost:3000/user/purchase-course",
           {
             course_id: course._id,
             transaction_id: " "
@@ -104,16 +104,16 @@ const CourseDetails = () => {
         );
 
         if (response.status !== 200) {
-          alert(response.data.error);
+          toast.error(response.data.error);
         } else {
-          alert(response.data.message);
+          toast.success(response.data.message);
           
         }
       } catch (error) {
         console.error('Error purchasing course:', error);
       }
     } else {
-      alert("Course not purchased");
+      toast.error("Course not purchased");
     }
     navigate("/mylearning");
   };

@@ -68,7 +68,7 @@ const TransactionPage = () => {
         // console.log("Token:", token);
 
         // Make the GET request using Axios
-        const response = await axios.get("https://edusphere-77qx.onrender.com/user/transaction-history", {
+        const response = await axios.get("http://localhost:3000/user/transaction-history", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

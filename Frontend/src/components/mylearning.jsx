@@ -11,6 +11,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useThemeStore } from '../store/themeStore';
 import { useWallet } from "../context/WalletProvider";
 import axios from 'axios';
+import { toast } from "react-toastify"
 
 
 
@@ -45,7 +46,7 @@ const MyLearningPage = () => {
         const token = cookie.split("=")[1];
         console.log("Token:", token);
 
-        const response = await axios.get(`https://edusphere-77qx.onrender.com/user/my-learning`,
+        const response = await axios.get(`http://localhost:3000/user/my-learning`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -55,15 +56,16 @@ const MyLearningPage = () => {
         );
 
         if (response.status !== 200) {
-          alert(response.data.error);
+          toast.error(response.data.error);
         } else {
           console.log(response.data)
-          alert(response.data.message);
+          toast.success(response.data.message);
           completedCourse(response.data.courses_completed);
           purchasedCourses(response.data.courses_enrolled);
         }
       } catch (error) {
         console.error('Failed to fetch courses:', error);
+        toast.error(error);
       }
     };
 

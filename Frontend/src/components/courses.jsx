@@ -113,7 +113,7 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('https://edusphere-77qx.onrender.com/courses');
+        const response = await axios.get('http://localhost:3000/courses');
   
         if (response.status !== 200) {
           toast.error(response.data.error);

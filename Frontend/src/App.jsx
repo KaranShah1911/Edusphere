@@ -83,7 +83,7 @@ const App = () => {
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiProvider>
-      <ToastContainer position='top-center' autoClose={1500} />
+      <ToastContainer position='top-left' autoClose={1500} />
     </>
     );
 };

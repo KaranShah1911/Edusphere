@@ -168,7 +168,7 @@ const CreateCourse = () => {
         const token = cookie.split("=")[1];
         console.log("Token:", token);
 
-        const response = await axios.post("https://edusphere-77qx.onrender.com/courses", courseData , {
+        const response = await axios.post("http://localhost:3000/courses", courseData , {
           headers: {
             "Content-Type" : 'application/json',
             "Authorization" : `Bearer ${token}`,
@@ -184,7 +184,7 @@ const CreateCourse = () => {
             value: 10000000000000000n
           });
           
-          alert(response.data.message);
+          toast.success(response.data.message);
           console.log(response.data.message);
           console.log(response.data);
 
@@ -195,7 +195,7 @@ const CreateCourse = () => {
             console.log("Token:", token);
 
             const course_id = response.data.course._id;
-            const response1 = await axios.post('https://edusphere-77qx.onrender.com/admin/add-course', {
+            const response1 = await axios.post('http://localhost:3000/admin/add-course', {
               course_id: course_id,
             }, {
               headers: {
@@ -205,18 +205,18 @@ const CreateCourse = () => {
             });
 
             if (response1.status === 200) {
-              console.log(response1.data.message);
+              toast.success(response1.data.message);
             } else {
-              console.log(response1.data.error);
+              toast.error(response1.data.error);
             }
           } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
           }
         } else {
-          alert(response.data.error);
+          toast.error(response.data.error);
         }
       } catch (error) {
-        console.error('Error submitting course data:', error);
+        toast.error('Error submitting course data:', error);
         // alert('Failed to create the course. Please try again.');
       }
 

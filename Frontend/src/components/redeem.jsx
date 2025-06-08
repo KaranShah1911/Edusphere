@@ -9,6 +9,7 @@ import { useThemeStore } from "../store/themeStore";
 import axios from "axios";
 import { contractAbi, contractAddress } from "../utils/constants";
 import { useWriteContract, useAccount } from 'wagmi'
+import { toast } from 'react-toastify'
 
 const RedeemPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -41,7 +42,7 @@ const RedeemPage = () => {
         const token = cookie.split("=")[1];
 
         // Make the GET request using Axios
-        const response = await axios.get("https://edusphere-77qx.onrender.com/user/redeem", {
+        const response = await axios.get("http://localhost:3000/user/redeem", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -49,7 +50,7 @@ const RedeemPage = () => {
 
         // Handle response
         if (response.status !== 200) {
-          alert(response.data.error);
+          toast.error(response.data.error);
         } else {
           console.log(response.data.message);
           setCoins(response.data.coins);
@@ -64,16 +65,10 @@ const RedeemPage = () => {
   }, []);
 
   const handleWalletClick = async (reqcoins) => {
-    // console.log("handleWalletClick called with:", reqcoins);
-    // console.log("Wallet Address:", walletAddress);
-    // console.log("redeemCoins function:", redeemCoins);
-
     if (!redeemCoins) {
       console.error("redeemCoins is undefined! CourseContext might not be wrapping this component.");
       return;
     }
-
-    
 
     try {
       // Get token from cookies
@@ -87,7 +82,7 @@ const RedeemPage = () => {
       const token = cookie.split("=")[1];
       console.log("Token:", token);
 
-      const response = await axios.get("https://edusphere-77qx.onrender.com/user/redeem", {
+      const response = await axios.get("http://localhost:3000/user/redeem", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -100,7 +95,7 @@ const RedeemPage = () => {
         console.log(response.data.message);
         const usercoins = response.data.coins;
         if(usercoins < reqcoins){
-          alert("You don't have enough coins to redeem this offer");
+          toast.info("You don't have enough coins to redeem this offer");
         }else{
           const choice = confirm("Are you sure you want to redeem this offer?");
           if(choice){
@@ -116,7 +111,7 @@ const RedeemPage = () => {
               console.error("Error calling redeemCoins:", error);
             }
             const newcoins = usercoins - reqcoins;
-            const response = await axios.post("https://edusphere-77qx.onrender.com/user/redeem", {
+            const response = await axios.post("http://localhost:3000/user/redeem", {
               coins: newcoins,
             }, {
               headers: {
@@ -124,9 +119,9 @@ const RedeemPage = () => {
               },
             });
             if (response.status !== 200) {
-              alert(response.data.error);
+              toast.error(response.data.error);
             } else {
-              alert(response.data.message);
+              toast.success(response.data.message);
               setCoins(newcoins);
             }
           }
@@ -134,7 +129,7 @@ const RedeemPage = () => {
       }
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      alert(error.response?.data?.error || "User is not logged in or registered");
+      toast.error(error.response?.data?.error || "User is not logged in or registered");
     }
   };
 

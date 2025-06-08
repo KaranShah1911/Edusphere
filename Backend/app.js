@@ -15,7 +15,7 @@ ConnectToDB()    // Establishing connection with the DataBase
 
 // Setting up middleware for parsing the request body and allowing the client to make the request
 app.use(cors({
-    origin: "http://localhost:5173",  // Allowing the specific frontend origin
+    origin : "*",
     methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Optional: specify allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'],  // Optional: specify allowed headers
   }));

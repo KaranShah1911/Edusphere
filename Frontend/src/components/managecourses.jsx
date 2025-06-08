@@ -72,7 +72,7 @@ const ManageCourses = () => {
         const token = cookie.split("=")[1];
 
         // Make the GET request using Axios
-        const response = await axios.get("https://edusphere-77qx.onrender.com/admin/get-courses", {
+        const response = await axios.get("http://localhost:3000/admin/get-courses", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -107,7 +107,7 @@ const ManageCourses = () => {
       // console.log("Token:", token);
       console.log(id)
       try {
-        const response = await axios.post("https://edusphere-77qx.onrender.com/admin/delete-course", {
+        const response = await axios.post("http://localhost:3000/admin/delete-course", {
           courseid: id
         },
           {

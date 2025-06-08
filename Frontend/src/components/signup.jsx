@@ -1,16 +1,44 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';  // Add useState here
+import { useState , useEffect } from 'react';  // Add useState here
 import axios from 'axios';
+import {toast} from 'react-toastify';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [walletaddress ,setwalletaddress] = useState("");
+  const [role , setrole] = useState("");
 
   const setCookie = (name, value, days) => {
     const expires = new Date();
     expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000); // Set expiration
-    document.cookie =` ${name}=${value};expires=${expires.toUTCString()};path=/;`;
+    document.cookie =`${name}=${value};expires=${expires.toUTCString()};path=/;`;
   };
+
+  useEffect(()=>{
+    // Retrieve role from sessionStorage
+    const role = localStorage.getItem("role");
+
+    if (!role) {
+      alert("Role is missing. Please go back and select your role.");
+      navigate("/roleselection");
+      return;
+    }
+
+    setrole(role);
+
+    const savedWalletAddress = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("walletAddress="));
+
+    if(!savedWalletAddress){
+      toast.info("Please connect wallet...");
+      navigate("/");
+    }
+
+    setwalletaddress(savedWalletAddress.split("=")[1]);
+
+  } , [])
 
   // State to store form data
   const [formData, setFormData] = useState({
@@ -28,24 +56,15 @@ const LoginPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    // Retrieve role from sessionStorage
-    const role = localStorage.getItem("role");
-
-    if (!role) {
-      alert("Role is missing. Please go back and select your role.");
-      navigate("/roleselection");
-      return;
-    }
-
       // Log form data (for debugging or API submission)
-      console.log( formData.username , localStorage.getItem("walletAddress"));
+      console.log( formData.username , walletaddress);
 
       // Posting the data to Database
       if(role==="student"){
         try {
-          const response = await axios.post("https://edusphere-77qx.onrender.com/user/add-details", {
+          const response = await axios.post("http://localhost:3000/user/add-details", {
             username: formData.username,
-            wallet_id: localStorage.getItem("walletAddress"),
+            wallet_id: walletaddress,
           }, {
             headers: {
               "Content-Type": "application/json",
@@ -68,10 +87,10 @@ const LoginPage = () => {
       }else{
         try {
           const response = await axios.post(
-            "https://edusphere-77qx.onrender.com/admin/add-details",
+            "http://localhost:3000/admin/add-details",
             {
               username: formData.username,
-              wallet_id: localStorage.getItem("walletAddress"),
+              wallet_id: walletaddress,
             },
             {
               headers: {
@@ -117,31 +136,8 @@ const LoginPage = () => {
             <label htmlFor="username" className="block text-gray-400 text-sm">Username</label>
             <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} placeholder="Enter your username" className="w-full p-3 bg-gray-700 text-white rounded-md" required />
 
-            {/* <label htmlFor="gender" className="block text-gray-400 text-sm">Gender</label>
-            <select id="gender" className="w-full p-3 bg-gray-700 text-white rounded-md" required>
-              <option value="" disabled>Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-
-            <label htmlFor="dob" className="block text-gray-400 text-sm">Date of Birth</label>
-            <input type="date" id="dob" className="w-full p-3 bg-gray-700 text-white rounded-md" required />
-
-            <label htmlFor="password" className="block text-gray-400 text-sm">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" className="w-full p-3 bg-gray-700 text-white rounded-md" required /> */}
-
             <button type="submit" className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-400 text-white rounded-md text-lg">Add Details</button>
 
-            {/* <div className="mt-5 text-center text-sm text-gray-300">
-              Already have an account? 
-              <span
-                className="text-cyan-500 cursor-pointer"
-                onClick={() => navigate('/userlogin')}
-              >
-                Login here
-              </span>
-            </div> */}
           </form>
         </div>
       </div>

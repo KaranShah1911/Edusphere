@@ -6,16 +6,18 @@ import { FiUser, FiDollarSign, FiBook, FiGift, FiCopy } from "react-icons/fi";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWallet } from "../context/WalletProvider";
 import { useThemeStore } from "../store/themeStore";
+import { useNavigate } from "react-router-dom"
 
 const Studenthome = () => {
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  const { walletAddress, walletConnected, connectWallet, disconnectWallet } = useWallet();
+  const { walletAddress, walletConnected, connectWallet } = useWallet();
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const setIsDarkMode = useThemeStore((state) => state.setIsDarkMode);
   const dropdownRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -96,7 +98,7 @@ const Studenthome = () => {
                 'bg-emerald-500/20 text-emerald-400' :
                 'bg-amber-500 hover:bg-amber-600 text-white'
               } transition-colors`}
-            onClick={walletConnected ? handleWalletClick : connectWallet}
+            onClick={walletConnected ? handleWalletClick : ()=>connectWallet(()=>navigate('/signup'))}
           >
             {walletConnected ? (
               <>
