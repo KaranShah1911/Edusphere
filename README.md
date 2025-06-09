@@ -68,10 +68,10 @@ Edusphere is a decentralized platform designed for learning, teaching, and buyin
 #### Blockchain
 - Solidity
 - Wagmi For integrating the Smart Contract
-- IPFS via Pinata
   
 #### Database
 - MongoDB
+- IPFS via Pinata
 
 
 ## 📈Progress
